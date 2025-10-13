@@ -46,6 +46,13 @@ class AttrModel extends BaseModel
 
     protected $table = 'attr';
 
+    protected static function booted()
+    {
+        static::addGlobalScope('status', function ($builder) {
+            $builder->where('status', 1);
+        });
+    }
+
     public function values():HasMany
     {
         return $this->hasMany(AttrValueModel::class, 'attr_id');

@@ -41,11 +41,11 @@ class CostItemOrderDetail extends LazyRenderable
                     ];
                 });
                 $titles = [
-                    '产品名称',
+                    '物料名称',
                     '单位',
                     '类型',
                     '属性',
-                    '含绒百分比',
+//                    '含绒百分比',
                     '检验标准',
                     '要货数量',
                     '销售数量',
@@ -68,11 +68,11 @@ class CostItemOrderDetail extends LazyRenderable
                     ];
                 });
                 $titles = [
-                    '产品名称',
+                    '物料名称',
                     '单位',
                     '类型',
                     '属性',
-                    '含绒百分比',
+//                    '含绒百分比',
                     '检验标准',
                     '采购数量',
                     '入库数量',

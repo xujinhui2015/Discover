@@ -42,8 +42,8 @@ class SkuStockBatchTable extends LazyRenderable
 
         $titles = [
             'Id',
-            '产品编号',
-            '产品名称',
+            '物料编号',
+            '物料名称',
             '单位',
             '类型',
             '属性',

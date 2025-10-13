@@ -14,11 +14,11 @@
 
 return [
     'labels' => [
-        'SkuStock' => '产品库存',
+        'SkuStock' => '物料库存',
     ],
     'fields' => [
-        'num' => '产品库存',
-        'sku_id' => '产品sku_id',
+        'num' => '物料库存',
+        'sku_id' => '物料sku_id',
     ],
     'options' => [
     ],

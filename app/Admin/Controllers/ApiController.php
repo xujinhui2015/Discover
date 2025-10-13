@@ -18,6 +18,7 @@ use App\Admin\Repositories\Customer;
 use App\Http\Requests\WithOrderRequest;
 use App\Http\Resources\ProductResource;
 use App\Repositories\AttrValueRepository;
+use App\Repositories\BrandRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\UnitRepository;
 use App\Services\OrderService;
@@ -52,6 +53,13 @@ class ApiController extends Controller
     {
         $product_id = $request->get('q');
         $data       = $repository->getUnitByProductId($product_id)->textIdtoArray('id', 'name');
+        return Response::json($data);
+    }
+
+    public function getBrandByProductId(Request $request, BrandRepository $repository): JsonResponse
+    {
+        $product_id = $request->get('q');
+        $data       = $repository->getBrandByProductId($product_id)->textIdtoArray('id', 'name');
         return Response::json($data);
     }
 

@@ -27,9 +27,9 @@ class CreateErpTables extends Migration
     {
         Schema::create('product', function (Blueprint $table) {
             $table->integerIncrements('id');
-            $table->string('name', 64)->default('')->comment('产品名称');
+            $table->string('name', 64)->default('')->comment('物料名称');
             $table->string('py_code', 32)->default('')->comment('拼音码');
-            $table->string('item_no', 32)->default('')->comment('产品编号');
+            $table->string('item_no', 32)->default('')->comment('物料编号');
             $table->unsignedSmallInteger('unit_id')->default(0)->comment('单位');
             $table->softDeletes();
             $table->timestamps();
@@ -37,9 +37,9 @@ class CreateErpTables extends Migration
 
         Schema::create('product_attr', function (Blueprint $table) {
             $table->integerIncrements('id');
-            $table->unsignedInteger('product_id')->default(0)->comment('产品id');
+            $table->unsignedInteger('product_id')->default(0)->comment('物料id');
             $table->unsignedInteger('attr_id')->default(0)->comment('属性id');
-            $table->json('attr_value_ids')->comment('产品可选值');
+            $table->json('attr_value_ids')->comment('物料可选值');
         });
 
         Schema::create('attr', function (Blueprint $table) {
@@ -58,7 +58,7 @@ class CreateErpTables extends Migration
 
         Schema::create('product_sku', function (Blueprint $table) {
             $table->integerIncrements('id');
-            $table->unsignedInteger('product_id')->default(0)->comment('产品id');
+            $table->unsignedInteger('product_id')->default(0)->comment('物料id');
             $table->string('attr_value_ids', 500)->comment('选项值ids');
         });
         Schema::create('unit', function (Blueprint $table) {
@@ -137,15 +137,15 @@ class CreateErpTables extends Migration
 
         Schema::create('sku_stock', function (Blueprint $table) {
             $table->integerIncrements('id');
-            $table->unsignedInteger('sku_id')->default(0)->comment('产品sku_id');
-            $table->integer('num')->default(0)->comment('产品库存');
+            $table->unsignedInteger('sku_id')->default(0)->comment('物料sku_id');
+            $table->integer('num')->default(0)->comment('物料库存');
             $table->timestamps();
         });
 
         Schema::create('sku_stock_batch', function (Blueprint $table) {
             $table->integerIncrements('id');
-            $table->unsignedInteger('sku_id')->default(0)->comment('产品sku_id');
-            $table->integer('num')->default(0)->comment('产品库存');
+            $table->unsignedInteger('sku_id')->default(0)->comment('物料sku_id');
+            $table->integer('num')->default(0)->comment('物料库存');
             $table->unsignedInteger('position_id')->default(0)->comment('仓库位置');
             $table->string('batch_no', 32)->default('')->comment('批次号');
             $table->timestamps();

@@ -17,7 +17,10 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Grid\BatchCreateProSave;
 use App\Admin\Repositories\Product;
 use App\Models\AttrModel;
+use App\Models\BrandModel;
+use App\Models\ProductCategoryModel;
 use App\Models\ProductModel;
+use App\Repositories\BrandRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\UnitRepository;
 use Dcat\Admin\Form;
@@ -92,14 +95,31 @@ class ProductController extends AdminController
             });
 
             $form->row(function (Form\Row $row) use ($form) {
+
+                $brands = BrandRepository::pluck('name', 'id');;
+                $row->width(6)->select('brand_id', '品牌')
+                    ->options($brands)
+                    ->default(head($brands->keys()->toArray()) ?? '')
+                    ->required();
+
+                $row->select('type', '类型')
+                    ->options(ProductModel::TYPE)
+                    ->default(ProductModel::TYPE_NOT_FINISH)
+                    ->required();
+
+
+            });
+
+            $form->row(function (Form\Row $row) use ($form) {
+                $row->width(6)->select('product_category_id', '分类')
+                    ->options(ProductCategoryModel::selectOptions())
+                    ->default(0)
+                    ->required();
+
                 $units = UnitRepository::pluck('name', 'id');
                 $row->width(6)->select('unit_id', '单位')
                     ->options($units)
                     ->default(head($units->keys()->toArray()) ?? '')
-                    ->required();
-                $row->width(6)->select('type', '类型')
-                    ->options(ProductModel::TYPE)
-                    ->default(ProductModel::TYPE_NOT_FINISH)
                     ->required();
             });
 

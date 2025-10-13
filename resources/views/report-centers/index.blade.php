@@ -66,7 +66,7 @@
                     <div class="fonticon-wrap">
                         <i class="feather icon-activity"></i>
                     </div>
-                    <span class="fonticon-classname mt-1">采购入库汇总(产品)</span>
+                    <span class="fonticon-classname mt-1">采购入库汇总(物料)</span>
                 </a>
 
                 <a class="col-md-4 col-sm-6 col-12 fonticon-container" target="_blank" href="{{route('purchase-report.order-amount')}}">
@@ -97,7 +97,7 @@
                     <div class="fonticon-wrap">
                         <i class="feather icon-activity"></i>
                     </div>
-                    <span class="fonticon-classname mt-1">销售出库汇总(产品)</span>
+                    <span class="fonticon-classname mt-1">销售出库汇总(物料)</span>
                 </a>
 
                 <a class="col-md-4 col-sm-6 col-12 fonticon-container" target="_blank" href="{{route('sale-report.order-amount')}}">

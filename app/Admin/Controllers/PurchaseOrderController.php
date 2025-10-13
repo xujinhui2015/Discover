@@ -112,7 +112,7 @@ class PurchaseOrderController extends OrderController
                 $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
                 $table->ipt('type', '类型')->rem(5)->default('-')->disable();
                 $table->select('sku_id', '属性选择')->options()->required();
-                $table->tableDecimal('percent', '含绒量')->default(0);
+//                $table->tableDecimal('percent', '含绒量')->default(0);
                 $table->select('standard', '检验标准')->options(PurchaseOrderModel::STANDARD)->default(0);
                 $table->num('should_num', '采购数量')->required();
                 $table->tableDecimal('price', '采购价格')->default(0.00)->required();
@@ -123,7 +123,7 @@ class PurchaseOrderController extends OrderController
     protected function setItems(Grid &$grid): void
     {
         $order = $this->order;
-        $grid->column('sku.product.name', '产品名称');
+        $grid->column('sku.product.name', '物料名称');
         $grid->column('sku.product.unit.name', '单位');
         $grid->column('sku.product.type_str', '类型');
         $grid->column('sku_id', '属性')->if(function () use ($order) {
@@ -133,9 +133,9 @@ class PurchaseOrderController extends OrderController
         })->else()->selectplus(function (Fluent $fluent) {
             return $fluent->sku['product']['sku_key_value'];
         });
-        $grid->column('percent', '含绒量')->if(function () use ($order) {
-            return $order->review_status !== PurchaseOrderModel::REVIEW_STATUS_OK;
-        })->edit();
+//        $grid->column('percent', '含绒量')->if(function () use ($order) {
+//            return $order->review_status !== PurchaseOrderModel::REVIEW_STATUS_OK;
+//        })->edit();
 
         $grid->column('standard', '检验标准')->if(function () use ($order) {
             return $order->review_status === PurchaseOrderModel::REVIEW_STATUS_OK;

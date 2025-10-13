@@ -20,9 +20,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * App\Models\ProductAttrModel
  *
  * @property int $id
- * @property int $product_id 产品id
+ * @property int $product_id 物料id
  * @property int $attr_id 属性id
- * @property array $attr_value_ids 产品可选值
+ * @property array $attr_value_ids 物料可选值
  * @method static \Illuminate\Database\Eloquent\Builder|ProductAttrModel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductAttrModel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductAttrModel query()

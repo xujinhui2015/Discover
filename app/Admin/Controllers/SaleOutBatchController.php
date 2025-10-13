@@ -42,7 +42,7 @@ class SaleOutBatchController extends AdminController
         return Grid::make(new SaleOutBatch(['item.sku.product', 'stock_batch']), function (Grid $grid) use ($order) {
             $grid->model()->where('item_id', request()->input('item_id'))->orderBy('id', 'desc');
             $grid->column('id')->sortable();
-            $grid->column('item.sku.product.name', '产品名称');
+            $grid->column('item.sku.product.name', '物料名称');
             $grid->column('item.sku.product.unit.name', '单位');
             $grid->column('item.sku.product.type_str', '类型');
             $grid->column('item.sku.product.type_str', '类型');

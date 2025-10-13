@@ -22,7 +22,7 @@ class ProductCheck extends RowAction
     /**
      * @return string
      */
-    protected $title = '产品检验';
+    protected $title = '物料检验';
 
     public function render()
     {

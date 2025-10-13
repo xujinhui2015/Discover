@@ -40,7 +40,7 @@ class TaskController extends AdminController
         return Grid::make(new Task(['sku', 'user', 'sku.product', 'craft', 'operator_user']), function (Grid $grid) {
             $grid->column('id')->sortable();
             $grid->column('order_no');
-            $grid->column('info', '产品信息')->display(function () {
+            $grid->column('info', '物料信息')->display(function () {
                 return $this->sku['product']['name']."|".$this->sku['attr_value_ids_str']."|".$this->percent."%|".$this->standard_str;
             });
             $grid->column('sum_cost_price', "领料总成本");
@@ -106,7 +106,7 @@ class TaskController extends AdminController
             $form->row(function (Form\Row $row) {
                 $row->width(4)->select('sku_id', '属性选择')->options()->required();
                 $row->width(4)->select('standard', '检验标准')->options(SkuStockBatchModel::STANDARD)->required();
-                $row->width(4)->rate('percent', '含绒百分比')->default(0)->required();
+//                $row->width(4)->rate('percent', '含绒百分比')->default(0)->required();
             });
 
             $form->row(function (Form\Row $row) {

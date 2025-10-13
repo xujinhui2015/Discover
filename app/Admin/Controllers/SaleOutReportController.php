@@ -86,11 +86,11 @@ class SaleOutReportController extends Controller
             })->orderByDesc('order_id');
             $grid->column('order.order_no', '订单号');
             $grid->column('order.customer.name', '客户');
-            $grid->column('sku.product.name', '产品名称');
+            $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '类型');
             $grid->column('sku.attr_value_ids_str', '属性');
-            $grid->column('percent', '含绒百分比');
+//            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
             $grid->column('should_num', '要货数量')->sortable();
             $grid->column('actual_num', '销售数量')->sortable();
@@ -114,7 +114,7 @@ class SaleOutReportController extends Controller
                             $query->orWhere('item_no', 'like', $this->getValue()."%");
                         });
                     });
-                }, "关键字")->placeholder("产品名称，拼音码，编号")->width(3);
+                }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
                 $filter->equal('order.supplier_id', '供应商')->select(SupplierModel::query()->latest()->pluck('name', 'id'))->width(3);
                 $filter->group('should_num', function ($group) {
                     $group->gt('大于');
@@ -130,7 +130,7 @@ class SaleOutReportController extends Controller
                     $group->ngt('不大于');
                     $group->equal('等于');
                 }, '销售数量')->width(3);
-                $filter->like('percent', "含绒量")->decimal()->width(3);
+//                $filter->like('percent', "含绒量")->decimal()->width(3);
                 $filter->equal('standard', "检验标准")->select(PurchaseInOrderModel::STANDARD)->width(3);
             });
 
@@ -139,11 +139,11 @@ class SaleOutReportController extends Controller
                     return [
                         '订单号' => $row['order']['order_no'],
                         '客户' => $row['order']['customer']['name'],
-                        '产品名称' => $row['sku']['product']['name'],
+                        '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
                         '类型' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
-                        '含绒百分比' => $row['percent'],
+//                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],
                         '要货数量' => $row['should_num'],
                         '销售数量' => $row['actual_num'],
@@ -193,11 +193,11 @@ class SaleOutReportController extends Controller
             $grid->column('customer_id', '客户')->display(function ($val) {
                 return CustomerModel::query()->where('id', $val)->value('name');
             })->sortable();
-            $grid->column('sku.product.name', '产品名称');
+            $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '类型');
             $grid->column('sku.attr_value_ids_str', '属性');
-            $grid->column('percent', '含绒百分比');
+//            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
             $grid->column('sum_should_num', '要货数量')->sortable();
             $grid->column('sum_actual_num', '出库数量')->sortable();
@@ -218,9 +218,9 @@ class SaleOutReportController extends Controller
                             $query->orWhere('item_no', 'like', $this->getValue()."%");
                         });
                     });
-                }, "关键字")->placeholder("产品名称，拼音码，编号")->width(3);
+                }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
                 $filter->equal('customer_id', '客户')->select(CustomerModel::query()->latest()->pluck('name', 'id'))->width(3);
-                $filter->like('percent', "含绒量")->decimal()->width(3);
+//                $filter->like('percent', "含绒量")->decimal()->width(3);
                 $filter->equal('standard', "检验标准")->select(SaleOutOrderModel::STANDARD)->width(3);
             });
 
@@ -228,11 +228,11 @@ class SaleOutReportController extends Controller
                 return array_map(function ($row) {
                     return [
                         '客户' => CustomerModel::query()->where('id', $row['customer_id'])->value('name'),
-                        '产品名称' => $row['sku']['product']['name'],
+                        '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
                         '类型' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
-                        '含绒百分比' => $row['percent'],
+//                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],
                         '要货数量' => $row['sum_should_num'],
                         '出库数量' => $row['sum_actual_num'],
@@ -273,11 +273,11 @@ class SaleOutReportController extends Controller
                 'percent',
                 'standard'
             );
-            $grid->column('sku.product.name', '产品名称');
+            $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '类型');
             $grid->column('sku.attr_value_ids_str', '属性');
-            $grid->column('percent', '含绒百分比');
+//            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
             $grid->column('sum_should_num', '要货数量')->sortable();
             $grid->column('sum_actual_num', '出库数量')->sortable();
@@ -298,20 +298,20 @@ class SaleOutReportController extends Controller
                             $query->orWhere('item_no', 'like', $this->getValue()."%");
                         });
                     });
-                }, "关键字")->placeholder("产品名称，拼音码，编号")->width(3);
+                }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
 
-                $filter->like('percent', "含绒量")->decimal()->width(3);
+//                $filter->like('percent', "含绒量")->decimal()->width(3);
                 $filter->equal('standard', "检验标准")->select(SaleOutOrderModel::STANDARD)->width(3);
             });
 
             $grid->export()->rows(function (array $rows) {
                 return array_map(function ($row) {
                     return [
-                        '产品名称' => $row['sku']['product']['name'],
+                        '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
                         '类型' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
-                        '含绒百分比' => $row['percent'],
+//                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],
                         '要货数量' => $row['sum_should_num'],
                         '出库数量' => $row['sum_actual_num'],
@@ -326,7 +326,7 @@ class SaleOutReportController extends Controller
             $grid->disableActions();
         });
         return $content
-            ->title("销售出库汇总(产品)")
+            ->title("销售出库汇总(物料)")
             ->description(' ')
             ->full()
             ->body($grid);

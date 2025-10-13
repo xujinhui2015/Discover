@@ -26,6 +26,7 @@ Route::group([
     $router->get('/', 'HomeController@index');
     $router->get('api/get-attr-value', 'ApiController@getAttrValue')->name('api.attrvalue.find');
     $router->get('api/get-product-unit', 'ApiController@getUnitByProductId')->name('api.productunit.find');
+    $router->get('api/get-product-brand', 'ApiController@getBrandByProductId')->name('api.productbrand.find');
     $router->get('api/get-product', 'ApiController@getProductInfo')->name('api.product.find');
     $router->post('api/with/order', 'ApiController@withOrder')->name('api.with.order');
     $router->get('api/get-customer-address', 'ApiController@getCustomerAddress')->name('api.customer.address.find');
@@ -33,7 +34,9 @@ Route::group([
 
     $router->resource('attrs', 'AttrController');
     $router->resource('products', 'ProductController');
+    $router->resource('product-category', 'ProductCategoryController');
     $router->resource('units', 'UnitController');
+    $router->resource('brands', 'BrandController');
     $router->resource('purchase-orders', 'PurchaseOrderController');
     $router->resource('purchase-items', 'PurchaseItemController');
     $router->resource('suppliers', 'SupplierController');

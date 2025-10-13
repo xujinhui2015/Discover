@@ -104,12 +104,12 @@ class CheckProductController extends AdminController
     {
         return Form::make(new CheckProduct(), function (Form $form) {
             $form->row(function (Form\Row $row) {
-                $row->width(12)->html('<h1 align="center">产品检验单</h1>');
+                $row->width(12)->html('<h1 align="center">物料检验单</h1>');
             });
 
             $form->row(function (Form\Row $row) {
                 $row->width(3)->text('check_no')->default(build_order_no('JY'))->readOnly();
-                $row->width(3)->select('product_id', '产品')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
+                $row->width(3)->select('product_id', '物料')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
                 $row->width(3)->select('sku_id', '属性选择')->options()->required();
                 $row->width(3)->number('num')->default(0)->required();
             });

@@ -94,7 +94,7 @@ class SaleOutOrderController extends OrderController
     protected function setItems(Grid &$grid): void
     {
         $order = $this->order;
-        $grid->column('sku.product.name', '产品名称');
+        $grid->column('sku.product.name', '物料名称');
         $grid->column('sku.product.unit.name', '单位');
         $grid->column('sku.product.type_str', '类型');
         $grid->column('sku_id', '属性')->if(function () use ($order) {
@@ -105,9 +105,9 @@ class SaleOutOrderController extends OrderController
             return $fluent->sku['product']['sku_key_value'];
         });
 
-        $grid->column('percent', '含绒百分比')->if(function () use ($order) {
-            return $order->review_status !== SaleOutOrderModel::REVIEW_STATUS_OK;
-        })->edit();
+//        $grid->column('percent', '含绒百分比')->if(function () use ($order) {
+//            return $order->review_status !== SaleOutOrderModel::REVIEW_STATUS_OK;
+//        })->edit();
 
         $grid->column('standard', '检验标准')->if(function () use ($order) {
             return $order->review_status === SaleOutOrderModel::REVIEW_STATUS_OK;

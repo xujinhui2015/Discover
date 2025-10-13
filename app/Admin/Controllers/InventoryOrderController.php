@@ -88,10 +88,10 @@ class InventoryOrderController extends OrderController
     public function setItems(Grid &$grid): void
     {
         $order = $this->order;
-        $grid->column('stock_batch.sku.product.name', '产品名称');
+        $grid->column('stock_batch.sku.product.name', '物料名称');
         $grid->column('stock_batch.sku.attr_value_ids_str', '属性');
         $grid->column('stock_batch.batch_no', '批次号');
-        $grid->column('stock_batch.percent', '含绒量');
+//        $grid->column('stock_batch.percent', '含绒量');
         $grid->column('stock_batch.standard_str', '检验标准');
         $grid->column('cost_price', "成本单价");
         $grid->column('should_num', '库存数量');

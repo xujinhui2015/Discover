@@ -191,7 +191,7 @@ class InitSeeder extends Seeder
             [
                 'parent_id'     => 0,
                 'order'         => 8,
-                'title'         => '产品管理',
+                'title'         => '物料管理',
                 'icon'          => 'fa-product-hunt',
                 'uri'           => '',
                 'created_at'    => $createdAt,
@@ -199,7 +199,7 @@ class InitSeeder extends Seeder
             [
                 'parent_id'     => 8,
                 'order'         => 9,
-                'title'         => '产品档案',
+                'title'         => '物料档案',
                 'icon'          => '',
                 'uri'           => 'products',
                 'created_at'    => $createdAt,
@@ -207,7 +207,7 @@ class InitSeeder extends Seeder
             [
                 'parent_id'     => 8,
                 'order'         => 10,
-                'title'         => '产品单位',
+                'title'         => '物料单位',
                 'icon'          => '',
                 'uri'           => 'units',
                 'created_at'    => $createdAt,
@@ -215,7 +215,7 @@ class InitSeeder extends Seeder
             [
                 'parent_id'     => 8,
                 'order'         => 11,
-                'title'         => '产品属性',
+                'title'         => '物料属性',
                 'icon'          => '',
                 'uri'           => 'attrs',
                 'created_at'    => $createdAt,
@@ -263,7 +263,7 @@ class InitSeeder extends Seeder
             [
                 'parent_id'     => 16,
                 'order'         => 17,
-                'title'         => '产品库存',
+                'title'         => '物料库存',
                 'icon'          => '',
                 'uri'           => 'sku-stocks',
                 'created_at'    => $createdAt,

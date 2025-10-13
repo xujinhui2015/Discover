@@ -38,13 +38,13 @@ class SkuStockBatchController extends AdminController
         return Grid::make(new SkuStockBatch(['sku.product']), function (Grid $grid) {
             $grid->model()->where('num', ">", 0);
             $grid->column('id')->sortable();
-            $grid->column('sku.product.item_no', '产品编号');
-            $grid->column('sku.product.name', '产品名称');
+            $grid->column('sku.product.item_no', '物料编号');
+            $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '类型');
             $grid->column('sku.attr_value_ids_str', '属性');
-            $grid->column('percent', '含绒量(%)');
-            $grid->column('standard_str', '检验标准');
+//            $grid->column('percent', '含绒量(%)');
+//            $grid->column('standard_str', '检验标准');
             $grid->column('batch_no');
             $grid->column('num');
             $grid->column('cost_price', "成本价格");
@@ -62,7 +62,7 @@ class SkuStockBatchController extends AdminController
                             $query->orWhere('item_no', 'like', $this->getValue()."%");
                         });
                     });
-                }, "关键字")->placeholder("产品名称，拼音码，编号")->width(3);
+                }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
                 $filter->group('num', function ($group) {
                     $group->gt('大于');
                     $group->lt('小于');
@@ -70,12 +70,12 @@ class SkuStockBatchController extends AdminController
                     $group->ngt('不大于');
                     $group->equal('等于');
                 })->width(3);
-                $filter->like('percent', "含绒量")->decimal()->width(3);
-                $filter->equal('standard', "检验标准")->select(SkuStockBatchModel::STANDARD)->width(3);
+//                $filter->like('percent', "含绒量")->decimal()->width(3);
+//                $filter->equal('standard', "检验标准")->select(SkuStockBatchModel::STANDARD)->width(3);
                 $filter->like('batch_no', "批次号")->width(3);
                 $filter->equal('position_id', "库位")->select(PositionModel::query()->latest()->pluck('name', 'id'))->width(3);
             });
-            $grid->column("_id", "检验记录")->expand(ProductCheckDetails::make());
+//            $grid->column("_id", "检验记录")->expand(ProductCheckDetails::make());
             $grid->actions(function (Grid\Displayers\Actions $actions) {
                 if ($this->num > 0) {
                     $actions->append(new ProductCheck());
@@ -102,13 +102,13 @@ class SkuStockBatchController extends AdminController
                 ])->where('num', ">", 0)->orderBy('id', 'desc');
             }
             $grid->column('id')->sortable();
-            $grid->column('sku.product.item_no', '产品编号');
-            $grid->column('sku.product.name', '产品名称');
+            $grid->column('sku.product.item_no', '物料编号');
+            $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '类型');
             $grid->column('sku.attr_value_ids_str', '属性');
-            $grid->column('standard', '检验标准');
-            $grid->column('percent', '含绒量（%）');
+//            $grid->column('standard', '检验标准');
+//            $grid->column('percent', '含绒量（%）');
             $grid->column('batch_no');
             $grid->column('num');
             $grid->column('position.name', '库位');

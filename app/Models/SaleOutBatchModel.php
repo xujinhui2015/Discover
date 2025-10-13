@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $actual_num 出库数量
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property int $stock_batch_id 出库产品批次id
+ * @property int $stock_batch_id 出库物料批次id
  * @property string $percent 含绒量
  * @property int $standard 检验标准
  * @property-read \App\Models\SaleOutItemModel $item

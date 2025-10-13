@@ -17,7 +17,7 @@ return [
         'InventoryItem' => 'InventoryItem',
     ],
     'fields' => [
-        'stock_batch.sku.product.name' => '产品名称',
+        'stock_batch.sku.product.name' => '物料名称',
         'stock_batch.sku.product.unit.name' => '单位',
         'stock_batch.sku.product.type_str' => '类型',
         'stock_batch.sku.attr_value_ids_str' => '属性',

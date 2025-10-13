@@ -14,14 +14,13 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Extensions\Expand\AttrValue;
-use App\Admin\Repositories\Attr;
-use App\Models\AttrModel;
+use App\Admin\Repositories\Brand;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
+use Dcat\Admin\Show;
 use Dcat\Admin\Controllers\AdminController;
 
-class AttrController extends AdminController
+class BrandController extends AdminController
 {
     /**
      * Make a grid builder.
@@ -30,14 +29,31 @@ class AttrController extends AdminController
      */
     protected function grid()
     {
-        return Grid::make(AttrModel::withoutGlobalScope('status'), function (Grid $grid) {
+        return Grid::make(new Brand(), function (Grid $grid) {
             $grid->column('id')->sortable();
             $grid->column('name');
-            $grid->column('value', '属性值')
-                ->display('查看')
-                ->expand(AttrValue::class);
-            $grid->status('状态')->switch();
             $grid->column('created_at');
+            $grid->column('updated_at')->sortable();
+
+            $grid->filter(function (Grid\Filter $filter) {
+            });
+        });
+    }
+
+    /**
+     * Make a show builder.
+     *
+     * @param mixed $id
+     *
+     * @return Show
+     */
+    protected function detail($id)
+    {
+        return Show::make($id, new Brand(), function (Show $show) {
+            $show->field('id');
+            $show->field('name');
+            $show->field('created_at');
+            $show->field('updated_at');
         });
     }
 
@@ -46,20 +62,14 @@ class AttrController extends AdminController
      *
      * @return Form
      */
-    /**
-     * Make a form builder.
-     *
-     * @return Form
-     */
     protected function form()
     {
-        return Form::make(new Attr('values'), function (Form $form) {
-            $form->text('name')->help('例如：颜色，尺寸')->required();
-            $form->hasMany('values', '属性值', function (Form\NestedForm $table) {
-                $table->text('name', '名称')->help('属性的值（例如颜色的值：黄色，蓝色）');
-            })->useTable();
+        return Form::make(new Brand(), function (Form $form) {
+            $form->display('id');
+            $form->text('name');
 
-            $form->hidden('status')->default(1);
+            $form->display('created_at');
+            $form->display('updated_at');
         });
     }
 }

@@ -51,7 +51,7 @@ class ProductCheckDetails extends LazyRenderable
         $titles = [
             '序号',
             '检验标准',
-            '含绒量（%）',
+//            '含绒量（%）',
             '质检员',
             '碳纤维',
             '毛片',

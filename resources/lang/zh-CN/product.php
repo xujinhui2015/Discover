@@ -14,11 +14,11 @@
 
 return [
     'labels' => [
-        'Product' => '产品',
+        'Product' => '物料',
     ],
     'fields' => [
-        'item_no' => '产品编号',
-        'name' => '产品名称',
+        'item_no' => '物料编号',
+        'name' => '物料名称',
         'py_code' => '拼音码',
         'unit_id' => '单位',
     ],

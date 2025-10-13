@@ -31,7 +31,7 @@ class ChangeStockTable extends Migration
 
         Schema::table('sale_out_batch', function (Blueprint $table) {
             $table->dropColumn(['cost_price', 'position_id', 'batch_no']);
-            $table->unsignedInteger('stock_batch_id')->default(0)->comment('出库产品批次id');
+            $table->unsignedInteger('stock_batch_id')->default(0)->comment('出库物料批次id');
         });
 
         Schema::table('sku_stock_batch', function (Blueprint $table) {

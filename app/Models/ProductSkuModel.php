@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * App\Models\ProductSkuModel
  *
  * @property int $id
- * @property int $product_id 产品id
+ * @property int $product_id 物料id
  * @property mixed $attr_value_ids 选项值ids
  * @method static \Illuminate\Database\Eloquent\Builder|ProductSkuModel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductSkuModel newQuery()

@@ -36,11 +36,11 @@ class MakeProductReportController extends Controller
                 $builder->where('review_status', ApplyForOrderModel::REVIEW_STATUS_OK);
             })->orderByDesc('id')->orderByDesc('order_id');
             $grid->column('order.order_no', '订单号');
-            $grid->column('sku.product.name', '产品名称');
+            $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '类型');
             $grid->column('sku.attr_value_ids_str', '属性');
-            $grid->column('percent', '含绒百分比');
+//            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
             $grid->column('cost_price', "成本总价");
             $grid->column('should_num', '申领数量');
@@ -60,7 +60,7 @@ class MakeProductReportController extends Controller
                             $query->orWhere('item_no', 'like', $this->getValue()."%");
                         });
                     });
-                }, "关键字")->placeholder("产品名称，拼音码，编号")->width(3);
+                }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
 
                 $filter->group('should_num', function ($group) {
                     $group->gt('大于');
@@ -76,7 +76,7 @@ class MakeProductReportController extends Controller
                     $group->ngt('不大于');
                     $group->equal('等于');
                 }, '实领数量')->width(3);
-                $filter->like('percent', "含绒量")->decimal()->width(3);
+//                $filter->like('percent', "含绒量")->decimal()->width(3);
                 $filter->equal('standard', "检验标准")->select(ApplyForOrderModel::STANDARD)->width(3);
             });
 
@@ -84,11 +84,11 @@ class MakeProductReportController extends Controller
                 return array_map(function ($row) {
                     return [
                         '订单号' => $row['order']['order_no'],
-                        '产品名称' => $row['sku']['product']['name'],
+                        '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
                         '类型' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
-                        '含绒百分比' => $row['percent'],
+//                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],
                         '成本总价' => $row['cost_price'],
                         '申领数量' => $row['should_num'],
@@ -126,11 +126,11 @@ class MakeProductReportController extends Controller
                 'standard'
             );
 
-            $grid->column('sku.product.name', '产品名称');
+            $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '类型');
             $grid->column('sku.attr_value_ids_str', '属性');
-            $grid->column('percent', '含绒百分比');
+//            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
             $grid->column('sum_should_num', '申领数量');
             $grid->column('sum_actual_num', '实领数量');
@@ -149,20 +149,20 @@ class MakeProductReportController extends Controller
                             $query->orWhere('item_no', 'like', $this->getValue()."%");
                         });
                     });
-                }, "关键字")->placeholder("产品名称，拼音码，编号")->width(3);
+                }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
 
-                $filter->like('percent', "含绒量")->decimal()->width(3);
+//                $filter->like('percent', "含绒量")->decimal()->width(3);
                 $filter->equal('standard', "检验标准")->select(ApplyForOrderModel::STANDARD)->width(3);
             });
 
             $grid->export()->rows(function (array $rows) {
                 return array_map(function ($row) {
                     return [
-                        '产品名称' => $row['sku']['product']['name'],
+                        '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
                         '类型' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
-                        '含绒百分比' => $row['percent'],
+//                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],
                         '成本总价' => $row['sum_cost_price'],
                         '申领数量' => $row['sum_actual_num'],
@@ -189,11 +189,11 @@ class MakeProductReportController extends Controller
                 $builder->where('review_status', MakeProductItemModel::REVIEW_STATUS_OK);
             })->orderByDesc('id')->orderByDesc('order_id');
             $grid->column('order.order_no', '订单号');
-            $grid->column('sku.product.name', '产品名称');
+            $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '类型');
             $grid->column('sku.attr_value_ids_str', '属性');
-            $grid->column('percent', '含绒百分比');
+//            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
             $grid->column('cost_price', '成本单价');
             $grid->column('sum_cost_price', '成本总价');
@@ -216,7 +216,7 @@ class MakeProductReportController extends Controller
                             $query->orWhere('item_no', 'like', $this->getValue()."%");
                         });
                     });
-                }, "关键字")->placeholder("产品名称，拼音码，编号")->width(3);
+                }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
 
                 $filter->group('should_num', function ($group) {
                     $group->gt('大于');
@@ -232,7 +232,7 @@ class MakeProductReportController extends Controller
                     $group->ngt('不大于');
                     $group->equal('等于');
                 }, '实领数量')->width(3);
-                $filter->like('percent', "含绒量")->decimal()->width(3);
+//                $filter->like('percent', "含绒量")->decimal()->width(3);
                 $filter->equal('standard', "检验标准")->select(MakeProductOrderModel::STANDARD)->width(3);
             });
 
@@ -240,11 +240,11 @@ class MakeProductReportController extends Controller
                 return array_map(function ($row) {
                     return [
                         '订单号' => $row['order']['order_no'],
-                        '产品名称' => $row['sku']['product']['name'],
+                        '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
                         '类型' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
-                        '含绒百分比' => $row['percent'],
+//                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],
                         '成本单价' => $row['cost_price'],
                         '成本总价' => $row['sum_cost_price'],
@@ -285,11 +285,11 @@ class MakeProductReportController extends Controller
                 'standard'
             );
 
-            $grid->column('sku.product.name', '产品名称');
+            $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '类型');
             $grid->column('sku.attr_value_ids_str', '属性');
-            $grid->column('percent', '含绒百分比');
+//            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
             $grid->column('sum_should_num', '计划入库数');
             $grid->column('sum_actual_num', '实际入库数');
@@ -308,20 +308,20 @@ class MakeProductReportController extends Controller
                             $query->orWhere('item_no', 'like', $this->getValue()."%");
                         });
                     });
-                }, "关键字")->placeholder("产品名称，拼音码，编号")->width(3);
+                }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
 
-                $filter->like('percent', "含绒量")->decimal()->width(3);
+//                $filter->like('percent', "含绒量")->decimal()->width(3);
                 $filter->equal('standard', "检验标准")->select(MakeProductOrderModel::STANDARD)->width(3);
             });
 
             $grid->export()->rows(function (array $rows) {
                 return array_map(function ($row) {
                     return [
-                        '产品名称' => $row['sku']['product']['name'],
+                        '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
                         '类型' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
-                        '含绒百分比' => $row['percent'],
+//                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],
                         '成本总价' => $row['sum_cost_price'],
                         '实际入库数' => $row['sum_actual_num'],

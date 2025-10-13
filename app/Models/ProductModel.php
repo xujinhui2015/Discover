@@ -25,9 +25,9 @@ use Illuminate\Support\Collection;
  * App\Models\ProductModel
  *
  * @property int $id
- * @property string $name 产品名称
+ * @property string $name 物料名称
  * @property string $py_code 拼音码
- * @property string $item_no 产品编号
+ * @property string $item_no 物料编号
  * @property int $unit_id 单位
  * @property mixed $test 测试
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -76,8 +76,15 @@ class ProductModel extends BaseModel
 
     const TYPE_FINISH = 1;
     const TYPE_NOT_FINISH = 0;
+    const TYPE_WRAPPER = 2;
+    const TYPE_RAW_MATERIAL = 3;
+    const TYPE_BLANK_BOTTLE = 4;
 
+    // 包材 / 原料 / 半成品 / 成品
     const TYPE = [
+        self::TYPE_BLANK_BOTTLE => '空白瓶(外库)',
+        self::TYPE_WRAPPER => '包材',
+        self::TYPE_RAW_MATERIAL => '原料',
         self::TYPE_NOT_FINISH => '半成品',
         self::TYPE_FINISH => '成品',
     ];
@@ -108,6 +115,11 @@ class ProductModel extends BaseModel
     public function unit(): BelongsTo
     {
         return $this->belongsTo(UnitModel::class);
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(BrandModel::class);
     }
 
     public function getAttrValueArrAttribute(): array

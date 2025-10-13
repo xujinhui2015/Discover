@@ -74,7 +74,8 @@ class SupplierController extends AdminController
             $form->text('link')->required();
             $form->text('name')->required();
             $form->select('pay_method')->options(SupplierModel::PAY_METHOD)->default(0)->required();
-            $form->text('phone')->rules('phone:CN,mobile')->required();
+//            $form->text('phone')->rules('phone:CN,mobile')->required();
+            $form->text('phone');
             $form->text('other')->saveAsString();
         });
     }

@@ -14,7 +14,7 @@
 
 return [
     'labels' => [
-        'CheckProduct' => '产品检验单',
+        'CheckProduct' => '物料检验单',
     ],
     'fields' => [
         'check_no' => '编号',

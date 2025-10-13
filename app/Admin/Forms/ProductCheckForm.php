@@ -79,7 +79,7 @@ class ProductCheckForm extends Form implements LazyRenderable
 
         $this->row(function (Row $row) use ($skuStockBatch) {
             $row->width(4)->text('order_no', '订单号')->default(build_order_no('JY'))->readOnly();
-            $row->width(4)->text('product_name', '产品名称')->value($skuStockBatch->sku->product->name)->readOnly();
+            $row->width(4)->text('product_name', '物料名称')->value($skuStockBatch->sku->product->name)->readOnly();
             $row->width(4)->text('batch_no', '批次号')->value($skuStockBatch->batch_no)->readOnly();
 
 //
@@ -92,8 +92,8 @@ class ProductCheckForm extends Form implements LazyRenderable
         });
         $this->row(function (Row $row) use ($skuStockBatch) {
             $row->width(4)->select('standard', '检验标准')->options(SkuStockBatchModel::STANDARD)->default($skuStockBatch->standard);
-            $row->width(4)->rate('percent', '含绒百分比')->default($skuStockBatch->percent);
-            $row->width(4)->rate('carbon_fiber', '碳纤维')->default(0);
+//            $row->width(4)->rate('percent', '含绒百分比')->default($skuStockBatch->percent);
+//            $row->width(4)->rate('carbon_fiber', '碳纤维')->default(0);
         });
         $this->row(function (Row $row) {
             $row->width(4)->rate('raw_footage', '毛片')->default(0);

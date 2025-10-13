@@ -21,8 +21,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * App\Models\SkuStockBatchModel
  *
  * @property int $id
- * @property int $sku_id 产品sku_id
- * @property int $num 产品库存
+ * @property int $sku_id 物料sku_id
+ * @property int $num 物料库存
  * @property int $position_id 仓库位置
  * @property string $batch_no 批次号
  * @property \Illuminate\Support\Carbon|null $created_at

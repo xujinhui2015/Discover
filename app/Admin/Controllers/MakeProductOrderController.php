@@ -104,7 +104,7 @@ class MakeProductOrderController extends OrderController
                 $table->select('product_id', '名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
                 $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
                 $table->select('sku_id', '属性选择')->options()->required();
-                $table->tableDecimal('percent', '含绒量')->default(0);
+//                $table->tableDecimal('percent', '含绒量')->default(0);
                 $table->select('standard', '检验标准')->options(MakeProductOrderModel::STANDARD)->default(0);
                 $table->num('should_num', '计划入库数')->required();
                 $table->tableDecimal('price', '实际入库数')->default(0.00)->required();
@@ -121,7 +121,7 @@ class MakeProductOrderController extends OrderController
     {
         $order = $this->order;
 
-        $grid->column('sku.product.name', '产品名称');
+        $grid->column('sku.product.name', '物料名称');
         $grid->column('sku.product.unit.name', '单位');
         $grid->column('sku.product.type_str', '类型');
 
@@ -129,7 +129,7 @@ class MakeProductOrderController extends OrderController
             return $this->sku['attr_value_ids_str'] ?? '';
         });
 
-        $grid->column('percent', '含绒量');
+//        $grid->column('percent', '含绒量');
         $grid->column('standard', '检验标准')->display(function () {
             return  MakeProductOrderModel::STANDARD[$this->standard];
         });
