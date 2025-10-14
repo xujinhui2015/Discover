@@ -21,6 +21,7 @@ return [
         'name' => '物料名称',
         'py_code' => '拼音码',
         'unit_id' => '单位',
+        'warning_num' => '预警库存',
     ],
     'options' => [
     ],

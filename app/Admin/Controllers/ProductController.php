@@ -43,6 +43,9 @@ class ProductController extends AdminController
             $grid->column('py_code')->emp();
             $grid->column('type', '类型')->using(ProductModel::TYPE);
             $grid->column('unit.name', '单位')->emp();
+            $grid->column('warning_num')->display(function ($warningNum) {
+                return $warningNum > 0 ? $warningNum : '-';
+            });
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
 
@@ -120,6 +123,13 @@ class ProductController extends AdminController
                 $row->width(6)->select('unit_id', '单位')
                     ->options($units)
                     ->default(head($units->keys()->toArray()) ?? '')
+                    ->required();
+            });
+
+            $form->row(function (Form\Row $row) use ($form) {
+                $row->width(6)->number('warning_num')
+                    ->default(0)
+                    ->help('填0则不预警')
                     ->required();
             });
 

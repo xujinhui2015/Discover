@@ -51,6 +51,7 @@ class PurchaseOrderController extends OrderController
             $grid->actions(new EditOrder());
             $grid->filter(function (Grid\Filter $filter) {
             });
+
         });
     }
 

@@ -17,6 +17,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Renderables\SkuStockBatchTable;
 use App\Admin\Repositories\SkuStock;
 use App\Models\SkuStockBatchModel;
+use App\Models\SkuStockModel;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Controllers\AdminController;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,7 +41,17 @@ class SkuStockController extends AdminController
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒量(%)');
             $grid->column('standard_str', '检验标准');
-            $grid->column('num');
+            $grid->column('num')->display(function ($num) {
+                $color = SkuStockModel::WARNING_STATUS_COLOR[$this->warning_status];
+
+                return "<span style='color: $color;font-weight: bold;'>$num</span>";
+            });
+            $grid->column('sku.product.warning_num', '预警库存')->display(function ($warningNum) {
+                return $warningNum > 0 ? $warningNum : '-';
+            });
+            $grid->column('warning_status', '预警状态')->display(function ($warningStatus) {
+                return SkuStockModel::WARNING_STATUS_STYLE[$warningStatus];
+            });
             $grid->column('batch_num', '批次库存')->expand(function () {
                 return SkuStockBatchTable::make(['sku_id' => $this->sku_id, 'percent' => $this->percent]);
             });
@@ -66,7 +77,17 @@ class SkuStockController extends AdminController
                 })->width(3);
 //                $filter->like('percent', "含绒量")->decimal()->width(3);
                 $filter->equal('standard', "检验标准")->select(SkuStockBatchModel::STANDARD)->width(3);
+
+                $filter
+                    ->where('warning_status', function (Builder $query) {
+                        $query->warningStatus($this->input);
+                    }, '预警状态')
+                    ->select(SkuStockModel::WARNING_STATUS)
+                    ->width(3);
+
             });
+
+
             $grid->disableActions();
             $grid->disableCreateButton();
         });
