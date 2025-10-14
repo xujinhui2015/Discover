@@ -15,7 +15,9 @@
 namespace App\Admin\Extensions\Form\Order;
 
 use App\Admin\Actions\Grid\BatchCreatePro;
+use App\Admin\Actions\Grid\Delete;
 use App\Admin\Actions\Grid\OrderDelete;
+use App\Admin\Actions\Grid\OrderParentDelete;
 use App\Admin\Actions\Grid\OrderPrint;
 use App\Admin\Actions\Grid\OrderReview;
 use App\Models\PurchaseBaseModel;
@@ -276,6 +278,7 @@ CSS
             $grid->tools(OrderReview::make(show_order_review($this->order->review_status)));
             $grid->tools(OrderDelete::make());
             $grid->tools(BatchCreatePro::make());
+            $grid->tools(OrderParentDelete::make());
         }
         $grid->disableActions();
         $grid->disablePagination();
