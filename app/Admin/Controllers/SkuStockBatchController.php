@@ -44,7 +44,7 @@ class SkuStockBatchController extends AdminController
             $grid->column('sku.product.type_str', '类型');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒量(%)');
-//            $grid->column('standard_str', '检验标准');
+            $grid->column('standard_str', '检验标准');
             $grid->column('batch_no');
             $grid->column('num');
             $grid->column('cost_price', "成本价格");
@@ -71,7 +71,7 @@ class SkuStockBatchController extends AdminController
                     $group->equal('等于');
                 })->width(3);
 //                $filter->like('percent', "含绒量")->decimal()->width(3);
-//                $filter->equal('standard', "检验标准")->select(SkuStockBatchModel::STANDARD)->width(3);
+                $filter->equal('standard', "检验标准")->select(SkuStockBatchModel::STANDARD)->width(3);
                 $filter->like('batch_no', "批次号")->width(3);
                 $filter->equal('position_id', "库位")->select(PositionModel::query()->latest()->pluck('name', 'id'))->width(3);
             });
@@ -107,7 +107,7 @@ class SkuStockBatchController extends AdminController
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '类型');
             $grid->column('sku.attr_value_ids_str', '属性');
-//            $grid->column('standard', '检验标准');
+            $grid->column('standard', '检验标准');
 //            $grid->column('percent', '含绒量（%）');
             $grid->column('batch_no');
             $grid->column('num');

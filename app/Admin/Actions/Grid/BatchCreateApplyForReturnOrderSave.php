@@ -16,6 +16,7 @@ namespace App\Admin\Actions\Grid;
 
 use App\Models\ApplyForItemModel;
 use App\Models\ApplyForOrderModel;
+use App\Models\ApplyForReturnItemModel;
 use App\Models\ApplyForReturnOrderModel;
 use Dcat\Admin\Admin;
 use Dcat\Admin\Grid\BatchAction;
@@ -51,10 +52,19 @@ class BatchCreateApplyForReturnOrderSave extends BatchAction
             'status' => ApplyForOrderModel::REVIEW_STATUS_WAIT,
         ]);
 
-        $items = $applyForOrderModel->items->map(function (ApplyForItemModel $applyForItemModel) {
+        $items = $applyForOrderModel->items->map(function (ApplyForItemModel $applyForItemModel) use ($applyForOrderModel) {
+            // 剩余可返仓的库存
+            $yetShouldNum = ApplyForReturnItemModel::query()
+                ->where('sku_id', $applyForItemModel->sku_id)
+                ->whereHas('order', function ($query) use ($applyForOrderModel) {
+                    $query->where('apply_for_order_id', $applyForOrderModel->id);
+                    $query->where('review_status', ApplyForReturnOrderModel::REVIEW_STATUS_OK);
+                })
+                ->sum('should_num');
+
             return [
                 'sku_id' => $applyForItemModel->sku_id,
-                'should_num' => $applyForItemModel->should_num,
+                'should_num' => $applyForItemModel->should_num - $yetShouldNum,
             ];
         });
         $applyForReturnOrder->items()->createMany($items);

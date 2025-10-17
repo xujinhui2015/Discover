@@ -20,7 +20,7 @@ return [
         'check_no' => '编号',
         'num' => '件数',
         'carbon_fiber' => '碳纤维',
-        'cashmere_content' => '含绒量',
+//        'cashmere_content' => '含绒量',
         'raw_footage' => '毛片',
         'velvet' => '朵绒',
         'magazine' => '杂志',

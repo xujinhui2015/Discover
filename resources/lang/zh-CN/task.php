@@ -26,7 +26,7 @@ return [
         'operator' => '生产人员',
         'craft_id' => '生产工艺',
         'sku_id' => '商品',
-        'percent' => '含绒量',
+//        'percent' => '含绒量',
         'standard' => '检验标准',
     ],
     'options' => [

@@ -202,7 +202,7 @@ class OrderReview extends AbstractTool
                 ->sum('should_num');
 
             if ($applyForReturnOrderItemsRow->should_num > ($applyForOrderItemsRow->should_num - $yetShouldNum)) {
-                throw new \Exception('返仓数量不允许大于申请数量');
+                throw new \Exception('返仓数量不允许大于申领数量');
             }
         }
 
