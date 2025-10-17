@@ -33,7 +33,7 @@ class InitStockItemController extends AdminController
             $grid->column('id')->sortable();
             $grid->column('order_id');
             $grid->column('sku_id');
-            $grid->column('percent');
+//            $grid->column('percent');
             $grid->column('standard');
             $grid->column('actual_num');
             $grid->column('cost_price');
@@ -61,7 +61,7 @@ class InitStockItemController extends AdminController
             $show->field('id');
             $show->field('order_id');
             $show->field('sku_id');
-            $show->field('percent');
+//            $show->field('percent');
             $show->field('standard');
             $show->field('actual_num');
             $show->field('cost_price');
@@ -83,7 +83,7 @@ class InitStockItemController extends AdminController
             $form->display('id');
             $form->text('order_id');
             $form->text('sku_id');
-            $form->text('percent');
+//            $form->text('percent');
             $form->text('standard');
             $form->text('actual_num');
             $form->text('cost_price');

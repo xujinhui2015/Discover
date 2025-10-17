@@ -36,7 +36,7 @@ class InitStockOrderObserver
                 $init_num = SkuStockModel::query()
                     ->where([
                         'sku_id' => $item->sku_id,
-                        'percent' => $item->percent,
+//                        'percent' => $item->percent,
                         'standard' => $item->standard,
                     ])->value('num');
                 StockHistoryModel::create([
@@ -51,7 +51,7 @@ class InitStockOrderObserver
                     'balance_num' => $init_num + $item->actual_num,
                     'standard' => $item->standard,
                     'user_id' => Admin::user()->id,
-                    'percent' => $item->percent,
+//                    'percent' => $item->percent,
                     'batch_no' => $item->batch_no,
                 ]);
             });

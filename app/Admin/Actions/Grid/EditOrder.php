@@ -19,6 +19,8 @@ use Dcat\Admin\Grid\RowAction;
 
 class EditOrder extends RowAction
 {
+
+
     public function id()
     {
         return "row-edit-select-resourc{$this->getKey()}";
@@ -89,7 +91,7 @@ HTML;
                 };
             }
             layer.open(option)
-                
+
         })
 JS;
     }

@@ -34,7 +34,7 @@ class StockHistoryController extends AdminController
             $grid->column('id')->sortable();
             $grid->combine('入库信息', ['in_num', 'in_position.name', 'in_price']);
             $grid->combine('出库信息', ['out_num', 'out_position.name', 'out_price']);
-            $grid->combine('物料信息', ['sku.product.item_no', 'sku.product.name', 'sku.product.unit.name', 'sku.product.type_str', 'sku.attr_value_ids_str', 'percent', 'standard_str']);
+            $grid->combine('物料信息', ['sku.product.item_no', 'sku.product.name', 'sku.product.unit.name', 'sku.product.type_str', 'sku.attr_value_ids_str', 'standard_str']);
             $grid->combine("盘点信息", ["inventory_num", "inventory_diff_num"]);
             $grid->combine('库存信息', ['init_num', 'balance_num', 'batch_no', 'cost_price']);
 

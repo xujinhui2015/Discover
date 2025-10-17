@@ -79,7 +79,11 @@ class SaleOutItemObserver
 
     public function saving(SaleOutItemModel $saleOutItemModel): void
     {
-        if ($saleOutItemModel->isDirty(['percent', 'price', 'standard'])) {
+        if ($saleOutItemModel->isDirty([
+//            'percent',
+            'price',
+            'standard'
+        ])) {
             SaleOutBatchModel::where(function (Builder $query) use ($saleOutItemModel) {
                 $query->where("item_id", $saleOutItemModel->id);
             })->delete();

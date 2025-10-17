@@ -28,11 +28,13 @@ class StockHistoryObserver
             case StockHistoryModel::PRO_STOCK_TYPE:
             case StockHistoryModel::INIT_TYPE:
             case StockHistoryModel::CHECK_IN_TYPE:
+            // 物料返仓单
+            case StockHistoryModel::RETURN_TO_WAREHOUSE_TYPE:
                 SkuStockBatchModel::updateOrCreate([
                     'position_id' => $stockHistoryModel->in_position_id,
                     'batch_no'    => $stockHistoryModel->batch_no,
                     'sku_id'      => $stockHistoryModel->sku_id,
-                    'percent'     => $stockHistoryModel->percent,
+//                    'percent'     => $stockHistoryModel->percent,
                     'standard'       => $stockHistoryModel->standard,
                 ], [
                     'num'        => DB::raw("num + $stockHistoryModel->in_num"),
@@ -45,7 +47,7 @@ class StockHistoryObserver
                         'position_id' => $stockHistoryModel->in_position_id,
                         'batch_no'    => $stockHistoryModel->batch_no,
                         'sku_id'      => $stockHistoryModel->sku_id,
-                        'percent'     => $stockHistoryModel->percent,
+//                        'percent'     => $stockHistoryModel->percent,
                         'standard'       => $stockHistoryModel->standard,
                     ]
                 );
@@ -60,13 +62,12 @@ class StockHistoryObserver
                     'position_id' => $stockHistoryModel->out_position_id,
                     'batch_no'    => $stockHistoryModel->batch_no,
                     'sku_id'      => $stockHistoryModel->sku_id,
-                    'percent'     => $stockHistoryModel->percent,
+//                    'percent'     => $stockHistoryModel->percent,
                     'standard'       => $stockHistoryModel->standard,
                 ], [
                     'num' => DB::raw("num - $stockHistoryModel->out_num"),
                 ]);
                 break;
-            default:
         }
     }
 }

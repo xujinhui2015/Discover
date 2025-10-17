@@ -14,6 +14,7 @@
 
 namespace App\Models;
 
+use App\Admin\Repositories\ApplyForReturnOrder;
 use Dcat\Admin\Models\Administrator;
 use Dcat\Admin\Traits\HasDateTimeFormatter;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -94,4 +95,11 @@ class ApplyForOrderModel extends BaseModel
     {
         return $this->belongsTo(TaskModel::class, 'with_id');
     }
+
+    public function apply_for_return_order():HasMany
+    {
+        return $this->hasMany(ApplyForReturnOrderModel::class, 'apply_for_order_id');
+    }
+
+
 }

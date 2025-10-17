@@ -53,7 +53,10 @@ class SkuStockController extends AdminController
                 return SkuStockModel::WARNING_STATUS_STYLE[$warningStatus];
             });
             $grid->column('batch_num', '批次库存')->expand(function () {
-                return SkuStockBatchTable::make(['sku_id' => $this->sku_id, 'percent' => $this->percent]);
+                return SkuStockBatchTable::make([
+                    'sku_id' => $this->sku_id,
+//                    'percent' => $this->percent
+                ]);
             });
 //            $grid->column('created_at');
 //            $grid->column('updated_at')->sortable();

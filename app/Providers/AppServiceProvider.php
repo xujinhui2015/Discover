@@ -18,6 +18,7 @@ use App\Models\AccountantDateModel;
 use App\Models\ApplyForBatchModel;
 use App\Models\ApplyForItemModel;
 use App\Models\ApplyForOrderModel;
+use App\Models\ApplyForReturnOrderModel;
 use App\Models\CheckProductModel;
 use App\Models\CostItemModel;
 use App\Models\CostOrderModel;
@@ -45,6 +46,7 @@ use App\Observers\AccountantDateObserver;
 use App\Observers\ApplyForBatchObserver;
 use App\Observers\ApplyForItemObserver;
 use App\Observers\ApplyForOrderObserver;
+use App\Observers\ApplyForReturnOrderObserver;
 use App\Observers\CheckProductObserver;
 use App\Observers\CostItemObserver;
 use App\Observers\CostOrderObserver;
@@ -122,5 +124,6 @@ class AppServiceProvider extends ServiceProvider
         AccountantDateModel::observe(AccountantDateObserver::class);
         StatementItemModel::observe(StatementItemObserver::class);
         StatementOrderModel::observe([StatementOrderObserver::class, OrderNoCreatedObserver::class]);
+        ApplyForReturnOrderModel::observe([ApplyForReturnOrderObserver::class, OrderNoCreatedObserver::class]);
     }
 }

@@ -98,7 +98,7 @@ class SkuStockBatchController extends AdminController
                 $grid->model()->where([
                     'sku_id' => request()->input('sku_id'),
                     'standard' => request()->input('standard'),
-                    'percent' => request()->input('percent'),
+//                    'percent' => request()->input('percent'),
                 ])->where('num', ">", 0)->orderBy('id', 'desc');
             }
             $grid->column('id')->sortable();

@@ -14,12 +14,19 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Grid\AddApplyForOrder;
+use App\Admin\Actions\Grid\BatchCreateApplyForReturnOrderSave;
+use App\Admin\Actions\Grid\BatchCreateProSave;
+use App\Admin\Actions\Grid\BatchCreatePurInOrderSave;
 use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Extensions\Grid\BatchDeail;
 use App\Admin\Repositories\ApplyForOrder;
+use App\Admin\Repositories\ApplyForReturnOrder;
+use App\Admin\Repositories\Product;
 use App\Models\ApplyForOrderModel;
+use App\Models\ApplyForReturnOrderModel;
 use App\Models\ProductModel;
 use App\Models\PurchaseOrderModel;
 use App\Models\TaskModel;
@@ -58,6 +65,49 @@ class ApplyForOrderController extends OrderController
                 }, '任务单号')->width(3);
                 $filter->like('order_no')->width(3);
                 $filter->equal('review_status', '审核状态')->select($this->oredr_model::REVIEW_STATUS)->width(3);
+            });
+        });
+    }
+
+    public function iFrameGrid()
+    {
+        return Grid::make(new ApplyForOrder(['with_order', 'user']), function (Grid $grid) {
+
+            $grid->model()
+                ->whereDoesntHave('apply_for_return_order', function (Builder $builder) {
+                    $builder->where('review_status',ApplyForReturnOrderModel::REVIEW_STATUS_WAIT);
+                })
+                ->where('review_status', $this->oredr_model::REVIEW_STATUS_OK)
+                ->orderByDesc('id');
+
+
+            $grid->column('id')->sortable();
+            $grid->column('with_order.order_no', '任务单号')->emp();
+            $grid->column('order_no');
+            $grid->column('user.username', '创建用户');
+            $grid->column('other')->emp();
+            $grid->column('review_status', '审核状态')
+                ->using($this->oredr_model::REVIEW_STATUS)
+                ->label($this->oredr_model::REVIEW_STATUS_COLOR);
+            $grid->column('created_at');
+            $grid->disableQuickEditButton();
+            $grid->disableActions();
+            $grid->disableCreateButton();
+
+            $grid->tools(BatchCreateApplyForReturnOrderSave::make());
+
+
+            $grid->filter(function (Grid\Filter $filter) {
+                $filter->expand(false);
+
+                $filter->where('with_order_order_no', function (Builder $builder) {
+                    $builder->whereHasIn('with_order', function (Builder $builder) {
+                        $builder->where("order_no", "like", $this->getValue() . "%");
+                    });
+                }, '任务单号')->width(3);
+                $filter->like('order_no')->width(3);
+//                $filter->equal('review_status', '审核状态')
+//                    ->select($this->oredr_model::REVIEW_STATUS)->width(3);
             });
         });
     }
@@ -141,7 +191,7 @@ class ApplyForOrderController extends OrderController
                 'item_id'               => $batchDeail->row->id,
                 'sku_id'                => $batchDeail->row->sku_id,
                 'standard'              => $batchDeail->row->standard,
-                'percent'               => $batchDeail->row->percent,
+//                'percent'               => $batchDeail->row->percent,
             ]);
         });
     }

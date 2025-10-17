@@ -34,7 +34,7 @@ class MakeProductOrderObserver
             $init_num = SkuStockModel::query()
                 ->where([
                     'sku_id' => $item->sku_id,
-                    'percent' => $item->percent,
+//                    'percent' => $item->percent,
                     'standard'       => $item->standard,
                 ])->value('num');
 
@@ -51,7 +51,7 @@ class MakeProductOrderObserver
                 'balance_num'    => $init_num + $item->actual_num,
                 'standard'       => $item->standard,
                 'user_id'        => Admin::user()->id,
-                'percent'        => $item->percent,
+//                'percent'        => $item->percent,
                 'batch_no'       => $item->batch_no,
             ]);
             $makeProductOrderModel->with_order->status = TaskModel::STATUS_FINISH;

@@ -29,7 +29,7 @@ class ProductCheckDetails extends LazyRenderable
             return [
                 $key + 1,
                 $model->standard_str,
-                $model->percent,
+//                $model->percent,
                 $model->user->name,
                 $model->carbon_fiber,
                 $model->raw_footage,

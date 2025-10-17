@@ -93,6 +93,7 @@ class StockHistoryModel extends BaseModel
     const SCRAP_TYPE = 8;
     const CHECK_IN_TYPE = 9;
     const CHECK_OUT_TYPE = 10;
+    const RETURN_TO_WAREHOUSE_TYPE = 11;
 
     const TYPE = [
         self::OUT_STOCK_PUCHASE => "采购退货",
@@ -106,6 +107,7 @@ class StockHistoryModel extends BaseModel
         self::SCRAP_TYPE => '物料报废',
         self::CHECK_IN_TYPE => '检验入库',
         self::CHECK_OUT_TYPE => '检验出库',
+        self::RETURN_TO_WAREHOUSE_TYPE => '物料返仓',
     ];
 
     const OUT = 0;

@@ -35,7 +35,7 @@ class ApplyForItemController extends AdminController
             $grid->column('sku_id');
             $grid->column('cost_price');
             $grid->column('standard');
-            $grid->column('percent');
+//            $grid->column('percent');
             $grid->column('num');
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
@@ -61,7 +61,7 @@ class ApplyForItemController extends AdminController
             $show->field('sku_id');
             $show->field('cost_price');
             $show->field('standard');
-            $show->field('percent');
+//            $show->field('percent');
             $show->field('should_num');
             $show->field('created_at');
             $show->field('updated_at');
@@ -81,7 +81,7 @@ class ApplyForItemController extends AdminController
             $form->text('sku_id');
             $form->text('cost_price');
             $form->text('standard');
-            $form->text('percent');
+//            $form->text('percent');
             $form->text('should_num');
 
             $form->display('created_at');

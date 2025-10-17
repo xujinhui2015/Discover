@@ -61,7 +61,7 @@ class SaleItemController extends AdminController
             $form->text('price');
             $form->text('should_num');
             $form->text('sku_id');
-            $form->decimal('percent');
+//            $form->decimal('percent');
             $form->number('standard');
 
             $form->display('created_at');

@@ -91,7 +91,7 @@ class PurchaseInOrderObserver
                 $init_num = SkuStockModel::query()
                     ->where([
                         'sku_id' => $purchaseInItemModel->sku_id,
-                        'percent' => $purchaseInItemModel->percent,
+//                        'percent' => $purchaseInItemModel->percent,
                         'standard'       => $purchaseInItemModel->standard,
                     ])->value('num');
 
@@ -108,7 +108,7 @@ class PurchaseInOrderObserver
                     'balance_num'    => $init_num + $purchaseInItemModel->actual_num,
                     'standard'       => $purchaseInItemModel->standard,
                     'user_id'        => Admin::user()->id,
-                    'percent'        => $purchaseInItemModel->percent,
+//                    'percent'        => $purchaseInItemModel->percent,
                     'batch_no'       => $purchaseInItemModel->batch_no,
                 ]);
             });

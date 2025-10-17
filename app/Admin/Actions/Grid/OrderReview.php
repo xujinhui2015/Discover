@@ -14,6 +14,8 @@
 
 namespace App\Admin\Actions\Grid;
 
+use App\Models\ApplyForReturnItemModel;
+use App\Models\ApplyForReturnOrderModel;
 use App\Models\BaseModel;
 use App\Models\InventoryModel;
 use App\Models\TaskModel;
@@ -176,6 +178,34 @@ class OrderReview extends AbstractTool
 //        if ($this->model->items()->where('actual_num', 0)->count()) {
 //            throw new \Exception('明细数量不能为0！');
 //        }
+    }
+
+    public function applyForReturnOrderCheck():void
+    {
+        $applyForReturnOrderItems = $this->model->items;
+        $applyForOrderItems = $this->model->apply_for_order->items;
+
+
+        foreach ($applyForReturnOrderItems as $applyForReturnOrderItemsRow) {
+            $applyForOrderItemsRow = $applyForOrderItems->where('sku_id', $applyForReturnOrderItemsRow->sku_id)->first();
+
+            if (!$applyForOrderItemsRow) {
+                throw new \Exception('找不到返仓的商品！');
+            }
+            //  获取当前已经返仓的商品数量
+            $yetShouldNum = ApplyForReturnItemModel::query()
+                ->where('sku_id', $applyForReturnOrderItemsRow->sku_id)
+                ->whereHas('order', function ($query) {
+                    $query->where('apply_for_order_id', $this->model->apply_for_order_id);
+                    $query->where('review_status', ApplyForReturnOrderModel::REVIEW_STATUS_OK);
+                })
+                ->sum('should_num');
+
+            if ($applyForReturnOrderItemsRow->should_num > ($applyForOrderItemsRow->should_num - $yetShouldNum)) {
+                throw new \Exception('返仓数量不允许大于申请数量');
+            }
+        }
+
     }
 
     /**

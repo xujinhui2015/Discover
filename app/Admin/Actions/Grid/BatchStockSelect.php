@@ -44,7 +44,7 @@ HTML;
             'item_id'               => request()->input('item_id'),
             'table'                 => admin_controller_name(),
             'standard'              => request()->input('standard'),
-            'percent'               => request()->input('percent'),
+//            'percent'               => request()->input('percent'),
             'order_id'              => $this->getOrderId(),
         ]);
         return <<<JS

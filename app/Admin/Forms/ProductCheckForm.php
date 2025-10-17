@@ -44,7 +44,7 @@ class ProductCheckForm extends Form implements LazyRenderable
                 'prev_sku_stock_batch_id' => $this->payload['id'],
                 'standard' => $input['standard'],
                 'carbon_fiber' => $input['carbon_fiber'],
-                'percent' => $input['percent'],
+//                'percent' => $input['percent'],
                 'raw_footage' => $input['raw_footage'],
                 'velvet' => $input['velvet'],
                 'magazine' => $input['magazine'],

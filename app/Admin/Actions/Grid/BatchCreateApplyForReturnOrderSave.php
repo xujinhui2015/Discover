@@ -14,63 +14,50 @@
 
 namespace App\Admin\Actions\Grid;
 
-use App\Models\SaleItemModel;
-use App\Models\SaleOrderModel;
-use App\Models\SaleOutOrderModel;
-use Dcat\Admin\Actions\Response;
+use App\Models\ApplyForItemModel;
+use App\Models\ApplyForOrderModel;
+use App\Models\ApplyForReturnOrderModel;
 use Dcat\Admin\Admin;
 use Dcat\Admin\Grid\BatchAction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class BatchCreateSaleOutOrderSave extends BatchAction
+class BatchCreateApplyForReturnOrderSave extends BatchAction
 {
     /**
      * @return string
      */
     protected $title = '保存';
 
-    /**
-     * Handle the action request.
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
     public function handle(Request $request)
     {
-        $index                     = $request->input('_index');
+        $index = $request->input('_index');
         DB::transaction(function () {
             foreach ($this->getKey() as $key) {
-                $sale_order = SaleOrderModel::findOrFail($key);
-                $this->orderSync($sale_order);
+                $applyForOrderModel = ApplyForOrderModel::findOrFail($key);
+                $this->orderSync($applyForOrderModel);
             }
         });
         return $this->response()->script("parent.layer.close({$index})");
     }
 
-    protected function orderSync(SaleOrderModel $saleOrderModel): void
+    protected function orderSync(ApplyForOrderModel $applyForOrderModel): void
     {
-        $out_order = SaleOutOrderModel::create([
-            'order_no'    => build_order_no('CK'),
-            'customer_id' => $saleOrderModel->customer_id,
-            'status'      => SaleOutOrderModel::STATUS_SEND,
-            'other'       => $saleOrderModel->other,
-            'user_id'     => Admin::user()->id,
-            'with_id'     => $saleOrderModel->id,
-            'address_id'  => $saleOrderModel->address_id,
-            'drawee_id'   => $saleOrderModel->drawee_id,
+        $applyForReturnOrder = ApplyForReturnOrderModel::create([
+            'apply_for_order_id' => $applyForOrderModel->id,
+            'order_no' => build_order_no('SLR'),
+            'user_id' => Admin::user()->id,
+            'other' => $applyForOrderModel->other,
+            'status' => ApplyForOrderModel::REVIEW_STATUS_WAIT,
         ]);
-        $items    = $saleOrderModel->items->map(function (SaleItemModel $saleItemModel) {
+
+        $items = $applyForOrderModel->items->map(function (ApplyForItemModel $applyForItemModel) {
             return [
-                'sku_id'      => $saleItemModel->sku_id,
-                'should_num'  => $saleItemModel->should_num,
-                'price'       => $saleItemModel->price,
-//                'percent'     => $saleItemModel->percent,
-                'standard'    => $saleItemModel->standard,
+                'sku_id' => $applyForItemModel->sku_id,
+                'should_num' => $applyForItemModel->should_num,
             ];
         });
-        $out_order->items()->createMany($items);
+        $applyForReturnOrder->items()->createMany($items);
     }
 
     protected function html(): string
@@ -82,7 +69,7 @@ HTML;
 
     public function actionScript(): string
     {
-        $warning = "请选择入库的明细！";
+        $warning = "请选择领料明细！";
 
         return <<<JS
 function (data, target, action) {

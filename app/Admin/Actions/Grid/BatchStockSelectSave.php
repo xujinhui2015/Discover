@@ -66,7 +66,7 @@ class BatchStockSelectSave extends BatchAction
 
         $this->standard = $request->input('_standard');
 
-        $this->percent = $request->input('_percent');
+//        $this->percent = $request->input('_percent');
 
         $this->order_id = $request->input('_order_id') ?? 0;
 
@@ -90,7 +90,7 @@ class BatchStockSelectSave extends BatchAction
                 'sku_id'         => $this->sku_id,
                 'item_id'        => $this->item_id,
                 'standard'       => $this->standard,
-                'percent'        => $this->percent,
+//                'percent'        => $this->percent,
                 'cost_price'     => $skuStockBatch->cost_price,
             ]);
         }
@@ -104,7 +104,7 @@ class BatchStockSelectSave extends BatchAction
                 'sku_id'         => $this->sku_id,
                 'item_id'        => $this->item_id,
                 'standard'       => $this->standard,
-                'percent'        => $this->percent,
+//                'percent'        => $this->percent,
             ]);
         }
     }
@@ -137,7 +137,7 @@ HTML;
         $sku_id  = request()->input('sku_id');
         $item_id = request()->input('item_id');
         $standard = request()->input('standard');
-        $percent = request()->input('percent');
+//        $percent = request()->input('percent');
         $order_id = request()->input('order_id');
 
         return <<<JS

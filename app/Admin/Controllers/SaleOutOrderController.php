@@ -132,7 +132,7 @@ class SaleOutOrderController extends OrderController
                 'item_id'               => $batchDeail->row->id,
                 'sku_id'                => $batchDeail->row->sku_id,
                 'standard'              => $batchDeail->row->standard,
-                'percent'               => $batchDeail->row->percent,
+//                'percent'               => $batchDeail->row->percent,
             ]);
         });
     }

@@ -96,7 +96,7 @@ class SaleOutItemModel extends BaseModel
     {
         return $this->belongsTo(SkuStockModel::class, 'sku_id', 'sku_id')
             ->where([
-                'percent' => $this->percent,
+//                'percent' => $this->percent,
                 'standard' => $this->standard,
             ]);
     }

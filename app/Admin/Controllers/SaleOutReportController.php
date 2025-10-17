@@ -260,7 +260,7 @@ class SaleOutReportController extends Controller
             $grid->model()->select(
                 'sku_id',
                 'standard',
-                'percent',
+//                'percent',
                 DB::raw('sum(should_num) as sum_should_num'),
                 DB::raw('sum(actual_num) as sum_actual_num'),
                 DB::raw('sum(sum_cost_price) as sum_cost_price'),
@@ -270,7 +270,7 @@ class SaleOutReportController extends Controller
                 $builder->where('review_status', SaleOutOrderModel::REVIEW_STATUS_OK);
             })->groupBy(
                 'sku_id',
-                'percent',
+//                'percent',
                 'standard'
             );
             $grid->column('sku.product.name', '物料名称');

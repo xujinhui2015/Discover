@@ -41,7 +41,8 @@ class TaskController extends AdminController
             $grid->column('id')->sortable();
             $grid->column('order_no');
             $grid->column('info', '物料信息')->display(function () {
-                return $this->sku['product']['name']."|".$this->sku['attr_value_ids_str']."|".$this->percent."%|".$this->standard_str;
+//                return $this->sku['product']['name']."|".$this->sku['attr_value_ids_str']."|".$this->percent."%|".$this->standard_str;
+                return $this->sku['product']['name']."|".$this->sku['attr_value_ids_str']."|".$this->standard_str;
             });
             $grid->column('sum_cost_price', "领料总成本");
 //            $grid->column('craft.name', '生产工艺');

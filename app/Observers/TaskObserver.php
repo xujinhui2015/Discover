@@ -56,7 +56,7 @@ class TaskObserver
                 'should_num' => $taskModel->plan_num,
                 'actual_num' => $taskModel->plan_num,
                 'batch_no' => "PC".date('Ymd'),
-                'percent' => $taskModel->percent,
+//                'percent' => $taskModel->percent,
                 'standard' => $taskModel->standard,
                 'sku_id' => $taskModel->sku_id,
                 'position_id' => PositionModel::query()->value('id') ?? 0,

@@ -39,7 +39,7 @@ class ApplyForOrderObserver
                 $applyForItemModel->batchs->each(function (ApplyForBatchModel $applyForBatchModel) use ($applyForItemModel, $applyForOrderModel) {
                     $init_num = SkuStockModel::where([
                         'sku_id' => $applyForItemModel->sku_id,
-                        'percent' => $applyForItemModel->percent,
+//                        'percent' => $applyForItemModel->percent,
                         'standard'       => $applyForItemModel->standard,
                     ])->value('num');
 
@@ -54,7 +54,7 @@ class ApplyForOrderObserver
                         'out_num'         => $applyForBatchModel->actual_num,
                         'out_price'       => $applyForBatchModel->stock_batch->cost_price,
                         'balance_num'     => $init_num - $applyForBatchModel->actual_num,
-                        'percent'         => $applyForItemModel->percent,
+//                        'percent'         => $applyForItemModel->percent,
                         'standard'        => $applyForItemModel->standard,
                         'user_id'         => Admin::user()->id,
                         'batch_no'        => $applyForBatchModel->stock_batch->batch_no,

@@ -71,7 +71,7 @@ class BatchCreatePurInOrderSave extends BatchAction
                 'should_num'  => $purchaseItemModel->should_num,
                 'actual_num'  => $purchaseItemModel->should_num,
                 'price'       => $purchaseItemModel->price,
-                'percent'     => $purchaseItemModel->percent,
+//                'percent'     => $purchaseItemModel->percent,
                 'standard'    => $purchaseItemModel->standard,
                 'batch_no'    => 'PC' . date('Ymd'),
                 'position_id' => $this->default_position_id,

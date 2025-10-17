@@ -238,14 +238,14 @@ class PurchaseInReportController extends Controller
             $grid->model()->select(
                 'sku_id',
                 'standard',
-                'percent',
+//                'percent',
                 DB::raw('sum(should_num) as sum_should_num'),
                 DB::raw('sum(actual_num) as sum_actual_num')
             )->whereHas('order', function (Builder $builder) {
                 $builder->where('review_status', PurchaseInOrderModel::REVIEW_STATUS_OK);
             })->groupBy(
                 'sku_id',
-                'percent',
+//                'percent',
                 'standard'
             );
 

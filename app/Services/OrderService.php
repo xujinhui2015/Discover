@@ -59,7 +59,7 @@ class OrderService extends BaseService
                 'should_num'  => $purchaseItemModel->should_num,
                 'actual_num'  => $purchaseItemModel->should_num,
                 'price'       => $purchaseItemModel->price,
-                'percent'     => $purchaseItemModel->percent,
+//                'percent'     => $purchaseItemModel->percent,
                 'standard'    => $purchaseItemModel->standard,
                 'batch_no'    => 'PC' . date('Ymd'),
                 'position_id' => $this->default_position_id,
@@ -87,7 +87,7 @@ class OrderService extends BaseService
                 'sku_id'      => $saleItemModel->sku_id,
                 'should_num'  => $saleItemModel->should_num,
                 'price'       => $saleItemModel->price,
-                'percent'     => $saleItemModel->percent,
+//                'percent'     => $saleItemModel->percent,
                 'standard'    => $saleItemModel->standard,
             ];
         });

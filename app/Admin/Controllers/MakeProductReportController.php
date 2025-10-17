@@ -114,7 +114,7 @@ class MakeProductReportController extends Controller
             $grid->model()->select(
                 'sku_id',
                 'standard',
-                'percent',
+//                'percent',
                 DB::raw('sum(should_num) as sum_should_num'),
                 DB::raw('sum(actual_num) as sum_actual_num'),
                 DB::raw('sum(cost_price) as sum_cost_price')
@@ -122,7 +122,7 @@ class MakeProductReportController extends Controller
                 $builder->where('review_status', ApplyForOrderModel::REVIEW_STATUS_OK);
             })->groupBy(
                 'sku_id',
-                'percent',
+//                'percent',
                 'standard'
             );
 
@@ -273,7 +273,7 @@ class MakeProductReportController extends Controller
             $grid->model()->select(
                 'sku_id',
                 'standard',
-                'percent',
+//                'percent',
                 DB::raw('sum(should_num) as sum_should_num'),
                 DB::raw('sum(actual_num) as sum_actual_num'),
                 DB::raw('sum(sum_cost_price) as sum_cost_price')
@@ -281,7 +281,7 @@ class MakeProductReportController extends Controller
                 $builder->where('review_status', MakeProductOrderModel::REVIEW_STATUS_OK);
             })->groupBy(
                 'sku_id',
-                'percent',
+//                'percent',
                 'standard'
             );
 

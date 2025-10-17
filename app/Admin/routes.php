@@ -56,6 +56,7 @@ Route::group([
     $router->resource('drawees', 'DraweeController');
     $router->resource('tasks', 'TaskController');
     $router->resource('crafts', 'CraftController');
+    $router->resource('apply-for-return-orders', 'ApplyForReturnOrderController');
     $router->resource('apply-for-orders', 'ApplyForOrderController');
     $router->resource('apply-for-items', 'ApplyForItemController');
     $router->resource('apply-for-batchs', 'ApplyForBatchController');

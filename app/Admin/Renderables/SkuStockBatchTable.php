@@ -25,7 +25,7 @@ class SkuStockBatchTable extends LazyRenderable
         $sku_id      = $this->sku_id;
         $batch_stock = SkuStockBatchModel::where([
             'sku_id' =>  $sku_id,
-            'percent' => $this->percent,
+//            'percent' => $this->percent,
         ])->where('num', ">", 0)->get()->map(function (SkuStockBatchModel $batchModel, int $key) {
             return [
                 $key + 1,

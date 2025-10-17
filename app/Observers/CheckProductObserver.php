@@ -28,14 +28,14 @@ class CheckProductObserver
         $prevStockNum = SkuStockModel::query()
             ->where([
                 'sku_id' => $prevSkuStockBatchModel->sku_id,
-                'percent' => $prevSkuStockBatchModel->percent,
+//                'percent' => $prevSkuStockBatchModel->percent,
                 'standard'       => $prevSkuStockBatchModel->standard,
             ])->value('num');
         $this->checkBeforeOldProductStock($checkProductModel, $prevSkuStockBatchModel, $prevStockNum);
 
         $newBatchStockNum = SkuStockBatchModel::query()->firstOrCreate([
             'sku_id' => $prevSkuStockBatchModel->sku_id,
-            'percent' => $checkProductModel->percent,
+//            'percent' => $checkProductModel->percent,
             'standard'       => $checkProductModel->standard,
             'position_id' => $prevSkuStockBatchModel->position_id,
             'batch_no'    => $prevSkuStockBatchModel->batch_no,
@@ -69,7 +69,7 @@ class CheckProductObserver
             'balance_num'     => $prevSkuStockBatchModel->num + $newBatchStockNum->num,
             'standard'        => $checkProductModel->standard,
             'user_id'         => Admin::user()->id,
-            'percent'         => $checkProductModel->percent,
+//            'percent'         => $checkProductModel->percent,
             'batch_no'        => $prevSkuStockBatchModel->batch_no,
         ]);
     }
@@ -90,7 +90,7 @@ class CheckProductObserver
             'out_num'         => $prevSkuStockBatchModel->num,
             'out_price'       => $prevSkuStockBatchModel->cost_price,
             'balance_num'     => $prevStockNum - $prevSkuStockBatchModel->num,
-            'percent'         => $prevSkuStockBatchModel->percent,
+//            'percent'         => $prevSkuStockBatchModel->percent,
             'standard'        => $prevSkuStockBatchModel->standard,
             'user_id'         => Admin::user()->id,
             'batch_no'        => $prevSkuStockBatchModel->batch_no,
