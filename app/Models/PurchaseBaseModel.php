@@ -30,6 +30,8 @@ class PurchaseBaseModel extends BaseModel
     const STATUS_RETURNING = 3;
     const STATUS_RETURNED = 4;
 
+    const STATUS_PART_RETURNED = 5;
+
     const CHECK_STATUS_NO = 0;
     const CHECK_STATUS_FIRST = 1;
     const CHECK_STATUS_SECOND = 2;
@@ -46,6 +48,7 @@ class PurchaseBaseModel extends BaseModel
         //        self::STATUS_FINISH    => '已完成',
         self::STATUS_RETURNING => '退回中',
         self::STATUS_RETURNED  => '已退回',
+        self::STATUS_PART_RETURNED  => '部分收货',
     ];
 
     const STATUS_COLOR = [

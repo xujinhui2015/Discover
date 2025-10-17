@@ -14,10 +14,13 @@
 
 namespace App\Admin\Actions\Grid;
 
+use App\Admin\Repositories\PurchaseInOrder;
 use App\Models\ApplyForReturnItemModel;
 use App\Models\ApplyForReturnOrderModel;
 use App\Models\BaseModel;
 use App\Models\InventoryModel;
+use App\Models\PurchaseInItemModel;
+use App\Models\PurchaseInOrderModel;
 use App\Models\TaskModel;
 use Dcat\Admin\Grid\Tools\AbstractTool;
 use Illuminate\Http\Request;
@@ -103,6 +106,41 @@ class OrderReview extends AbstractTool
         }
     }
 
+    public function purchaseInOrderCheck()
+    {
+        if ($this->model->items->count() === 0) {
+            throw new \Exception('订单明细不能为空！');
+        }
+        if ($this->model->items()->where('actual_num', 0)->count()) {
+            throw new \Exception('明细数量不能为0！');
+        }
+        $purchaseInOrderItems = $this->model->items;
+        $purchaseOrderItems = $this->model->with_order->items;
+
+        foreach ($purchaseInOrderItems as $purchaseInOrderItem) {
+            $purchaseOrderItem = $purchaseOrderItems->where('sku_id', $purchaseInOrderItem->sku_id)->first();
+            if (!$purchaseOrderItem) {
+                throw new \Exception('找不到采购的商品！');
+            }
+            if ($purchaseInOrderItem->actual_num <= 0) {
+                throw new \Exception('入库数量不能为空！');
+            }
+            //  获取当前已经入库的商品数量
+            $sumActualNum = PurchaseInItemModel::query()
+                ->where('sku_id', $purchaseInOrderItem->sku_id)
+                ->whereHas('order', function ($query) {
+                    $query->where('with_id', $this->model->with_id);
+                    $query->where('review_status', PurchaseInOrderModel::REVIEW_STATUS_OK);
+                })
+                ->sum('actual_num');
+
+            if (($purchaseInOrderItem->actual_num + $sumActualNum) > $purchaseOrderItem->should_num) {
+                throw new \Exception('入库数量不允许大于采购数量');
+            }
+        }
+
+    }
+
     public function saleOrderCheck():void
     {
         if ($this->model->items->count() === 0) {
@@ -185,10 +223,16 @@ class OrderReview extends AbstractTool
         $applyForReturnOrderItems = $this->model->items;
         $applyForOrderItems = $this->model->apply_for_order->items;
 
+        if ($applyForReturnOrderItems->count() === 0) {
+            throw new \Exception('返仓明细不能为空！');
+        }
 
         foreach ($applyForReturnOrderItems as $applyForReturnOrderItemsRow) {
             $applyForOrderItemsRow = $applyForOrderItems->where('sku_id', $applyForReturnOrderItemsRow->sku_id)->first();
 
+            if ($applyForReturnOrderItemsRow->should_num <= 0) {
+                throw new \Exception('返仓的商品数量不能为空！');
+            }
             if (!$applyForOrderItemsRow) {
                 throw new \Exception('找不到返仓的商品！');
             }

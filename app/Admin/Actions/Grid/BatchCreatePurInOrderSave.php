@@ -15,9 +15,11 @@
 namespace App\Admin\Actions\Grid;
 
 use App\Models\PositionModel;
+use App\Models\PurchaseInItemModel;
 use App\Models\PurchaseInOrderModel;
 use App\Models\PurchaseItemModel;
 use App\Models\PurchaseOrderModel;
+use App\Services\OrderService;
 use Dcat\Admin\Actions\Response;
 use Dcat\Admin\Admin;
 use Dcat\Admin\Grid\BatchAction;
@@ -66,10 +68,12 @@ class BatchCreatePurInOrderSave extends BatchAction
             'with_id'     => $purchaseOrderModel->id,
         ]);
         $items    = $purchaseOrderModel->items->map(function (PurchaseItemModel $purchaseItemModel) {
+            //  获取当前已经入库的商品数量
+
             return [
                 'sku_id'      => $purchaseItemModel->sku_id,
                 'should_num'  => $purchaseItemModel->should_num,
-                'actual_num'  => $purchaseItemModel->should_num,
+                'actual_num'  => $purchaseItemModel->should_num - OrderService::getInActualSumNum($purchaseItemModel->id, $purchaseItemModel->sku_id),
                 'price'       => $purchaseItemModel->price,
 //                'percent'     => $purchaseItemModel->percent,
                 'standard'    => $purchaseItemModel->standard,

@@ -67,6 +67,18 @@ class BatchCreateApplyForReturnOrderSave extends BatchAction
                 'should_num' => $applyForItemModel->should_num - $yetShouldNum,
             ];
         });
+
+        /**
+         * 移除掉0库存的条目
+         */
+        $items = $items->filter(function ($item) {
+            return bccomp((string)$item['should_num'], '0', 2) == 1;
+        })->values();
+
+        if ($items->isEmpty()) {
+            throw new \Exception('该订单已没有可返仓的物料！');
+        }
+
         $applyForReturnOrder->items()->createMany($items);
     }
 

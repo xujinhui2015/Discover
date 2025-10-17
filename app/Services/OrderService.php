@@ -15,6 +15,7 @@
 namespace App\Services;
 
 use App\Models\PositionModel;
+use App\Models\PurchaseInItemModel;
 use App\Models\PurchaseInOrderModel;
 use App\Models\PurchaseItemModel;
 use App\Models\PurchaseOrderModel;
@@ -97,5 +98,22 @@ class OrderService extends BaseService
 
         $sale_out_order->with_id = $with_order_id;
         $sale_out_order->save();
+    }
+
+    /**
+     * 获取已入库的数量
+     * @param $purchaseOrderId
+     * @param $skuId
+     * @return int
+     */
+    public static function getInActualSumNum($purchaseOrderId, $skuId): int
+    {
+        return PurchaseInItemModel::query()
+            ->where('sku_id', $skuId)
+            ->whereHas('order', function ($query) use ($purchaseOrderId) {
+                $query->where('with_id', $purchaseOrderId);
+                $query->where('review_status', PurchaseInOrderModel::REVIEW_STATUS_OK);
+            })
+            ->sum('actual_num') ?? 0;
     }
 }

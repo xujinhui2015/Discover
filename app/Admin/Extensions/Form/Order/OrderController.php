@@ -20,6 +20,7 @@ use App\Admin\Actions\Grid\OrderDelete;
 use App\Admin\Actions\Grid\OrderParentDelete;
 use App\Admin\Actions\Grid\OrderPrint;
 use App\Admin\Actions\Grid\OrderReview;
+use App\Models\ApplyForReturnOrderModel;
 use App\Models\PurchaseBaseModel;
 use Dcat\Admin\Admin;
 use Dcat\Admin\Form;
@@ -277,7 +278,12 @@ CSS
         if ($this->order && $this->order->review_status !== $this->oredr_model::REVIEW_STATUS_OK) {
             $grid->tools(OrderReview::make(show_order_review($this->order->review_status)));
             $grid->tools(OrderDelete::make());
-            $grid->tools(BatchCreatePro::make());
+
+            // 物料返仓不允许新增物料
+            if (ltrim($this->oredr_model, '\\') !== ltrim(ApplyForReturnOrderModel::class, '\\')) {
+                $grid->tools(BatchCreatePro::make());
+            }
+
             $grid->tools(OrderParentDelete::make());
         }
         $grid->disableActions();

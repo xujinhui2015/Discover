@@ -83,11 +83,15 @@ class PurchaseInOrderObserver
      */
     public function saving(PurchaseInOrderModel $purchaseInOrderModel): void
     {
+
         if ($purchaseInOrderModel->isDirty('review_status')
             && (int)$purchaseInOrderModel->review_status === PurchaseInOrderModel::REVIEW_STATUS_OK
             && (int)$purchaseInOrderModel->status === PurchaseInOrderModel::STATUS_ARRIVE
         ) {
-            $purchaseInOrderModel->items->each(function (PurchaseInItemModel $purchaseInItemModel) use ($purchaseInOrderModel) {
+            // true 表示部分收货 false表示全部收货
+            $flag = true;
+            $purchaseInItems = $purchaseInOrderModel->with_order->items;
+            $purchaseInOrderModel->items->each(function (PurchaseInItemModel $purchaseInItemModel) use ($purchaseInOrderModel, $purchaseInItems, &$flag) {
                 $init_num = SkuStockModel::query()
                     ->where([
                         'sku_id' => $purchaseInItemModel->sku_id,
@@ -111,9 +115,29 @@ class PurchaseInOrderObserver
 //                    'percent'        => $purchaseInItemModel->percent,
                     'batch_no'       => $purchaseInItemModel->batch_no,
                 ]);
+
+                // 检查采购订单是否已经全部收货
+                if ($flag) {
+                    $sumActualNum = PurchaseInItemModel::query()
+                        ->where('sku_id', $purchaseInItemModel->sku_id)
+                        ->whereHas('order', function ($query) use ($purchaseInOrderModel) {
+                            $query->where('with_id', $purchaseInOrderModel->with_id);
+                            $query->where('review_status', PurchaseInOrderModel::REVIEW_STATUS_OK);
+                        })
+                        ->sum('actual_num');
+                    $purchaseInItem = $purchaseInItems->where('sku_id', $purchaseInItemModel->sku_id)->first();
+
+                    if ($purchaseInItem && $purchaseInItem->should_num <= ($purchaseInItemModel->actual_num + $sumActualNum)) {
+                        // 执行到这表示已经全部收货
+                        $flag = false;
+                    }
+                }
+
             });
-            $purchaseInOrderModel->with_order->status = PurchaseOrderModel::STATUS_ARRIVE;
+
+            $purchaseInOrderModel->with_order->status = $flag ? PurchaseOrderModel::STATUS_PART_RETURNED : PurchaseOrderModel::STATUS_ARRIVE;
             $purchaseInOrderModel->with_order->save();
+
             $purchaseInOrderModel->apply_at = now();
             $purchaseInOrderModel->amount()->create([
                 'supplier_id' => $purchaseInOrderModel->supplier_id,

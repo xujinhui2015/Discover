@@ -58,10 +58,14 @@ class PurchaseOrderController extends OrderController
     public function iFrameGrid()
     {
         return Grid::make(new PurchaseOrder(['user', 'supplier']), function (Grid $grid) {
-            $grid->model()->where([
-                'status'        => PurchaseOrderModel::STATUS_WAIT,
-                'review_status' => PurchaseOrderModel::REVIEW_STATUS_OK
-            ])->orderBy('id', 'desc');
+            $grid->model()
+                ->whereIn('status', [
+                    PurchaseOrderModel::STATUS_WAIT,
+                    PurchaseOrderModel::STATUS_PART_RETURNED,
+                ])
+                ->where([
+                    'review_status' => PurchaseOrderModel::REVIEW_STATUS_OK
+                ])->orderBy('id', 'desc');
 
             $grid->column('id')->sortable();
 //            $grid->column('check_status')->using(PurchaseOrderModel::CHECK_STATUS);

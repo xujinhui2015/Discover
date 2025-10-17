@@ -15,6 +15,8 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Metrics\Examples;
+use App\Admin\Metrics\TotalPurchase;
+use App\Admin\Metrics\TotalSkuStock;
 use App\Http\Controllers\Controller;
 use Dcat\Admin\Controllers\Dashboard;
 use Dcat\Admin\Layout\Column;
@@ -26,8 +28,7 @@ class HomeController extends Controller
     public function index(Content $content)
     {
         return $content
-            ->header('Dashboard')
-            ->description('Description...')
+            ->header('仪表盘')
             ->body(function (Row $row) {
 //                $row->column(6, function (Column $column) {
 //                    $column->row(Dashboard::title());
@@ -43,6 +44,13 @@ class HomeController extends Controller
 //                    $column->row(new Examples\Sessions());
 //                    $column->row(new Examples\ProductOrders());
 //                });
+
+                $row->column(4, function (Column $column) {
+                    $column->row(TotalPurchase::make());
+                });
+
+
+
             });
     }
 }

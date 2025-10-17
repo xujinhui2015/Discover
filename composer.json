@@ -22,7 +22,8 @@
         "propaganistas/laravel-phone": "^4.2",
         "spatie/laravel-enum": "^2.5",
         "yxx/laravel-quick": "^1.0",
-        "zgldh/qiniu-laravel-storage": "^0.10.3"
+        "zgldh/qiniu-laravel-storage": "^0.10.3",
+        "ext-bcmath": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.8",
