@@ -48,6 +48,9 @@ class HomeController extends Controller
                 $row->column(4, function (Column $column) {
                     $column->row(TotalPurchase::make());
                 });
+//                $row->column(4, function (Column $column) {
+//                    $column->row(TotalPurchase::make());
+//                });
 
 
 
