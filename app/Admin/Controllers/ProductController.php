@@ -124,14 +124,19 @@ class ProductController extends AdminController
                     ->options($units)
                     ->default(head($units->keys()->toArray()) ?? '')
                     ->required();
-            });
 
-            $form->row(function (Form\Row $row) use ($form) {
                 $row->width(6)->number('warning_num')
                     ->default(0)
                     ->help('填0则不预警')
                     ->required();
             });
+
+//            $form->row(function (Form\Row $row) use ($form) {
+//                $row->width(6)->number('warning_num')
+//                    ->default(0)
+//                    ->help('填0则不预警')
+//                    ->required();
+//            });
 
             $form->row(function (Form\Row $row) use ($form) {
                 $row->hasMany('product_attr', '', function (Form\NestedForm $table) {
