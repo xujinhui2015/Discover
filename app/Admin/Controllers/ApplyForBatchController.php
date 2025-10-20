@@ -33,8 +33,8 @@ class ApplyForBatchController extends AdminController
             $grid->column('id')->sortable();
             $grid->column('item.sku.product.name', '物料名称');
             $grid->column('item.sku.product.unit.name', '单位');
-            $grid->column('item.sku.product.type_str', '类型');
-            $grid->column('item.sku.product.type_str', '类型');
+            $grid->column('item.sku.product.type_str', '分类');
+            $grid->column('item.sku.product.type_str', '分类');
             $grid->column('item.sku.attr_value_ids_str', '属性');
             $grid->column('stock_batch.standard_str', '检验标准');
             $grid->column('stock_batch.batch_no');

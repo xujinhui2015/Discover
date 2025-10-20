@@ -45,7 +45,7 @@ class SkuStockBatchTable extends LazyRenderable
             '物料编号',
             '物料名称',
             '单位',
-            '类型',
+            '分类',
             '属性',
             '批次号',
             '库存数量',

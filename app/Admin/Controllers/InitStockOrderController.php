@@ -72,7 +72,7 @@ class InitStockOrderController extends OrderController
             $row->hasMany('items', '', function (Form\NestedForm $table) {
                 $table->select('product_id', '名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
                 $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
-                $table->ipt('type', '类型')->rem(5)->default('-')->disable();
+                $table->ipt('type', '分类')->rem(5)->default('-')->disable();
                 $table->select('sku_id', '属性选择')->options()->required();
 //                $table->tableDecimal('percent', '含绒百分比')->default(0);
                 $table->select('standard', '检验标准')->options(InitStockOrderModel::STANDARD)->default(0);
@@ -91,7 +91,7 @@ class InitStockOrderController extends OrderController
 
         $grid->column('sku.product.name', '物料名称');
         $grid->column('sku.product.unit.name', '单位');
-        $grid->column('sku.product.type_str', '类型');
+        $grid->column('sku.product.type_str', '分类');
 
         $grid->column('sku_id', '属性')->if(function () use ($order,$review_statu_ok) {
             return $order->review_status === $review_statu_ok;

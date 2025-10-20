@@ -26,7 +26,7 @@ class ChangeProductTable extends Migration
     public function up()
     {
         Schema::table('product', function (Blueprint $table) {
-            $table->unsignedTinyInteger('type')->default(0)->comment('类型');
+            $table->unsignedTinyInteger('type')->default(0)->comment('分类');
         });
     }
 }

@@ -19,7 +19,7 @@ return [
     'fields' => [
         'sku.product.name' => '物料名称',
         'sku.product.unit.name' => '单位',
-        'sku.product.type_str' => '类型',
+        'sku.product.type_str' => '分类',
         'sku.attr_value_ids_str' => '属性',
         'actual_num' => '返仓数量',
         'sku_stock_num' => '库存参考',

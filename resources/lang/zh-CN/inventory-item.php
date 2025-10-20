@@ -19,7 +19,7 @@ return [
     'fields' => [
         'stock_batch.sku.product.name' => '物料名称',
         'stock_batch.sku.product.unit.name' => '单位',
-        'stock_batch.sku.product.type_str' => '类型',
+        'stock_batch.sku.product.type_str' => '分类',
         'stock_batch.sku.attr_value_ids_str' => '属性',
 //        'stock_batch.percent' => '含绒量',
         'stock_batch.standard_str' => '检验标准',

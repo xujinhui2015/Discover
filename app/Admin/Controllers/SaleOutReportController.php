@@ -88,7 +88,7 @@ class SaleOutReportController extends Controller
             $grid->column('order.customer.name', '客户');
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '类型');
+            $grid->column('sku.product.type_str', '分类');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
@@ -141,7 +141,7 @@ class SaleOutReportController extends Controller
                         '客户' => $row['order']['customer']['name'],
                         '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
-                        '类型' => $row['sku']['product']['type_str'],
+                        '分类' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
 //                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],
@@ -195,7 +195,7 @@ class SaleOutReportController extends Controller
             })->sortable();
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '类型');
+            $grid->column('sku.product.type_str', '分类');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
@@ -230,7 +230,7 @@ class SaleOutReportController extends Controller
                         '客户' => CustomerModel::query()->where('id', $row['customer_id'])->value('name'),
                         '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
-                        '类型' => $row['sku']['product']['type_str'],
+                        '分类' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
 //                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],
@@ -275,7 +275,7 @@ class SaleOutReportController extends Controller
             );
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '类型');
+            $grid->column('sku.product.type_str', '分类');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
@@ -309,7 +309,7 @@ class SaleOutReportController extends Controller
                     return [
                         '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
-                        '类型' => $row['sku']['product']['type_str'],
+                        '分类' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
 //                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],

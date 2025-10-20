@@ -43,7 +43,7 @@ class CostItemOrderDetail extends LazyRenderable
                 $titles = [
                     '物料名称',
                     '单位',
-                    '类型',
+                    '分类',
                     '属性',
 //                    '含绒百分比',
                     '检验标准',
@@ -70,7 +70,7 @@ class CostItemOrderDetail extends LazyRenderable
                 $titles = [
                     '物料名称',
                     '单位',
-                    '类型',
+                    '分类',
                     '属性',
 //                    '含绒百分比',
                     '检验标准',

@@ -79,7 +79,7 @@ class PurchaseInReportController extends Controller
             $grid->column('order.supplier.name', '供应商');
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '类型');
+            $grid->column('sku.product.type_str', '分类');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
@@ -129,7 +129,7 @@ class PurchaseInReportController extends Controller
                         '供应商' => $row['order']['supplier']['name'],
                         '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
-                        '类型' => $row['sku']['product']['type_str'],
+                        '分类' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
 //                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],
@@ -179,7 +179,7 @@ class PurchaseInReportController extends Controller
             })->sortable();
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '类型');
+            $grid->column('sku.product.type_str', '分类');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
@@ -211,7 +211,7 @@ class PurchaseInReportController extends Controller
                         '供应商' => SupplierModel::query()->where('id', $row['supplier_id'])->value('name'),
                         '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
-                        '类型' => $row['sku']['product']['type_str'],
+                        '分类' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
 //                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],
@@ -251,7 +251,7 @@ class PurchaseInReportController extends Controller
 
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '类型');
+            $grid->column('sku.product.type_str', '分类');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒百分比');
             $grid->column('standard_str', '检验标准');
@@ -282,7 +282,7 @@ class PurchaseInReportController extends Controller
                     return [
                         '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
-                        '类型' => $row['sku']['product']['type_str'],
+                        '分类' => $row['sku']['product']['type_str'],
                         '属性' => $row['sku']['attr_value_ids_str'],
 //                        '含绒百分比' => $row['percent'],
                         '检验标准' => $row['standard_str'],

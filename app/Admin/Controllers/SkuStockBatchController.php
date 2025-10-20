@@ -41,7 +41,7 @@ class SkuStockBatchController extends AdminController
             $grid->column('sku.product.item_no', '物料编号');
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '类型');
+            $grid->column('sku.product.type_str', '分类');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒量(%)');
             $grid->column('standard_str', '检验标准');
@@ -105,7 +105,7 @@ class SkuStockBatchController extends AdminController
             $grid->column('sku.product.item_no', '物料编号');
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '类型');
+            $grid->column('sku.product.type_str', '分类');
             $grid->column('sku.attr_value_ids_str', '属性');
             $grid->column('standard', '检验标准');
 //            $grid->column('percent', '含绒量（%）');

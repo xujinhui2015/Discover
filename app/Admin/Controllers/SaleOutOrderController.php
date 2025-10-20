@@ -96,7 +96,7 @@ class SaleOutOrderController extends OrderController
         $order = $this->order;
         $grid->column('sku.product.name', '物料名称');
         $grid->column('sku.product.unit.name', '单位');
-        $grid->column('sku.product.type_str', '类型');
+        $grid->column('sku.product.type_str', '分类');
         $grid->column('sku_id', '属性')->if(function () use ($order) {
             return $order->review_status === SaleOutOrderModel::REVIEW_STATUS_OK;
         })->display(function () {

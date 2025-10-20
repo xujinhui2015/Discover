@@ -41,7 +41,7 @@ class ProductController extends AdminController
             $grid->column('item_no')->emp();
             $grid->column('name')->emp();
             $grid->column('py_code')->emp();
-            $grid->column('type', '类型')->using(ProductModel::TYPE);
+            $grid->column('type', '分类')->using(ProductModel::TYPE);
             $grid->column('unit.name', '单位')->emp();
             $grid->column('warning_num')->display(function ($warningNum) {
                 return $warningNum > 0 ? $warningNum : '-';
@@ -65,7 +65,7 @@ class ProductController extends AdminController
             $grid->column('item_no');
             $grid->column('name');
             $grid->column('py_code');
-            $grid->column('type', '类型')->using(ProductModel::TYPE);
+            $grid->column('type', '分类')->using(ProductModel::TYPE);
             $grid->column('unit.name', '单位')->emp();
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
@@ -105,7 +105,7 @@ class ProductController extends AdminController
                     ->default(head($brands->keys()->toArray()) ?? '')
                     ->required();
 
-                $row->select('type', '类型')
+                $row->select('type', '分类')
                     ->options(ProductModel::TYPE)
                     ->default(ProductModel::TYPE_NOT_FINISH)
                     ->required();
@@ -114,10 +114,10 @@ class ProductController extends AdminController
             });
 
             $form->row(function (Form\Row $row) use ($form) {
-                $row->width(6)->select('product_category_id', '分类')
-                    ->options(ProductCategoryModel::selectOptions())
-                    ->default(0)
-                    ->required();
+//                $row->width(6)->select('product_category_id', '分类')
+//                    ->options(ProductCategoryModel::selectOptions())
+//                    ->default(0)
+//                    ->required();
 
                 $units = UnitRepository::pluck('name', 'id');
                 $row->width(6)->select('unit_id', '单位')

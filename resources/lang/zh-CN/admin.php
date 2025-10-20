@@ -34,7 +34,7 @@ return [
         'comment'           => '注释',
         'default'           => '默认值',
         'field_name'        => '字段名',
-        'type'              => '类型',
+        'type'              => '分类',
         'nullable'          => '允许空值',
         'key'               => '索引',
     ],
