@@ -64,7 +64,7 @@ class BatchCreateApplyForReturnOrderSave extends BatchAction
 
             return [
                 'sku_id' => $applyForItemModel->sku_id,
-                'should_num' => $applyForItemModel->should_num - $yetShouldNum,
+                'should_num' => $applyForItemModel->actual_num - $yetShouldNum,
             ];
         });
 

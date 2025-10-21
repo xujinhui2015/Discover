@@ -153,7 +153,6 @@ function (data, target, action) {
     data["_sku_id"] = "$sku_id";
     data['_item_id'] = "$item_id";
     data['_standard'] = "$standard";
-    // data['_percent'] = "$percent";
     data['_order_id'] = "$order_id";
 
     // 设置主键为复选框选中的行ID数组
