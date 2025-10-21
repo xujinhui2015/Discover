@@ -107,7 +107,7 @@ class TaskController extends AdminController
                     ->map(function (ProductModel $product) {
 
                         return [
-                            'name' => $product->brand->name . '-'. $product->name,
+                            'name' => $product->brand->name . $product->name,
                             'id' => $product->id,
                         ];
                     })->pluck('name', 'id');
