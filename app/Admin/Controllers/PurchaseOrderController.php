@@ -113,7 +113,11 @@ class PurchaseOrderController extends OrderController
     {
         $form->row(function (Form\Row $row) {
             $row->hasMany('items', '', function (Form\NestedForm $table) {
-                $table->select('product_id', '名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
+                $table->select('product_id', '名称')
+                    ->width(4)
+                    ->options(ProductModel::pluck('name', 'id'))
+                    ->loadpku(route('api.product.find'))
+                    ->required();
                 $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
                 $table->ipt('type', '分类')->rem(5)->default('-')->disable();
                 $table->select('sku_id', '属性选择')->options()->required();

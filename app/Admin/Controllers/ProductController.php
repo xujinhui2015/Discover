@@ -15,6 +15,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\BatchCreateProSave;
+use App\Admin\Actions\Grid\BatchDeleteProduct;
 use App\Admin\Repositories\Product;
 use App\Models\AttrModel;
 use App\Models\BrandModel;
@@ -26,6 +27,8 @@ use App\Repositories\UnitRepository;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Controllers\AdminController;
+use Illuminate\Support\Collection;
+
 
 class ProductController extends AdminController
 {
@@ -48,6 +51,10 @@ class ProductController extends AdminController
             });
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
+
+            $grid->batchActions([
+                new BatchDeleteProduct(),
+            ]);
 
             $grid->filter(function (Grid\Filter $filter) {
             });
@@ -145,9 +152,9 @@ class ProductController extends AdminController
                 })->width(12)->enableHorizontal()->useTable();
             });
             $form->saved(function (Form $form, $result) {
-                $id      = $form->getKey();
+                $id = $form->getKey();
                 $product = ProductModel::findOrFail($id);
-                $attr    = collect($product->attr_value_arr)->keys()->diff($product->sku->pluck('attr_value_ids'))->map(function (string $val) {
+                $attr = collect($product->attr_value_arr)->keys()->diff($product->sku->pluck('attr_value_ids'))->map(function (string $val) {
                     return ['attr_value_ids' => $val];
                 })->values()->toArray();
                 $attr && $product->sku()->createMany($attr);
