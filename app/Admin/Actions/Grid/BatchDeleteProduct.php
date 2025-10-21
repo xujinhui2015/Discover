@@ -6,10 +6,7 @@ use App\Models\ProductModel;
 use App\Models\ProductSkuModel;
 use App\Models\PurchaseItemModel;
 use App\Models\SkuStockModel;
-use Dcat\Admin\Actions\Response;
 use Dcat\Admin\Grid\BatchAction;
-use Illuminate\Support\Collection;
-use JetBrains\PhpStorm\NoReturn;
 use Illuminate\Http\Request;
 
 class BatchDeleteProduct extends BatchAction
