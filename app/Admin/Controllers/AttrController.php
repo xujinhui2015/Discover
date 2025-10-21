@@ -38,6 +38,8 @@ class AttrController extends AdminController
                 ->expand(AttrValue::class);
             $grid->status('状态')->switch();
             $grid->column('created_at');
+
+            $grid->showBatchDelete();
         });
     }
 

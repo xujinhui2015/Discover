@@ -37,6 +37,8 @@ class BrandController extends AdminController
 
             $grid->filter(function (Grid\Filter $filter) {
             });
+
+            $grid->showBatchDelete();
         });
     }
 
