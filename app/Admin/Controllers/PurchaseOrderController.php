@@ -114,7 +114,6 @@ class PurchaseOrderController extends OrderController
         $form->row(function (Form\Row $row) {
             $row->hasMany('items', '', function (Form\NestedForm $table) {
                 $table->select('product_id', '名称')
-                    ->width(4)
                     ->options(ProductModel::pluck('name', 'id'))
                     ->loadpku(route('api.product.find'))
                     ->required();
