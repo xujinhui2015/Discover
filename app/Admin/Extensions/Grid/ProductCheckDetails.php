@@ -41,10 +41,10 @@ class ProductCheckDetails extends LazyRenderable
                 $model->heterochromatic_hair,
                 $model->flower_number,
                 $model->blackhead,
-                intval($model->cleanliness)?'不合格':'合格',
+                intval($model->cleanliness)?'否':'是',
                 $model->moisture,
-                intval($model->bulkiness)?'不符合':'符合',
-                intval($model->odor)?'不合格':'符合',
+                intval($model->bulkiness)?'否':'是',
+                intval($model->odor)?'否':'是',
                 $model->duck_ratio,
             ];
         });

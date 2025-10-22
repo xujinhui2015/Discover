@@ -141,10 +141,10 @@ class ProductCheckForm extends Form implements LazyRenderable
 //            $row->width(4)->rate('bulkiness', '蓬松度')->default(0);
             // 合格/不合格
             $row->width(4)
-                ->select('cleanliness', 'IFRA 合规认证核查')
+                ->radio('cleanliness', 'IFRA 合规认证核查')
                 ->options([
-                    0 => '合格',
-                    1 => '不合格',
+                    0 => '是',
+                    1 => '否',
                 ])
                 ->default(0);
             $row->width(4)->text('moisture', '留香时间')
@@ -152,10 +152,10 @@ class ProductCheckForm extends Form implements LazyRenderable
                 ->default(0);
             // 符合/不符合
             $row->width(4)
-                ->select('bulkiness', '配方成分合规性')
+                ->radio('bulkiness', '配方成分合规性')
                 ->options([
-                    0 => '符合',
-                    1 => '不符合',
+                    0 => '是',
+                    1 => '否',
                 ])
                 ->default(0);
         });
@@ -164,10 +164,10 @@ class ProductCheckForm extends Form implements LazyRenderable
 //            $row->width(4)->rate('duck_ratio', '鸭比')->default(0);
             // 合格/不合格
             $row->width(4)
-                ->select('odor', '香气纯度')
+                ->radio('odor', '香气纯度')
                 ->options([
-                    0 => '合格',
-                    1 => '不合格',
+                    0 => '是',
+                    1 => '否',
                 ])
                 ->default(0);
             $row->width(4)->rate('duck_ratio', '儿童用香水醛类含量')->default(0);
