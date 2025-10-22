@@ -61,7 +61,7 @@ Form\Field::macro('enableHorizontal', function () {
 });
 
 \App\Admin\Extensions\Form\Select::macro();
-\App\Admin\Extensions\Form\SelectTable::macro();
+//\App\Admin\Extensions\Form\SelectTable::macro();
 
 Dcat\Admin\Grid\Column::extend('emp', \App\Admin\Extensions\Grid\EmptyData::class);
 Dcat\Admin\Grid\Column::extend('fee', \App\Admin\Extensions\Grid\Fee::class);
