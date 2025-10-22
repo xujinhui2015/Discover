@@ -92,7 +92,7 @@ Admin::script($script);
 
 Admin::style(<<<CSS
     span[aria-labelledby*="product_id"] {
-    width: 300px !important;
+    width: 100vw !important;
 }
 CSS
 );

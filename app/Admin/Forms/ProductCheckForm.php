@@ -88,7 +88,7 @@ class ProductCheckForm extends Form implements LazyRenderable
             $row->width(4)->text('product_att', '属性')->value($skuStockBatch->sku->attr_value_ids_str)->readOnly();
         });
         $this->row(function (Row $row) {
-            $row->width(12)->html('<hr/><h3>成份分析明细</h3>');
+            $row->width(12)->html('<hr/><h3>数据明细</h3>');
         });
         $this->row(function (Row $row) use ($skuStockBatch) {
             $row->width(4)->select('standard', '通用标准')->options(SkuStockBatchModel::STANDARD)->default($skuStockBatch->standard);
@@ -101,37 +101,75 @@ class ProductCheckForm extends Form implements LazyRenderable
 //            $row->width(4)->rate('magazine', '杂志')->default(0);
             $row->width(4)->rate('raw_footage', '香精含量')->default(0);
             $row->width(4)->rate('velvet', '乙醇含量')->default(0);
-            $row->width(4)->rate('magazine', '甲醇含量')->default(0);
+            $row->width(4)
+                ->text('magazine', '甲醇含量')
+                ->prepend('mg/kg')
+                ->default(0);
         });
 
         $this->row(function (Row $row) {
 //            $row->width(4)->rate('fluffy_silk', '绒丝')->default(0);
 //            $row->width(4)->rate('terrestrial_feather', '陆禽毛')->default(0);
 //            $row->width(4)->rate('feather_silk', '羽丝')->default(0);
-            $row->width(4)->rate('fluffy_silk', '单一受限香料（如麝香）')->default(0);
-            $row->width(4)->rate('terrestrial_feather', '26 种致敏原总量')->default(0);
+            $row->width(4)
+                ->text('fluffy_silk', '单一受限香料（如麝香）')
+                ->prepend('ppm')
+                ->default(0);
+            $row->width(4)
+                ->text('terrestrial_feather', '26 种致敏原总量')
+                ->prepend('ppm')
+                ->default(0);
             $row->width(4)->rate('feather_silk', '邻苯二甲酸盐（如 DEHP）')->default(0);
         });
         $this->row(function (Row $row) {
 //            $row->width(4)->rate('heterochromatic_hair', '异色毛')->default(0);
 //            $row->width(4)->rate('flower_number', '朵数')->default(0);
 //            $row->width(4)->rate('blackhead', '黑头')->default(0);
-            $row->width(4)->rate('heterochromatic_hair', '重金属（以铅为例）')->default(0);
+            $row->width(4)
+                ->text('heterochromatic_hair', '重金属（以铅为例）')
+                ->prepend('mg/kg')
+                ->default(0);
             $row->width(4)->rate('flower_number', '水分含量')->default(0);
-            $row->width(4)->rate('blackhead', '澄清度（浊度）')->default(0);
+            $row->width(4)
+                ->text('blackhead', '澄清度（浊度）')
+                ->prepend('NTU')
+                ->default(0);
         });
         $this->row(function (Row $row) {
 //            $row->width(4)->rate('cleanliness', '清洁度')->default(0);
 //            $row->width(4)->rate('moisture', '水份')->default(0);
 //            $row->width(4)->rate('bulkiness', '蓬松度')->default(0);
-            $row->width(4)->rate('cleanliness', 'IFRA 合规认证核查')->default(0);
-            $row->width(4)->rate('moisture', '留香时间')->default(0);
-            $row->width(4)->rate('bulkiness', '配方成分合规性')->default(0);
+            // 合格/不合格
+            $row->width(4)
+                ->select('cleanliness', 'IFRA 合规认证核查')
+                ->options([
+                    0 => '合格',
+                    1 => '不合格',
+                ])
+                ->default(0);
+            $row->width(4)->text('moisture', '留香时间')
+                ->prepend('小时')
+                ->default(0);
+            // 符合/不符合
+            $row->width(4)
+                ->select('bulkiness', '配方成分合规性')
+                ->options([
+                    0 => '符合',
+                    1 => '不符合',
+                ])
+                ->default(0);
         });
         $this->row(function (Row $row) {
 //            $row->width(4)->rate('odor', '气味')->default(0);
 //            $row->width(4)->rate('duck_ratio', '鸭比')->default(0);
-            $row->width(4)->rate('odor', '香气纯度')->default(0);
+            // 合格/不合格
+            $row->width(4)
+                ->select('odor', '香气纯度')
+                ->options([
+                    0 => '合格',
+                    1 => '不合格',
+                ])
+                ->default(0);
             $row->width(4)->rate('duck_ratio', '儿童用香水醛类含量')->default(0);
         });
     }

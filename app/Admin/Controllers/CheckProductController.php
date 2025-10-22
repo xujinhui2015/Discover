@@ -114,7 +114,7 @@ class CheckProductController extends AdminController
                 $row->width(3)->number('num')->default(0)->required();
             });
             $form->row(function (Form\Row $row) {
-                $row->width(12)->html('<hr/><h3>成份分析明细</h3>');
+                $row->width(12)->html('<hr/><h3>数据明细</h3>');
             });
             $form->row(function (Form\Row $row) {
                 $row->width(3)->rate('carbon_fiber')->default(0);
