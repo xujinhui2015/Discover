@@ -21,6 +21,7 @@ use App\Models\AttrModel;
 use App\Models\BrandModel;
 use App\Models\ProductCategoryModel;
 use App\Models\ProductModel;
+use App\Models\UnitModel;
 use App\Repositories\BrandRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\UnitRepository;
@@ -56,6 +57,17 @@ class ProductController extends AdminController
             ]);
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->like('name', '物料名称')->width(4);
+                $filter->like('item_no', '物料编号')->width(4);
+                $filter->equal('type', '分类')
+                    ->select(ProductModel::TYPE)
+                    ->width(4);
+                $filter->equal('unit_id', '品牌')
+                    ->select(BrandModel::query()->pluck('name', 'id'))
+                    ->width(4);
+                $filter->equal('brand_id', '单位')
+                    ->select(UnitModel::query()->pluck('name', 'id'))
+                    ->width(4);
             });
         });
     }
