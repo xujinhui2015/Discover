@@ -62,10 +62,10 @@ class ProductController extends AdminController
                 $filter->equal('type', '分类')
                     ->select(ProductModel::TYPE)
                     ->width(4);
-                $filter->equal('unit_id', '品牌')
+                $filter->equal('brand_id', '品牌')
                     ->select(BrandModel::query()->pluck('name', 'id'))
                     ->width(4);
-                $filter->equal('brand_id', '单位')
+                $filter->equal('unit_id', '单位')
                     ->select(UnitModel::query()->pluck('name', 'id'))
                     ->width(4);
             });
