@@ -1,0 +1,71 @@
+/* 自定义Select2样式 - 实现下拉框宽度自适应 */
+
+/* 基础样式 - 保持默认行为但确保不收缩过小 */
+.select2-container {
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* 确保选择框占满容器 */
+.select2-container .select2-selection {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* 表格中的Select2特殊处理 */
+.table-responsive .select2-container {
+  display: inline-block !important;
+  width: auto !important;
+  min-width: 150px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 下拉菜单自适应宽度 - 移除固定最小宽度 */
+.select2-dropdown {
+  width: auto !important;
+  white-space: nowrap; /* 防止下拉菜单换行 */
+  box-sizing: border-box;
+}
+
+/* 防止选项文本换行 */
+.select2-results__option {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 6px 12px;
+}
+
+/* 搜索框和内容区域自适应 */
+.select2-search--dropdown,
+.select2-results {
+  width: auto !important;
+  min-width: 100%;
+}
+
+/* 特别针对产品选择框的优化 - 确保能容纳长产品名称 */
+[id^="itemsnew_"] [id*="product_id"] + .select2-container .select2-selection,
+[id*="product_id"] + .select2-container .select2-selection {
+  min-width: 250px;
+}
+
+/* 产品选择框的下拉菜单特别处理 */
+[id^="itemsnew_"] [id*="product_id"] + .select2-container .select2-dropdown,
+[id*="product_id"] + .select2-container .select2-dropdown {
+  min-width: 250px;
+  width: max-content !important; /* 使用max-content确保宽度足够容纳最长选项 */
+  max-width: 80vw; /* 限制最大宽度，防止超出视口 */
+}
+
+/* 内联表单中的Select2处理 */
+.form-inline .select2-container {
+  display: inline-block !important;
+  vertical-align: middle;
+}
+
+/* 优化搜索框在宽下拉菜单中的显示 */
+.select2-search--dropdown .select2-search__field {
+  width: 100% !important;
+  box-sizing: border-box;
+}

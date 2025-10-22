@@ -90,12 +90,12 @@ JS;
 Admin::script($script);
 
 
-Admin::style(<<<CSS
-    span[aria-labelledby*="product_id"] {
-    width: 100vw !important;
-}
-CSS
-);
+//Admin::style(<<<CSS
+//    span[aria-labelledby*="product_id"] {
+//    width: 100vw !important;
+//}
+//CSS
+//);
 
 // 调整过滤框字体大小
 //Admin::style(<<<CSS
@@ -115,3 +115,69 @@ CSS
 //);
 
 app('view')->prependNamespace('admin', resource_path('views/vendor/laravel-admin'));
+
+// 添加用户信息区域样式优化
+Admin::style(<<<'CSS'
+.user-nav {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+}
+.user-name {
+    margin-right: 8px;
+    font-weight: 500;
+}
+.user-status {
+    margin-right: 4px;
+}
+.user-status i {
+    margin-right: 2px;
+}
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+}
+CSS
+);
+
+// 添加基本JavaScript交互
+Admin::script(<<<'JS'
+    // 响应式侧边栏切换
+    (function() {
+        const toggle = document.querySelector('.sidebar-toggle');
+        const sidebar = document.querySelector('.admin-sidebar');
+
+        if (toggle && sidebar) {
+            toggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+
+                // 保存侧边栏状态到本地存储
+                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+            });
+
+            // 从本地存储恢复侧边栏状态
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                sidebar.classList.add('collapsed');
+            }
+        }
+    })();
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+JS);
+
+
+Admin::css('/static/css/custom-select2.css');
