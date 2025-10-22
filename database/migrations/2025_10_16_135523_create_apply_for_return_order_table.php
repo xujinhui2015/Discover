@@ -28,6 +28,7 @@ class CreateApplyForReturnOrderTable extends Migration
         });
 
         Schema::create('apply_for_return_item', function (Blueprint $table) {
+            $table->id();
             $table->unsignedInteger('order_id')->index()->default(0)->comment('关联单据');
             $table->unsignedInteger('sku_id')->default(0)->comment('商品的skuId');
             $table->unsignedTinyInteger('standard')->default(0)->comment('检验标准');

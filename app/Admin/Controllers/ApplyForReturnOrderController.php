@@ -113,7 +113,8 @@ class ApplyForReturnOrderController extends OrderController
 
     public function setItems(Grid &$grid): void
     {
-        $grid->column('sku.product.name', '物料名称');
+        $grid->column('id')->sortable();
+        $grid->column('standard', '检验标准');
         $grid->column('sku.product.unit.name', '单位');
         $grid->column('sku.product.type_str', '分类');
         $grid->column('sku_id', '属性')

@@ -101,20 +101,7 @@ class TaskController extends AdminController
             });
             $form->row(function (Form\Row $row) {
                 $row->width(4)->text('order_no', '订单号')->default(build_order_no('SCRW'))->readOnly();
-                $productList = ProductModel::query()
-                    ->with('brand')
-                    ->get()
-                    ->map(function (ProductModel $product) {
-
-                        return [
-                            'name' => $product->brand->name . $product->name,
-                            'id' => $product->id,
-                        ];
-                    })->pluck('name', 'id');
-
-                $row->width(4)->select('product_id', '名称')
-                    ->options($productList)
-                    ->loadpku(route('api.product.find'))->required();
+                $row->width(4)->select('product_id', '名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
                 $row->width(4)->ipt('unit', '单位')->rem(3)->default('-')->disable();
             });
             $form->row(function (Form\Row $row) {
