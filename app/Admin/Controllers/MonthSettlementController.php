@@ -56,7 +56,7 @@ class MonthSettlementController extends AdminController
                         'id' => $itemModel->id,
                     ];
                 })->sortByDesc('yearmonth')->pluck('yearmonth', 'id');
-            $form->select('accountant_item_id', "结算期")->options($accountant)->default($accountant->keys()->first())->required();
+            $form->select('accountant_item_id', "结算期")->options($accountant)->default($accountant->keys()->first());
             $form->radio("type", "结算类型")->options(CostOrderModel::CATEGORY)->default(CostOrderModel::CATEGORY_CUSTOMER)->when(CostOrderModel::CATEGORY_CUSTOMER, function (Form $form) {
                 $form->multipleSelect("customers", "客户")->options(CustomerModel::query()->latest()->pluck(
                     'name',
