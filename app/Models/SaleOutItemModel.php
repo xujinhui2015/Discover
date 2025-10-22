@@ -49,7 +49,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Query\Builder|SaleOutItemModel withoutTrashed()
  * @mixin \Eloquent
  * @property string $percent 含绒量
- * @property int $standard 检验标准
+ * @property int $standard 通用标准
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\SaleOutBatchModel[] $batchs
  * @property-read int|null $batchs_count
  * @property-read int $sku_stock_num

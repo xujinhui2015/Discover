@@ -42,7 +42,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @mixin \Eloquent
  * @property string $cost_price 成本价
  * @property string $percent 含绒量
- * @property int $standard 检验标准
+ * @property int $standard 通用标准
  * @property-read mixed $standard_str
  * @method static \Illuminate\Database\Eloquent\Builder|SkuStockBatchModel whereCostPrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SkuStockBatchModel wherePercent($value)

@@ -55,7 +55,7 @@ class StockHistoryController extends AdminController
             $grid->column('sku.product.type_str', '分类');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒量(%)');
-            $grid->column('standard_str', '检验标准');
+            $grid->column('standard_str', '通用标准');
             $grid->column('cost_price');
             $grid->column('batch_no');
             $grid->column('init_num');
@@ -84,7 +84,7 @@ class StockHistoryController extends AdminController
                 $filter->equal('type')->select(StockHistoryModel::TYPE)->width(3);
                 $filter->equal('flag')->select(StockHistoryModel::FLAG)->width(3);
 //                $filter->like('percent', "含绒量")->decimal()->width(3);
-                $filter->equal('standard', "检验标准")->select(SkuStockBatchModel::STANDARD)->width(3);
+                $filter->equal('standard', "通用标准")->select(SkuStockBatchModel::STANDARD)->width(3);
                 $filter->like('batch_no', "批次号")->width(3);
             });
         });

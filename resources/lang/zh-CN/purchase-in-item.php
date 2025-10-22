@@ -22,7 +22,7 @@ return [
         'sku.product.type_str' => '分类',
         'sku.attr_value_ids_str' => '属性',
 //        'percent' => '含绒量',
-        'standard_str' => '检验标准',
+        'standard_str' => '通用标准',
         'position.name' => '入库位置',
         'should_num' => '采购数量',
         'actual_num' => '入库数量',

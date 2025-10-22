@@ -17,6 +17,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Repositories\Customer;
 use App\Http\Requests\WithOrderRequest;
 use App\Http\Resources\ProductResource;
+use App\Models\ProductModel;
 use App\Repositories\AttrValueRepository;
 use App\Repositories\BrandRepository;
 use App\Repositories\ProductRepository;

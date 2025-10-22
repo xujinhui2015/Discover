@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property int $id
  * @property int $sku_stock_batch_id 关联批次库存id
- * @property int $standard 检验标准
+ * @property int $standard 通用标准
  * @property string $carbon_fiber 碳纤维
  * @property string $percent 含绒量
  * @property string $raw_footage 毛片

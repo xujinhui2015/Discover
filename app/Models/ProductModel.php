@@ -14,6 +14,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -66,11 +67,11 @@ use Illuminate\Support\Collection;
  */
 class ProductModel extends BaseModel
 {
-    use SoftDeletes;
+    use SoftDeletes,HasFactory;
 
     protected $table = 'product';
 
-    protected $with = ['product_attr', 'unit', 'sku'];
+    protected $with = ['product_attr', 'unit', 'sku', 'brand'];
 
     protected $appends = ['attr_value_arr', 'sku_key_value', 'sku_pluck', 'sku_id_text', 'type_str'];
 
@@ -119,7 +120,7 @@ class ProductModel extends BaseModel
 
     public function brand(): BelongsTo
     {
-        return $this->belongsTo(BrandModel::class);
+        return $this->belongsTo(BrandModel::class, 'brand_id');
     }
 
     public function getAttrValueArrAttribute(): array

@@ -80,9 +80,10 @@ class PurchaseInReportController extends Controller
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '分类');
+            $grid->column('sku.product.brand.name', '品牌');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒百分比');
-            $grid->column('standard_str', '检验标准');
+            $grid->column('standard_str', '通用标准');
             $grid->column('position.name', '入库位置');
             $grid->column('should_num', '采购数量')->sortable();
             $grid->column('actual_num', '入库数量')->sortable();
@@ -119,7 +120,7 @@ class PurchaseInReportController extends Controller
                     $group->equal('等于');
                 }, '入库数量')->width(3);
 //                $filter->like('percent', "含绒量")->decimal()->width(3);
-                $filter->equal('standard', "检验标准")->select(PurchaseInOrderModel::STANDARD)->width(3);
+                $filter->equal('standard', "通用标准")->select(PurchaseInOrderModel::STANDARD)->width(3);
             });
 
             $grid->export()->rows(function (array $rows) {
@@ -130,9 +131,10 @@ class PurchaseInReportController extends Controller
                         '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
                         '分类' => $row['sku']['product']['type_str'],
+                        '品牌' => $row['sku']['product']['brand']['name'],
                         '属性' => $row['sku']['attr_value_ids_str'],
 //                        '含绒百分比' => $row['percent'],
-                        '检验标准' => $row['standard_str'],
+                        '通用标准' => $row['standard_str'],
                         '入库位置' => $row['position']['name'],
                         '采购数量' => $row['should_num'],
                         '入库数量' => $row['actual_num'],
@@ -180,9 +182,10 @@ class PurchaseInReportController extends Controller
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '分类');
+            $grid->column('sku.product.brand.name', '品牌');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒百分比');
-            $grid->column('standard_str', '检验标准');
+            $grid->column('standard_str', '通用标准');
             $grid->column('sum_should_num', '采购数量')->sortable();
             $grid->column('sum_actual_num', '入库数量')->sortable();
 
@@ -202,7 +205,7 @@ class PurchaseInReportController extends Controller
                 }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
                 $filter->equal('supplier_id', '供应商')->select(SupplierModel::query()->latest()->pluck('name', 'id'))->width(3);
 //                $filter->like('percent', "含绒量")->decimal()->width(3);
-                $filter->equal('standard', "检验标准")->select(PurchaseInOrderModel::STANDARD)->width(3);
+                $filter->equal('standard', "通用标准")->select(PurchaseInOrderModel::STANDARD)->width(3);
             });
 
             $grid->export()->rows(function (array $rows) {
@@ -212,9 +215,10 @@ class PurchaseInReportController extends Controller
                         '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
                         '分类' => $row['sku']['product']['type_str'],
+                        '品牌' => $row['sku']['product']['brand']['name'],
                         '属性' => $row['sku']['attr_value_ids_str'],
 //                        '含绒百分比' => $row['percent'],
-                        '检验标准' => $row['standard_str'],
+                        '通用标准' => $row['standard_str'],
                         '采购数量' => $row['sum_should_num'],
                         '入库数量' => $row['sum_actual_num'],
                     ];
@@ -252,9 +256,10 @@ class PurchaseInReportController extends Controller
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '分类');
+            $grid->column('sku.product.brand.name', '品牌');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒百分比');
-            $grid->column('standard_str', '检验标准');
+            $grid->column('standard_str', '通用标准');
             $grid->column('sum_should_num', '采购数量')->sortable();
             $grid->column('sum_actual_num', '入库数量')->sortable();
 
@@ -274,7 +279,7 @@ class PurchaseInReportController extends Controller
                 }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
 
 //                $filter->like('percent', "含绒量")->decimal()->width(3);
-                $filter->equal('standard', "检验标准")->select(PurchaseInOrderModel::STANDARD)->width(3);
+                $filter->equal('standard', "通用标准")->select(PurchaseInOrderModel::STANDARD)->width(3);
             });
 
             $grid->export()->rows(function (array $rows) {
@@ -283,9 +288,10 @@ class PurchaseInReportController extends Controller
                         '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
                         '分类' => $row['sku']['product']['type_str'],
+                        '品牌' => $row['sku']['product']['brand']['name'],
                         '属性' => $row['sku']['attr_value_ids_str'],
 //                        '含绒百分比' => $row['percent'],
-                        '检验标准' => $row['standard_str'],
+                        '通用标准' => $row['standard_str'],
                         '采购数量' => $row['sum_should_num'],
                         '入库数量' => $row['sum_actual_num'],
                     ];

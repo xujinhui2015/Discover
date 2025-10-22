@@ -22,7 +22,7 @@ return [
         'stock_batch.sku.product.type_str' => '分类',
         'stock_batch.sku.attr_value_ids_str' => '属性',
 //        'stock_batch.percent' => '含绒量',
-        'stock_batch.standard_str' => '检验标准',
+        'stock_batch.standard_str' => '通用标准',
         'cost_price' => '成本单价',
         'should_num' => '库存数量',
         'actual_num' => '实盘数量',

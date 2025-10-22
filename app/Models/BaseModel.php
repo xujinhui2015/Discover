@@ -39,15 +39,24 @@ class BaseModel extends Model
     const REVIEW_STATUS_REREVIEW = 2;
 
     const STANDARD_NO_CHOICE = 0;
-    const STANDARD_CHINA = 1;
-    const STANDARD_JAPAN = 2;
-    const STANDARD_EUROPE = 3;
+    const STANDARD_INDUSTRY = 1;
+    const STANDARD_CHINA_2023 = 2;
+    const STANDARD_CHINA_2022 = 3;
+    const STANDARD_IFRA = 4;
+
+//字段改为：
+//（默认暂无）
+//行标 QB/T 1858-2004
+//国标 GB/T 27575-2023
+//国标 GB/T 22731-2022
+//IFRA 标准
 
     const STANDARD = [
         self::STANDARD_NO_CHOICE => '暂无',
-        self::STANDARD_CHINA => '国标',
-        self::STANDARD_JAPAN => '日标',
-        self::STANDARD_EUROPE => '欧标',
+        self::STANDARD_INDUSTRY => '行标 QB/T 1858-2004',
+        self::STANDARD_CHINA_2023     => '国标 GB/T 27575-2023',
+        self::STANDARD_CHINA_2022     => '国标 GB/T 22731-2022',
+        self::STANDARD_IFRA => 'IFRA 标准',
     ];
 
     const REVIEW_STATUS = [

@@ -30,7 +30,7 @@ class CreateApplyForBatchTable extends Migration
             $table->unsignedInteger('item_id')->default(0)->comment('订单明细id');
             $table->unsignedDecimal('actual_num')->default(0)->comment('实领数量');
             $table->unsignedInteger('stock_batch_id')->comment('出库批次库存id');
-            $table->unsignedTinyInteger('standard')->default(0)->comment('检验标准');
+            $table->unsignedTinyInteger('standard')->default(0)->comment('通用标准');
             $table->unsignedDecimal('percent')->default(0.00)->comment('含绒量');
             $table->timestamps();
         });

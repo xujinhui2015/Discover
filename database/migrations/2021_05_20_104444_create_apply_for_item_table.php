@@ -30,7 +30,7 @@ class CreateApplyForItemTable extends Migration
             $table->unsignedInteger('order_id')->index()->default(0)->comment('关联单据');
             $table->unsignedInteger('sku_id')->default(0)->comment('商品的skuId');
             $table->unsignedDecimal('cost_price')->default(0.00)->comment('成本价格');
-            $table->unsignedTinyInteger('standard')->default(0)->comment('检验标准');
+            $table->unsignedTinyInteger('standard')->default(0)->comment('通用标准');
             $table->unsignedDecimal('percent')->default(0.00)->comment('含绒量');
             $table->unsignedDecimal('should_num')->default(0.00)->comment('申领数量');
             $table->timestamps();

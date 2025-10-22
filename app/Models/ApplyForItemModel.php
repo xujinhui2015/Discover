@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $order_id 关联单据
  * @property int $sku_id 商品的skuId
  * @property string $cost_price 成本价格
- * @property int $standard 检验标准
+ * @property int $standard 通用标准
  * @property string $percent 含绒量
  * @property string $should_num 申领数量
  * @property \Illuminate\Support\Carbon|null $created_at

@@ -28,7 +28,7 @@ class CreateCheckProductTable extends Migration
         Schema::create('check_product', function (Blueprint $table) {
             $table->integerIncrements('id');
             $table->unsignedInteger('sku_stock_batch_id')->default(0)->comment('关联批次库存id');
-            $table->unsignedTinyInteger('standard')->default(0)->comment('检验标准');
+            $table->unsignedTinyInteger('standard')->default(0)->comment('通用标准');
             $table->decimal('carbon_fiber', 10, 2)->default(0.00)->comment('碳纤维');
             $table->decimal('percent', 10, 2)->default(0)->comment('含绒量');
             $table->decimal('raw_footage', 10, 2)->default(0.00)->comment('毛片');

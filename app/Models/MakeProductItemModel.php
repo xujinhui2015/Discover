@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $position_id 位置id
  * @property string $batch_no 批次号
  * @property string $percent 含绒量
- * @property int $standard 检验标准
+ * @property int $standard 通用标准
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read mixed $standard_str

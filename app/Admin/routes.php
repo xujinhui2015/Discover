@@ -28,6 +28,8 @@ Route::group([
     $router->get('api/get-product-unit', 'ApiController@getUnitByProductId')->name('api.productunit.find');
     $router->get('api/get-product-brand', 'ApiController@getBrandByProductId')->name('api.productbrand.find');
     $router->get('api/get-product', 'ApiController@getProductInfo')->name('api.product.find');
+
+
     $router->post('api/with/order', 'ApiController@withOrder')->name('api.with.order');
     $router->get('api/get-customer-address', 'ApiController@getCustomerAddress')->name('api.customer.address.find');
     $router->get('api/get-customer-drawee', 'ApiController@getCustomerDrawee')->name('api.customer.drawee.find');

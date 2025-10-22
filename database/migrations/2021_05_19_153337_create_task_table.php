@@ -30,7 +30,7 @@ class CreateTaskTable extends Migration
             $table->string('order_no')->default("")->unique()->comment('任务单号');
             $table->unsignedInteger('sku_id')->default(0)->comment('商品');
             $table->unsignedDecimal('percent')->default(0)->comment('含绒量');
-            $table->unsignedTinyInteger('standard')->default(0)->comment('检验标准');
+            $table->unsignedTinyInteger('standard')->default(0)->comment('通用标准');
             $table->unsignedDecimal('plan_num')->default(0)->comment('计划数量');
             $table->unsignedDecimal('finish_num')->default(0)->comment('完成数量');
             $table->unsignedInteger('craft_id')->default(0)->comment('生产工艺');

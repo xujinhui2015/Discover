@@ -66,7 +66,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \App\Models\ProductSkuModel $sku
  * @property-read Administrator $user
  * @property string $percent 含绒量
- * @property int $standard 检验标准
+ * @property int $standard 通用标准
  * @property string $inventory_num 盘点数量
  * @property string $inventory_diff_num 盘点盈亏数量
  * @property-read mixed $standard_str

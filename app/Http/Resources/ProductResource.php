@@ -30,6 +30,7 @@ class ProductResource extends JsonResource
             'id'           => $this->id,
             'name'         => $this->name,
             'unit'         => $this->unit->name ?? '',
+            'brand_str'         => $this->brand->name ?? '',
             'product_attr' => $this->sku_id_text,
             'type_str'     => $this->type_str
         ];

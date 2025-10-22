@@ -101,11 +101,11 @@ class MakeProductOrderController extends OrderController
     {
         $form->width(12)->row(function (Form\Row $row) {
             $row->hasMany('items', '', function (Form\NestedForm $table) {
-                $table->select('product_id', '名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
+                $table->select('product_id', '物料名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
                 $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
                 $table->select('sku_id', '属性选择')->options()->required();
 //                $table->tableDecimal('percent', '含绒量')->default(0);
-                $table->select('standard', '检验标准')->options(MakeProductOrderModel::STANDARD)->default(0);
+                $table->select('standard', '通用标准')->options(MakeProductOrderModel::STANDARD)->default(0);
                 $table->num('should_num', '计划入库数')->required();
                 $table->tableDecimal('price', '实际入库数')->default(0.00)->required();
                 $table->select('position_id', '入库位置')->options(PositionModel::orderBy('id', 'desc')->pluck('name', 'id'));
@@ -124,13 +124,15 @@ class MakeProductOrderController extends OrderController
         $grid->column('sku.product.name', '物料名称');
         $grid->column('sku.product.unit.name', '单位');
         $grid->column('sku.product.type_str', '分类');
+        $grid->column('sku.product.brand.name', '品牌');
+
 
         $grid->column('sku_id', '属性')->display(function () {
             return $this->sku['attr_value_ids_str'] ?? '';
         });
 
 //        $grid->column('percent', '含绒量');
-        $grid->column('standard', '检验标准')->display(function () {
+        $grid->column('standard', '通用标准')->display(function () {
             return  MakeProductOrderModel::STANDARD[$this->standard];
         });
 

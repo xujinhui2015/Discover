@@ -103,7 +103,7 @@ class ApplyForReturnOrderController extends OrderController
     {
         $form->width(12)->row(function (Form\Row $row) {
             $row->hasMany('items', '', function (Form\NestedForm $table) {
-                $table->select('product_id', '名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
+                $table->select('product_id', '物料名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
                 $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
                 $table->select('sku_id', '属性选择')->options()->required();
                 $table->num('should_num', '申领数量')->required();
@@ -114,9 +114,10 @@ class ApplyForReturnOrderController extends OrderController
     public function setItems(Grid &$grid): void
     {
         $grid->column('id')->sortable();
-        $grid->column('standard', '检验标准');
+        $grid->column('standard', '通用标准');
         $grid->column('sku.product.unit.name', '单位');
         $grid->column('sku.product.type_str', '分类');
+        $grid->column('sku.product.brand.name', '品牌');
         $grid->column('sku_id', '属性')
             ->display(function () {
             return $this->sku['attr_value_ids_str'] ?? '';

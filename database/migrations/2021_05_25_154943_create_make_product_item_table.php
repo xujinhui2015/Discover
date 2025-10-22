@@ -35,7 +35,7 @@ class CreateMakeProductItemTable extends Migration
             $table->unsignedInteger('position_id')->default(0)->comment('位置id');
             $table->string('batch_no')->default('')->comment('批次号');
             $table->unsignedDecimal('percent')->default(0.00)->comment('含绒量');
-            $table->unsignedTinyInteger('standard')->default(0)->comment('检验标准');
+            $table->unsignedTinyInteger('standard')->default(0)->comment('通用标准');
             $table->timestamps();
         });
     }

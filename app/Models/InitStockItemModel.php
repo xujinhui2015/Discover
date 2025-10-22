@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $order_id 订单id
  * @property int $sku_id skuId
  * @property string $percent 含绒量
- * @property int $standard 检验标准
+ * @property int $standard 通用标准
  * @property int $actual_num 期初库存
  * @property string $cost_price 成本价格
  * @property int $position_id 库位

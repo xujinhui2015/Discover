@@ -43,14 +43,13 @@ class ProductController extends AdminController
             $grid->column('id')->sortable();
             $grid->column('item_no')->emp();
             $grid->column('name')->emp();
-            $grid->column('py_code')->emp();
+//            $grid->column('py_code')->emp();
             $grid->column('type', '分类')->using(ProductModel::TYPE);
+            $grid->column('brand.name', '品牌')->emp();
             $grid->column('unit.name', '单位')->emp();
-            $grid->column('warning_num')->display(function ($warningNum) {
-                return $warningNum > 0 ? $warningNum : '-';
-            });
-            $grid->column('created_at');
-            $grid->column('updated_at')->sortable();
+            $grid->column('warning_num')->emp();
+//            $grid->column('created_at');
+//            $grid->column('updated_at')->sortable();
 
             $grid->batchActions([
                 new BatchDeleteProduct(),
@@ -71,11 +70,12 @@ class ProductController extends AdminController
             $grid->column('id')->sortable();
             $grid->column('item_no');
             $grid->column('name');
-            $grid->column('py_code');
+//            $grid->column('py_code');
             $grid->column('type', '分类')->using(ProductModel::TYPE);
+            $grid->column('brand.name', '品牌')->emp();
             $grid->column('unit.name', '单位')->emp();
-            $grid->column('created_at');
-            $grid->column('updated_at')->sortable();
+//            $grid->column('created_at');
+//            $grid->column('updated_at')->sortable();
             $grid->disableCreateButton();
             $grid->disableActions();
 

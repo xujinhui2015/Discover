@@ -42,9 +42,10 @@ class SkuStockBatchController extends AdminController
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '分类');
+            $grid->column('sku.product.brand.name', '品牌');
             $grid->column('sku.attr_value_ids_str', '属性');
 //            $grid->column('percent', '含绒量(%)');
-            $grid->column('standard_str', '检验标准');
+            $grid->column('standard_str', '通用标准');
             $grid->column('batch_no');
             $grid->column('num');
             $grid->column('cost_price', "成本价格");
@@ -71,11 +72,11 @@ class SkuStockBatchController extends AdminController
                     $group->equal('等于');
                 })->width(3);
 //                $filter->like('percent', "含绒量")->decimal()->width(3);
-                $filter->equal('standard', "检验标准")->select(SkuStockBatchModel::STANDARD)->width(3);
+                $filter->equal('standard', "通用标准")->select(SkuStockBatchModel::STANDARD)->width(3);
                 $filter->like('batch_no', "批次号")->width(3);
                 $filter->equal('position_id', "库位")->select(PositionModel::query()->latest()->pluck('name', 'id'))->width(3);
             });
-//            $grid->column("_id", "检验记录")->expand(ProductCheckDetails::make());
+            $grid->column("_id", "检验记录")->expand(ProductCheckDetails::make());
             $grid->actions(function (Grid\Displayers\Actions $actions) {
                 if ($this->num > 0) {
                     $actions->append(new ProductCheck());
@@ -106,8 +107,9 @@ class SkuStockBatchController extends AdminController
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '分类');
+            $grid->column('sku.product.brand.name', '品牌');
             $grid->column('sku.attr_value_ids_str', '属性');
-            $grid->column('standard', '检验标准');
+            $grid->column('standard', '通用标准');
 //            $grid->column('percent', '含绒量（%）');
             $grid->column('batch_no');
             $grid->column('num');

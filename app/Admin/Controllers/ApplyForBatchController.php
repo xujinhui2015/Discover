@@ -36,7 +36,7 @@ class ApplyForBatchController extends AdminController
             $grid->column('item.sku.product.type_str', '分类');
             $grid->column('item.sku.product.type_str', '分类');
             $grid->column('item.sku.attr_value_ids_str', '属性');
-            $grid->column('stock_batch.standard_str', '检验标准');
+            $grid->column('stock_batch.standard_str', '通用标准');
             $grid->column('stock_batch.batch_no');
             $grid->column('actual_num', '实领数量')->if(function () use ($order) {
                 return $order->review_status !== ApplyForOrderModel::REVIEW_STATUS_OK;

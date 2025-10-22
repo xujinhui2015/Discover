@@ -147,11 +147,11 @@ class ApplyForOrderController extends OrderController
     {
         $form->width(12)->row(function (Form\Row $row) {
             $row->hasMany('items', '', function (Form\NestedForm $table) {
-                $table->select('product_id', '名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
+                $table->select('product_id', '物料名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
                 $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
                 $table->select('sku_id', '属性选择')->options()->required();
 //                $table->tableDecimal('percent', '含绒百分比')->default(0);
-                $table->select('standard', '检验标准')->options(PurchaseOrderModel::STANDARD)->default(0);
+                $table->select('standard', '通用标准')->options(PurchaseOrderModel::STANDARD)->default(0);
                 $table->num('should_num', '申领数量')->required();
             })->useTable()->width(12)->enableHorizontal();
         });
@@ -163,6 +163,7 @@ class ApplyForOrderController extends OrderController
         $grid->column('sku.product.name', '物料名称');
         $grid->column('sku.product.unit.name', '单位');
         $grid->column('sku.product.type_str', '分类');
+        $grid->column('sku.product.brand.name', '品牌');
         $grid->column('sku_id', '属性')->if(function () use ($order) {
             return $order->review_status === ApplyForOrderModel::REVIEW_STATUS_OK;
         })->display(function () {
@@ -174,7 +175,7 @@ class ApplyForOrderController extends OrderController
 //        $grid->column('percent', '含绒百分比')->if(function () use ($order) {
 //            return $order->review_status !== ApplyForOrderModel::REVIEW_STATUS_OK;
 //        })->edit();
-        $grid->column('standard', '检验标准')->if(function () use ($order) {
+        $grid->column('standard', '通用标准')->if(function () use ($order) {
             return $order->review_status === ApplyForOrderModel::REVIEW_STATUS_OK;
         })->display(function () {
             return ApplyForOrderModel::STANDARD[$this->standard];

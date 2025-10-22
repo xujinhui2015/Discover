@@ -97,6 +97,7 @@ class SaleOutOrderController extends OrderController
         $grid->column('sku.product.name', '物料名称');
         $grid->column('sku.product.unit.name', '单位');
         $grid->column('sku.product.type_str', '分类');
+        $grid->column('sku.product.brand.name', '品牌');
         $grid->column('sku_id', '属性')->if(function () use ($order) {
             return $order->review_status === SaleOutOrderModel::REVIEW_STATUS_OK;
         })->display(function () {
@@ -109,7 +110,7 @@ class SaleOutOrderController extends OrderController
 //            return $order->review_status !== SaleOutOrderModel::REVIEW_STATUS_OK;
 //        })->edit();
 
-        $grid->column('standard', '检验标准')->if(function () use ($order) {
+        $grid->column('standard', '通用标准')->if(function () use ($order) {
             return $order->review_status === SaleOutOrderModel::REVIEW_STATUS_OK;
         })->display(function () {
             return PurchaseOrderModel::STANDARD[$this->standard];

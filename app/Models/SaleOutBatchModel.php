@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $stock_batch_id 出库物料批次id
  * @property string $percent 含绒量
- * @property int $standard 检验标准
+ * @property int $standard 通用标准
  * @property-read \App\Models\SaleOutItemModel $item
  * @property-read \App\Models\SkuStockBatchModel $stock_batch
  * @method static \Illuminate\Database\Eloquent\Builder|SaleOutBatchModel newModelQuery()

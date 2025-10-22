@@ -92,11 +92,11 @@ class PurchaseInOrderController extends OrderController
     {
         $form->width(12)->row(function (Form\Row $row) {
             $row->hasMany('items', '', function (Form\NestedForm $table) {
-                $table->select('product_id', '名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
+                $table->select('product_id', '物料名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
                 $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
                 $table->select('sku_id', '属性选择')->options()->required();
 //                $table->tableDecimal('percent', '含绒百分比')->default(0);
-                $table->select('standard', '检验标准')->options(PurchaseOrderModel::STANDARD)->default(0);
+                $table->select('standard', '通用标准')->options(PurchaseOrderModel::STANDARD)->default(0);
                 $table->num('should_num', '采购数量')->required();
                 $table->tableDecimal('price', '采购价格')->default(0.00)->required();
                 $table->select('position_id', '入库位置')->options(PositionModel::orderBy('id', 'desc')->pluck('name', 'id'));
@@ -116,6 +116,7 @@ class PurchaseInOrderController extends OrderController
         $grid->column('sku.product.name', '物料名称');
         $grid->column('sku.product.unit.name', '单位');
         $grid->column('sku.product.type_str', '分类');
+        $grid->column('sku.product.brand.name', '品牌');
 
         $grid->column('sku_id', '属性')->if(function () use ($order,$review_statu_ok) {
             return $order->review_status === $review_statu_ok;
@@ -128,7 +129,7 @@ class PurchaseInOrderController extends OrderController
 //        $grid->column('percent', '含绒百分比')->if(function () use ($order, $review_statu_ok) {
 //            return $order->review_status !== $review_statu_ok;
 //        })->edit();
-        $grid->column('standard', '检验标准')->if(function () use ($order) {
+        $grid->column('standard', '通用标准')->if(function () use ($order) {
             return $order->review_status === PurchaseOrderModel::REVIEW_STATUS_OK;
         })->display(function () {
             return PurchaseOrderModel::STANDARD[$this->standard];

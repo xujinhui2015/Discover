@@ -30,7 +30,7 @@ class CreateInitStockItemTable extends Migration
             $table->unsignedInteger('order_id')->default('0')->comment('订单id');
             $table->unsignedInteger('sku_id')->default('0')->comment('skuId');
             $table->decimal('percent')->default('0')->comment('含绒量');
-            $table->unsignedTinyInteger('standard')->default('0')->comment('检验标准');
+            $table->unsignedTinyInteger('standard')->default('0')->comment('通用标准');
             $table->unsignedInteger('actual_num')->default('0')->comment('期初库存');
             $table->decimal('cost_price')->default('0')->comment('成本价格');
             $table->unsignedInteger('position_id')->default('0')->comment('库位');

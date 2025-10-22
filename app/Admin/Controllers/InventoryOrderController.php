@@ -92,7 +92,7 @@ class InventoryOrderController extends OrderController
         $grid->column('stock_batch.sku.attr_value_ids_str', '属性');
         $grid->column('stock_batch.batch_no', '批次号');
 //        $grid->column('stock_batch.percent', '含绒量');
-        $grid->column('stock_batch.standard_str', '检验标准');
+        $grid->column('stock_batch.standard_str', '通用标准');
         $grid->column('cost_price', "成本单价");
         $grid->column('should_num', '库存数量');
         $grid->column("actual_num", "实盘数量")->if(function (Grid\Column $colum) use ($order) {

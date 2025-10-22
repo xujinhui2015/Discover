@@ -31,7 +31,7 @@ class CreateApplyForReturnOrderTable extends Migration
             $table->id();
             $table->unsignedInteger('order_id')->index()->default(0)->comment('关联单据');
             $table->unsignedInteger('sku_id')->default(0)->comment('商品的skuId');
-            $table->unsignedTinyInteger('standard')->default(0)->comment('检验标准');
+            $table->unsignedTinyInteger('standard')->default(0)->comment('通用标准');
             $table->unsignedDecimal('should_num')->default(0.00)->comment('返仓数量');
             $table->softDeletes();
             $table->timestamps();

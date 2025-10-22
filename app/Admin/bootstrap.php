@@ -12,6 +12,7 @@
  * // +----------------------------------------------------------------------
  */
 
+use Dcat\Admin\Admin;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid\Filter;
@@ -60,6 +61,7 @@ Form\Field::macro('enableHorizontal', function () {
 });
 
 \App\Admin\Extensions\Form\Select::macro();
+\App\Admin\Extensions\Form\SelectTable::macro();
 
 Dcat\Admin\Grid\Column::extend('emp', \App\Admin\Extensions\Grid\EmptyData::class);
 Dcat\Admin\Grid\Column::extend('fee', \App\Admin\Extensions\Grid\Fee::class);
@@ -86,5 +88,13 @@ $script = <<<'JS'
         })
 JS;
 Admin::script($script);
+
+
+Admin::style(<<<CSS
+    span[aria-labelledby*="product_id"] {
+    width: 300px !important;
+}
+CSS
+);
 
 app('view')->prependNamespace('admin', resource_path('views/vendor/laravel-admin'));

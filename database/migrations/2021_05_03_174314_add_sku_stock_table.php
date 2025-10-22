@@ -27,7 +27,7 @@ class AddSkuStockTable extends Migration
     {
         Schema::table('sku_stock', function (Blueprint $table) {
             $table->decimal('percent', 10, 2)->default(0)->comment('含绒量');
-            $table->unsignedTinyInteger('standard')->default(0)->comment('检验标准');
+            $table->unsignedTinyInteger('standard')->default(0)->comment('通用标准');
         });
     }
 

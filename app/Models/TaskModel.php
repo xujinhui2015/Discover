@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $order_no 任务单号
  * @property int $sku_id 商品
  * @property string $percent 含绒量
- * @property int $standard 检验标准
+ * @property int $standard 通用标准
  * @property string $plan_num 计划数量
  * @property string $finish_num 完成数量
  * @property int $craft_id 生产工艺

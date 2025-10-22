@@ -44,7 +44,7 @@ namespace App\Models;
  * @method static \Illuminate\Database\Eloquent\Builder|SaleInItemModel whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property string $percent 含绒量
- * @property int $standard 检验标准
+ * @property int $standard 通用标准
  * @method static \Illuminate\Database\Eloquent\Builder|SaleInItemModel wherePercent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SaleInItemModel whereStandard($value)
  */

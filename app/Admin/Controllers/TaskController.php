@@ -17,6 +17,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Grid\AddApplyForOrder;
 use App\Admin\Actions\Grid\AddMakeProduct;
 use App\Admin\Extensions\Grid\ApplyOfOrders;
+use App\Admin\Renderables\ProductTable;
 use App\Admin\Repositories\Task;
 use App\Models\CraftModel;
 use App\Models\ProductModel;
@@ -101,12 +102,24 @@ class TaskController extends AdminController
             });
             $form->row(function (Form\Row $row) {
                 $row->width(4)->text('order_no', '订单号')->default(build_order_no('SCRW'))->readOnly();
-                $row->width(4)->select('product_id', '名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
+                $row->width(4)
+                    ->select('product_id', '物料名称')
+                    ->options(ProductModel::pluck('name', 'id'))
+                    ->loadpku(route('api.product.find'))
+                    ->required();
+
+//                $row->selectTable('product_id', '物料')
+//                    ->title('物料列表')
+//                    ->placeholder('请选择物料')
+//                    ->from(ProductTable::make()) // 设置渲染类实例，并传递自定义参数
+//                    ->loadpku(route('api.product.find'))
+//                    ->model(ProductModel::class, 'id', 'name');
+
                 $row->width(4)->ipt('unit', '单位')->rem(3)->default('-')->disable();
             });
             $form->row(function (Form\Row $row) {
                 $row->width(4)->select('sku_id', '属性选择')->options()->required();
-                $row->width(4)->select('standard', '检验标准')->options(SkuStockBatchModel::STANDARD)->required();
+                $row->width(4)->select('standard', '通用标准')->options(SkuStockBatchModel::STANDARD)->required();
 //                $row->width(4)->rate('percent', '含绒百分比')->default(0)->required();
             });
 

@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $item_id 订单明细id
  * @property string $actual_num 实领数量
  * @property int $stock_batch_id 出库批次库存id
- * @property int $standard 检验标准
+ * @property int $standard 通用标准
  * @property string $percent 含绒量
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
