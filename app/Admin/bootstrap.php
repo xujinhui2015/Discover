@@ -97,4 +97,21 @@ Admin::style(<<<CSS
 CSS
 );
 
+// 调整过滤框字体大小
+//Admin::style(<<<CSS
+//.input-group-sm>.input-group-prepend>.input-group-text {
+//   font-size: .9rem !important;
+//}
+//.input-group-sm>.form-control::placeholder{
+//font-size: .8rem !important;
+//}
+//.input-group-sm .select2-container--default .select2-selection--single{
+//font-size: .8rem!important;
+//}
+//.custom-data-table-header .table-responsive .top .dataTables_filter .form-control::placeholder {
+//    font-size: .8rem;
+//}
+//CSS
+//);
+
 app('view')->prependNamespace('admin', resource_path('views/vendor/laravel-admin'));
