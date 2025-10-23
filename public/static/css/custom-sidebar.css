@@ -1,0 +1,420 @@
+/* 自定义侧边栏导航菜单样式 - 使用!important确保优先级 */
+
+/* 全局侧边栏容器样式增强 */
+.main-sidebar {
+  background-color: #eeeeee !important;
+  border-right: 1px solid #e0e0e0 !important;
+  box-shadow: 1px 0 5px rgba(0, 173, 181, 0.1) !important;
+  transition: all 0.2s ease !important;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+/* 侧边栏容器样式 - 匹配选中元素 */
+.sidebar {
+  background-color: #00adb5 !important;
+  overflow-y: auto !important;
+  padding-bottom: 10px !important;
+  height: calc(100vh - 60px);
+}
+
+.sidebar.pb-3 {
+  padding-bottom: 10px !important;
+  background-color: #00adb5 !important;
+}
+/* 导航栏头部底色 */
+.navbar-header {
+  background-color: #00adb5 !important;
+}
+
+/* 侧边栏折叠状态下的样式 */
+.main-sidebar.collapsed {
+  width: 64px !important;
+}
+
+/* 导航菜单容器样式 */
+.sidebar .nav {
+  padding: 0;
+  margin-top: 10px !important;
+}
+
+/* 菜单项基础样式 */
+.sidebar .nav-item {
+  position: relative;
+  margin-bottom: 2px !important;
+  transition: all 0.2s ease !important;
+  margin-left: 8px !important;
+  margin-right: 8px !important;
+  border-radius: 4px;
+}
+
+/* 带有子菜单的菜单项 */
+.sidebar .nav-item.has-treeview {
+  margin-bottom: 2px !important;
+}
+
+/* 菜单项悬停效果 */
+.sidebar .nav-item:hover {
+  background-color: #00adb5 !important;
+  transform: none !important;
+}
+
+/* 菜单链接样式 */
+.sidebar .nav-link {
+  display: flex !important;
+  align-items: center !important;
+  padding: 12px 15px !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  border-radius: 4px !important;
+  height: auto !important;
+  min-height: 46px !important;
+  border-left: none !important;
+  position: relative;
+}
+
+/* 菜单链接悬停效果 */
+.sidebar .nav-link:hover {
+  color: #fff !important;
+  background-color: #222831 !important;
+  border-left-color: #312222 !important;
+}
+
+/* 当前激活菜单项样式 */
+.sidebar .nav-link.active {
+  color: white !important;
+  background-color: #1b191a !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 6px rgba(34, 40, 49, 0.4) !important;
+  border-left: none !important;
+}
+
+/* 菜单项图标样式 */
+.sidebar .nav-link i {
+  margin-right: 12px !important;
+  font-size: 16px !important;
+  width: 20px !important;
+  text-align: center !important;
+  transition: all 0.2s ease !important;
+  color: #fff !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  height: auto !important;
+  border-radius: 0 !important;
+}
+
+/* 子菜单容器样式 */
+.sidebar .nav-treeview {
+  background-color: #00adb5 !important;
+  padding-left: 0 !important;
+  display: none;
+  transition: all 0.2s ease !important;
+  border-left: 1px solid rgba(0, 173, 181, 0.2);
+  margin-left: 15px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* 展开的子菜单样式 */
+.sidebar .menu-open > .nav-treeview {
+  display: block;
+}
+
+/* 子菜单项样式 */
+.sidebar .nav-treeview > .nav-item {
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+  margin-bottom: 1px !important;
+  background-color: transparent;
+  border-radius: 3px;
+}
+
+/* 子菜单链接样式 - 匹配选中元素中的缩进 */
+.sidebar .nav-treeview > .nav-item > .nav-link {
+  padding: 8px 15px !important;
+  padding-left: 30px !important;
+  font-size: 13px !important;
+  height: auto !important;
+  border-left: 2px solid transparent !important;
+  color: #fff !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  min-height: 36px !important;
+  border-radius: 3px;
+}
+
+/* 子菜单图标样式 - 匹配选中元素中的样式 */
+.sidebar .nav-treeview .nav-link i {
+  margin-right: 8px !important;
+  font-size: 12px !important;
+  color: #fff !important;
+  width: 12px !important;
+  text-align: center !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  height: auto !important;
+  border-radius: 0 !important;
+}
+
+/* 确保子菜单项前的空格正确显示 */
+.sidebar .nav-treeview .nav-link i:before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background-color: #00adb5;
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+.sidebar .nav-treeview .nav-link.active i:before {
+  opacity: 1;
+}
+
+/* 子菜单激活样式 */
+.sidebar .nav-treeview .nav-link.active {
+  color: #fff !important;
+  background-color: #312223 !important;
+  border-left-color: #fff !important;
+  padding-left: 28px !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* 子菜单链接悬停效果 */
+.sidebar .nav-treeview .nav-link:hover {
+  color: #fff !important;
+  background-color: #312224 !important;
+  padding-left: 28px !important;
+  border-left-color: #222831 !important;
+  transform: none !important;
+}
+
+/* 子菜单激活状态下的图标样式 */
+.sidebar .nav-treeview .nav-link.active i {
+  color: #fff !important;
+  background-color: transparent !important;
+  transform: none !important;
+}
+
+/* 子菜单悬停时的图标样式 */
+.sidebar .nav-treeview .nav-link:hover i {
+  color: #fff !important;
+  background-color: transparent !important;
+  transform: none !important;
+}
+
+/* 下拉箭头样式增强 */
+.sidebar .nav-link .fa-angle-left {
+  transition: transform 0.3s ease !important;
+  margin-left: auto !important;
+  font-size: 12px !important;
+  color: #fff !important;
+  background: none !important;
+  box-shadow: none !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* 展开状态下的下拉箭头 */
+.sidebar .menu-open > .nav-link .fa-angle-left {
+  transform: rotate(90deg) !important;
+  color: #00adb5 !important;
+}
+
+/* 确保激活菜单项的下拉箭头颜色 */
+.sidebar .nav-link.active .fa-angle-left {
+  color: white !important;
+}
+
+/* 全局侧边栏容器样式增强 */
+.main-sidebar {
+  background-color: #eeeeee !important;
+  border-right: 1px solid #e0e0e0 !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+}
+
+/* 确保所有菜单项样式优先级 */
+body .sidebar .nav-link {
+  background-color: transparent !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .main-sidebar {
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+    background-color: #eeeeee !important;
+    box-shadow: 0 2px 10px rgba(0, 173, 181, 0.1) !important;
+  }
+}
+
+body .sidebar .nav-link.active {
+  background-color: #222831 !important;
+  color: white !important;
+  box-shadow: none !important;
+}
+
+/* 下拉箭头样式 */
+.sidebar .nav-link .fa-angle-left {
+  transition: transform 0.3s ease;
+  margin-left: auto;
+  font-size: 12px;
+}
+
+/* 展开状态下的下拉箭头 */
+.sidebar .menu-open > .nav-link .fa-angle-left {
+  transform: rotate(90deg);
+}
+
+/* 菜单标题样式 */
+.sidebar .nav-header {
+  padding: 12px 15px;
+  color: #00adb5;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: rgba(0, 173, 181, 0.1);
+  border-bottom: 1px solid rgba(0, 173, 181, 0.2);
+}
+
+/* 侧边栏折叠时的特殊处理 */
+.sidebar.collapsed .nav-item .nav-link span:not(.right) {
+  display: none !important;
+}
+
+.sidebar.collapsed .nav-link i {
+  margin-right: 0 !important;
+  font-size: 20px !important;
+  width: 32px !important;
+  height: 32px !important;
+  background-color: #00adb5 !important;
+  color: white !important;
+  box-shadow: 0 2px 4px rgba(0, 173, 181, 0.4) !important;
+}
+
+/* 菜单展开时的平滑过渡效果 */
+.sidebar .nav-item, .sidebar .nav-treeview {
+  transition: all 0.3s ease;
+}
+
+/* 菜单项点击动画效果 */
+.sidebar .nav-link:active {
+  transform: scale(0.98);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .main-sidebar {
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+    background-color: #eeeeee !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+  }
+  
+  .sidebar .nav {
+    flex-direction: column !important;
+  }
+  
+  .sidebar .nav-item {
+    margin: 1px 4px !important;
+  }
+}
+
+/* 保持侧边栏滚动条正常工作 */
+.sidebar.ps {
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.sidebar.ps .ps__rail-y {
+  width: 6px !important;
+  opacity: 0.6;
+}
+
+.sidebar.ps .ps__thumb-y {
+  background: rgba(0, 173, 181, 0.3) !important;
+  border-radius: 3px;
+}
+
+/* 自定义滚动条样式 */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(0, 173, 181, 0.05);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(0, 173, 181, 0.3);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 173, 181, 0.5);
+}
+
+/* 侧边栏品牌标题样式 */
+.sidebar-brand {
+  background: linear-gradient(135deg, #00adb5 0%, #00adb5 100%) !important;
+  color: #fff !important;
+  padding: 18px 0 !important;
+  margin-bottom: 0 !important;
+  text-align: center !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 8px rgba(0, 173, 181, 0.3) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.sidebar-brand a {
+  color: #fff !important;
+  text-decoration: none !important;
+}
+
+.sidebar-brand .logo-mini,
+.sidebar-brand .logo-lg {
+   color: #fff !important;
+}
+
+/* 头部系统标题色 */
+.navbar-brand {
+   color: #fff !important;
+}
+
+.navbar-brand .logo-mini,
+.navbar-brand .logo-lg {
+   color: #fff !important;
+}
+
+/* 确保当前激活菜单项图标颜色变化 */
+.sidebar .nav-link.active i {
+  color: white !important;
+  background-color: transparent !important;
+  transform: none !important;
+}
+
+/* 菜单项悬停时图标颜色变化 */
+.sidebar .nav-link:hover i {
+  color: #fff !important;
+  background-color: transparent !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* 确保第一个主菜单项颜色与其他菜单项一致 */
+.sidebar .nav > li:first-child > .nav-link {
+  color: #fff !important;
+  background-color: transparent !important;
+}

@@ -8,8 +8,6 @@
  * // +----------------------------------------------------------------------
  * // | Licensed ( LICENSE-1.0.0 )
  * // +----------------------------------------------------------------------
- * // | Author: yxx <1365831278@qq.com>
- * // +----------------------------------------------------------------------
  */
 
 use Dcat\Admin\Admin;
@@ -181,3 +179,5 @@ JS);
 
 
 Admin::css('/static/css/custom-select2.css');
+Admin::css('/static/css/custom-sidebar.css');
+Admin::css('/static/css/modern-navbar.css');

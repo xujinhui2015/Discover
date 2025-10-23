@@ -1,13 +1,13 @@
 @if($user)
 <li class="dropdown dropdown-user nav-item">
     <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
-        <div class="user-nav d-sm-flex d-none">
-            <span class="user-name text-bold-600">{{ $user->name }}</span>
-            <span class="user-status"><i class="fa fa-circle text-success"></i> {{ trans('admin.online') }}</span>
+        <div class="user-info-container">
+            <img class="round" src="{{ $user->getAvatar() }}" alt="avatar" height="32" width="32" />
+            <div class="user-name-status d-sm-block d-none">
+                <div class="user-name">{{ $user->name }}</div>
+                <div class="user-status"><i class="fa fa-circle"></i> {{ trans('admin.online') }}</div>
+            </div>
         </div>
-        <span>
-            <img class="round" src="{{ $user->getAvatar() }}" alt="avatar" height="40" width="40" />
-        </span>
     </a>
     <div class="dropdown-menu dropdown-menu-right">
         <a href="{{ admin_url('auth/setting') }}" class="dropdown-item">
