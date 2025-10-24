@@ -10,21 +10,23 @@
   overflow-x: hidden;
 }
 
-/* 侧边栏容器样式 - 匹配选中元素 */
+/* 侧边栏容器样式增强 */
 .sidebar {
-  background-color: #00adb5 !important;
+  background-color: #343a40 !important;
   overflow-y: auto !important;
   padding-bottom: 10px !important;
   height: calc(100vh - 60px);
+  border-left: none !important;
+  border-right: none !important;
 }
 
 .sidebar.pb-3 {
   padding-bottom: 10px !important;
-  background-color: #00adb5 !important;
+  background-color: #343a40 !important;
 }
 /* 导航栏头部底色 */
 .navbar-header {
-  background-color: #00adb5 !important;
+  background-color: #343a40 !important;
 }
 
 /* 侧边栏折叠状态下的样式 */
@@ -55,7 +57,7 @@
 
 /* 菜单项悬停效果 */
 .sidebar .nav-item:hover {
-  background-color: #00adb5 !important;
+  background-color: #495057 !important;
   transform: none !important;
 }
 
@@ -78,17 +80,26 @@
 /* 菜单链接悬停效果 */
 .sidebar .nav-link:hover {
   color: #fff !important;
-  background-color: #222831 !important;
-  border-left-color: #312222 !important;
+  background-color: #495057 !important;
+  border-left-color: #17a2b8 !important;
 }
 
 /* 当前激活菜单项样式 */
 .sidebar .nav-link.active {
   color: white !important;
-  background-color: #1b191a !important;
+  background-color: #00adb5 !important;
   font-weight: 600 !important;
-  box-shadow: 0 2px 6px rgba(34, 40, 49, 0.4) !important;
-  border-left: none !important;
+  box-shadow: none !important;
+  border-left: 3px solid #17a2b8 !important;
+}
+
+/* 为无子菜单的主菜单项添加更具体的样式 */
+.sidebar .nav-item:not(.has-treeview) > .nav-link.active {
+  background-color: #00adb5 !important;
+  color: white !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  border-left: 3px solid #17a2b8 !important;
 }
 
 /* 菜单项图标样式 */
@@ -107,28 +118,39 @@
 
 /* 子菜单容器样式 */
 .sidebar .nav-treeview {
-  background-color: #00adb5 !important;
-  padding-left: 0 !important;
+  background-color: #343a40 !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
   display: none;
   transition: all 0.2s ease !important;
-  border-left: 1px solid rgba(0, 173, 181, 0.2);
+  border: none !important;
   margin-left: 15px !important;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
 }
 
 /* 展开的子菜单样式 */
 .sidebar .menu-open > .nav-treeview {
   display: block;
+  border-left: 2px solid #17a2b8 !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
 }
 
 /* 子菜单项样式 */
 .sidebar .nav-treeview > .nav-item {
   padding-left: 0 !important;
-  margin-left: 0 !important;
-  margin-bottom: 1px !important;
+  margin-left: 4px !important;
+  margin-right: 4px !important;
+  margin-bottom: 2px !important;
   background-color: transparent;
   border-radius: 3px;
+  box-shadow: none !important;
 }
 
 /* 子菜单链接样式 - 匹配选中元素中的缩进 */
@@ -143,6 +165,7 @@
   box-shadow: none !important;
   min-height: 36px !important;
   border-radius: 3px;
+  transition: all 0.2s ease !important;
 }
 
 /* 子菜单图标样式 - 匹配选中元素中的样式 */
@@ -158,39 +181,32 @@
   border-radius: 0 !important;
 }
 
-/* 确保子菜单项前的空格正确显示 */
+/* 移除子菜单项前的圆点样式，简化显示 */
 .sidebar .nav-treeview .nav-link i:before {
-  content: '';
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  background-color: #00adb5;
-  border-radius: 50%;
-  opacity: 0.7;
-}
-
-.sidebar .nav-treeview .nav-link.active i:before {
-  opacity: 1;
+  content: none !important;
 }
 
 /* 子菜单激活样式 */
 .sidebar .nav-treeview .nav-link.active {
   color: #fff !important;
-  background-color: #312223 !important;
+  background-color: #17a2b8 !important;
   border-left-color: #fff !important;
   padding-left: 28px !important;
   font-weight: 600 !important;
   box-shadow: none !important;
   transform: none !important;
+  transition: all 0.2s ease !important;
 }
 
 /* 子菜单链接悬停效果 */
 .sidebar .nav-treeview .nav-link:hover {
   color: #fff !important;
-  background-color: #312224 !important;
+  background-color: #495057 !important;
   padding-left: 28px !important;
-  border-left-color: #222831 !important;
+  border-left-color: #17a2b8 !important;
   transform: none !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
 }
 
 /* 子菜单激活状态下的图标样式 */
@@ -222,7 +238,7 @@
 /* 展开状态下的下拉箭头 */
 .sidebar .menu-open > .nav-link .fa-angle-left {
   transform: rotate(90deg) !important;
-  color: #00adb5 !important;
+  color: #17a2b8 !important;
 }
 
 /* 确保激活菜单项的下拉箭头颜色 */
@@ -232,8 +248,8 @@
 
 /* 全局侧边栏容器样式增强 */
 .main-sidebar {
-  background-color: #eeeeee !important;
-  border-right: 1px solid #e0e0e0 !important;
+  background-color: #343a40 !important;
+  border-right: 1px solid #495057 !important;
   box-shadow: none !important;
   transition: all 0.2s ease !important;
 }
@@ -251,15 +267,16 @@ body .sidebar .nav-link {
     width: 100% !important;
     height: auto !important;
     position: relative !important;
-    background-color: #eeeeee !important;
-    box-shadow: 0 2px 10px rgba(0, 173, 181, 0.1) !important;
+    background-color: #343a40 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
   }
 }
 
 body .sidebar .nav-link.active {
-  background-color: #222831 !important;
+  background-color: #407BFF !important;
   color: white !important;
   box-shadow: none !important;
+  font-weight: 600 !important;
 }
 
 /* 下拉箭头样式 */
@@ -277,13 +294,13 @@ body .sidebar .nav-link.active {
 /* 菜单标题样式 */
 .sidebar .nav-header {
   padding: 12px 15px;
-  color: #00adb5;
+  color: #adb5bd;
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background-color: rgba(0, 173, 181, 0.1);
-  border-bottom: 1px solid rgba(0, 173, 181, 0.2);
+  background-color: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* 侧边栏折叠时的特殊处理 */
@@ -296,9 +313,9 @@ body .sidebar .nav-link.active {
   font-size: 20px !important;
   width: 32px !important;
   height: 32px !important;
-  background-color: #00adb5 !important;
+  background-color: #495057 !important;
   color: white !important;
-  box-shadow: 0 2px 4px rgba(0, 173, 181, 0.4) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* 菜单展开时的平滑过渡效果 */
@@ -342,7 +359,7 @@ body .sidebar .nav-link.active {
 }
 
 .sidebar.ps .ps__thumb-y {
-  background: rgba(0, 173, 181, 0.3) !important;
+  background: rgba(255, 255, 255, 0.2) !important;
   border-radius: 3px;
 }
 
@@ -352,30 +369,30 @@ body .sidebar .nav-link.active {
 }
 
 .sidebar::-webkit-scrollbar-track {
-  background: rgba(0, 173, 181, 0.05);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 3px;
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-  background: rgba(0, 173, 181, 0.3);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
 }
 
 .sidebar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 173, 181, 0.5);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* 侧边栏品牌标题样式 */
 .sidebar-brand {
-  background: linear-gradient(135deg, #00adb5 0%, #00adb5 100%) !important;
+  background: linear-gradient(135deg, #2c3e50 0%, #343a40 100%) !important;
   color: #fff !important;
   padding: 18px 0 !important;
   margin-bottom: 0 !important;
   text-align: center !important;
   font-size: 16px !important;
   font-weight: 600 !important;
-  box-shadow: 0 2px 8px rgba(0, 173, 181, 0.3) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .sidebar-brand a {
@@ -417,4 +434,55 @@ body .sidebar .nav-link.active {
 .sidebar .nav > li:first-child > .nav-link {
   color: #fff !important;
   background-color: transparent !important;
+}
+
+/* 全局覆盖所有可能的红色边框 */
+.sidebar * {
+  border-color: inherit !important;
+}
+
+/* 确保侧边栏所有边框都使用深色主题色 */
+.sidebar, .sidebar *, .main-sidebar, .navbar-header {
+  border-color: #495057 !important;
+  border-left-color: #495057 !important;
+  border-right-color: #495057 !important;
+  border-top-color: #495057 !important;
+  border-bottom-color: #495057 !important;
+}
+
+/* 面包屑链接样式 */
+.breadcrumb a {
+    color: #00adb5 !important;
+    text-decoration: none !important;
+}
+
+.breadcrumb a:hover,
+.breadcrumb a:focus {
+    color: #008c96 !important;
+    text-decoration: none !important;
+}
+
+/* 分页组件链接样式 */
+.pagination > li > a,
+.pagination > li > span {
+    color: #00adb5 !important;
+}
+
+.pagination > li > a:hover,
+.pagination > li > span:hover,
+.pagination > li > a:focus,
+.pagination > li > span:focus {
+    color: #008c96 !important;
+}
+
+/* 分页组件当前活动页样式 */
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus {
+    background-color: #00adb5 !important;
+    border-color: #00adb5 !important;
+    color: #ffffff !important;
 }

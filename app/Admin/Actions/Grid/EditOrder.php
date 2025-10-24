@@ -19,45 +19,39 @@ use Dcat\Admin\Grid\RowAction;
 
 class EditOrder extends RowAction
 {
-
-
-    public function id()
-    {
-        return "row-edit-select-resourc{$this->getKey()}";
-    }
-
-    public function render()
-    {
-        parent::render();
-        return <<<HTML
-<span class="grid-expand">
-   <a href="javascript:void(0)" id="{$this->id()}"><i class="feather icon-edit grid-action-icon"></i></a>
-</span>
-HTML;
-    }
+    /**
+     * @return string
+     */
+    protected $title = '操作';
 
     /**
      * @return string
      */
-    public function action()
+    public function html()
     {
-        return $this->resource() . "/" . $this->getKey() . "/edit";
+        $showBtn = $this->row('review_status') === BaseModel::REVIEW_STATUS_OK ? 'no' : 'yes';
+        $action = $this->resource() . "/" . $this->getKey() . "/edit";
+        return <<<HTML
+<a class="{$this->getElementClass()} btn btn-xs btn-primary" data-show-btn="{$showBtn}" href="javascript:void(0)" data-action="$action" style="padding: 3px 8px; border-radius: 3px; display: inline-flex; align-items: center; cursor: pointer; transition: all 0.2s ease;">
+    {$this->title()}
+  </a>
+HTML;
     }
 
     public function script()
     {
-        $showBtn = $this->row('review_status') === BaseModel::REVIEW_STATUS_OK ? 'no' : 'yes';
-        $lable   = admin_trans_label();
+        $class = $this->getElementClass();
+        $title = admin_trans_label();
         return <<<JS
-        $("#{$this->id()}").on("click",function(){
-            var show_btn = '{$showBtn}';
+        $(" .{$class}").on("click",function(){
+            var action = $(this).data('action');
+            var show_btn = $(this).data('show-btn');
             var option = {
-                title:'$lable',
+                title:'{$title}',
                 type: 2,
                 area: ['65%', '80%'], //宽高
-                content:["{$this->action()}"],
+                content:[action],
                 scrollbar:false,
-                // maxmin:true,
                 end: function(){
                     Dcat.reload();
                 },
@@ -71,7 +65,7 @@ HTML;
                     $.ajax({
                         type: "POST",
                         dataType: "json",
-                        url: url ,//url
+                        url: url,
                         data: orderInfo.serialize(),
                         success: function (data) {
                             if (data.status) {
@@ -90,9 +84,8 @@ HTML;
                     layer.close(index);
                 };
             }
-            layer.open(option)
-
-        })
+            layer.open(option);
+        });
 JS;
     }
 }
