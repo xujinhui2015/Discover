@@ -141,7 +141,7 @@ class ProductCheckForm extends Form implements LazyRenderable
 //            $row->width(4)->rate('bulkiness', '蓬松度')->default(0);
             // 合格/不合格
             $row->width(4)
-                ->radio('cleanliness', 'IFRA 合规认证核查')
+                ->select('cleanliness', 'IFRA 合规认证核查')
                 ->options([
                     0 => '是',
                     1 => '否',
@@ -152,7 +152,7 @@ class ProductCheckForm extends Form implements LazyRenderable
                 ->default(0);
             // 符合/不符合
             $row->width(4)
-                ->radio('bulkiness', '配方成分合规性')
+                ->select('bulkiness', '配方成分合规性')
                 ->options([
                     0 => '是',
                     1 => '否',
@@ -164,7 +164,7 @@ class ProductCheckForm extends Form implements LazyRenderable
 //            $row->width(4)->rate('duck_ratio', '鸭比')->default(0);
             // 合格/不合格
             $row->width(4)
-                ->radio('odor', '香气纯度')
+                ->select('odor', '香气纯度')
                 ->options([
                     0 => '是',
                     1 => '否',
