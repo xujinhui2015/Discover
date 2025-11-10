@@ -1,0 +1,200 @@
+/* 筛选框字体大小统一调整 */
+
+/* 筛选框容器中的输入框字体大小 */
+.filter-box .input-group-sm .form-control,
+.filter-box .input-group-sm input[type="text"],
+.filter-box .input-group-sm input[type="number"],
+.filter-box .input-group-sm input[type="date"],
+.filter-box .input-group-sm input[type="datetime-local"],
+.filter-box .input-group-sm select {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+}
+
+/* 筛选框标签字体大小 */
+.filter-box .input-group-sm .input-group-text {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 1.5 !important;
+}
+
+/* 筛选框占位符文本字体大小 */
+.filter-box .input-group-sm .form-control::placeholder {
+    font-size: 14px !important;
+}
+
+/* Select2下拉框字体大小 */
+.filter-box .input-group-sm .select2-container--default .select2-selection--single,
+.filter-box .input-group-sm .select2-container--default .select2-selection--multiple {
+    font-size: 14px !important;
+}
+
+/* Select2下拉菜单选项字体大小 */
+.filter-box .select2-dropdown .select2-results__option {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+}
+
+/* Select2搜索框字体大小 */
+.filter-box .select2-search--dropdown .select2-search__field {
+    font-size: 14px !important;
+}
+
+/* 筛选框中的下拉菜单项字体大小 */
+.filter-box .dropdown-menu .dropdown-item {
+    font-size: 14px !important;
+}
+
+/* 筛选框中的分组标签字体大小 */
+.filter-box .filter-group {
+    font-size: 14px !important;
+}
+
+/* 筛选框中的"To"分隔符字体大小 */
+.filter-box .input-group-addon {
+    font-size: 14px !important;
+}
+
+/* 确保输入框高度适配字体大小 - 使用auto让浏览器自动计算，保持与字体大小匹配 */
+.filter-box .input-group-sm .form-control {
+    padding: 0.4rem 0.75rem !important;
+    min-height: 34px !important;
+}
+
+/* Select2选择框高度适配 */
+.filter-box .input-group-sm .select2-container--default .select2-selection--single {
+    min-height: 34px !important;
+    height: 34px !important;
+}
+
+.filter-box .input-group-sm .select2-container--default .select2-selection--single .select2-selection__rendered {
+    font-size: 14px !important;
+    line-height: 34px !important;
+    padding-left: 8px !important;
+    padding-right: 20px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    height: 34px !important;
+    display: block !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+}
+
+.filter-box .input-group-sm .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 32px !important;
+    top: 1px !important;
+    right: 1px !important;
+}
+
+.filter-box .input-group-sm .select2-container--default .select2-selection--single .select2-selection__arrow b {
+    margin-top: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+/* Select2占位符文本垂直对齐 - 占位符继承父元素的line-height */
+.filter-box .input-group-sm .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #999 !important;
+    line-height: 34px !important;
+}
+
+/* 多选Select2高度适配 */
+.filter-box .input-group-sm .select2-container--default .select2-selection--multiple {
+    min-height: 34px !important;
+    padding: 2px 4px !important;
+}
+
+.filter-box .input-group-sm .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+    font-size: 14px !important;
+    padding: 0 !important;
+    padding-left: 4px !important;
+    display: block !important;
+    line-height: 28px !important;
+    min-height: 28px !important;
+}
+
+.filter-box .input-group-sm .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    display: inline-flex !important;
+    align-items: center !important;
+    margin: 2px 4px 2px 0 !important;
+    padding: 2px 6px !important;
+    line-height: 1.4 !important;
+    vertical-align: middle !important;
+}
+
+.filter-box .input-group-sm .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    margin-right: 4px !important;
+    line-height: 1 !important;
+}
+
+.filter-box .input-group-sm .select2-container--default .select2-selection--multiple .select2-search--inline {
+    display: inline-block !important;
+    vertical-align: middle !important;
+    margin: 0 !important;
+}
+
+.filter-box .input-group-sm .select2-container--default .select2-selection--multiple .select2-search--inline .select2-search__field {
+    margin: 0 !important;
+    padding: 0 4px !important;
+    height: 24px !important;
+    line-height: 24px !important;
+    vertical-align: middle !important;
+}
+
+/* 多选Select2占位符对齐 */
+.filter-box .input-group-sm .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
+    line-height: 28px !important;
+    color: #999 !important;
+    padding-left: 4px !important;
+}
+
+/* 输入组文本高度适配 */
+.filter-box .input-group-sm .input-group-text {
+    padding: 0.4rem 0.75rem !important;
+    min-height: 34px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* 日期时间选择器弹出面板字体大小 */
+.filter-box .bootstrap-datetimepicker-widget,
+.filter-box .datetimepicker {
+    font-size: 14px !important;
+}
+
+.filter-box .bootstrap-datetimepicker-widget table th,
+.filter-box .bootstrap-datetimepicker-widget table td,
+.filter-box .datetimepicker table th,
+.filter-box .datetimepicker table td {
+    font-size: 14px !important;
+}
+
+.filter-box .bootstrap-datetimepicker-widget .picker-switch,
+.filter-box .datetimepicker .picker-switch {
+    font-size: 14px !important;
+}
+
+/* 筛选框输入组中的图标字体大小保持正常 */
+.filter-box .input-group-text i {
+    font-size: 16px !important;
+}
+
+/* 筛选框按钮字体大小 */
+.filter-box .btn-sm {
+    font-size: 14px !important;
+}
+
+/* 确保所有筛选框内的文本都使用统一字体大小 */
+.filter-box .form-group {
+    font-size: 14px !important;
+}
+
+/* 筛选框中的复选框和单选框标签字体大小 */
+.filter-box .checkbox label,
+.filter-box .radio label,
+.filter-box .form-check-label {
+    font-size: 14px !important;
+}
+
