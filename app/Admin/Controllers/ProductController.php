@@ -16,6 +16,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\BatchCreateProSave;
 use App\Admin\Actions\Grid\BatchDeleteProduct;
+use App\Admin\Actions\Grid\ImportProduct as ImportProductTool;
 use App\Admin\Repositories\Product;
 use App\Models\AttrModel;
 use App\Models\BrandModel;
@@ -27,6 +28,7 @@ use App\Repositories\ProductRepository;
 use App\Repositories\UnitRepository;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
+use Dcat\Admin\Grid\Tools;
 use Dcat\Admin\Controllers\AdminController;
 use Illuminate\Support\Collection;
 
@@ -55,6 +57,10 @@ class ProductController extends AdminController
             $grid->batchActions([
                 new BatchDeleteProduct(),
             ]);
+
+            $grid->tools(function (Grid\Tools $tools) {
+                $tools->append(new ImportProductTool());
+            });
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('product_id', '物料名称')

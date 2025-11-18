@@ -35,6 +35,8 @@ Route::group([
     $router->get('api/get-customer-drawee', 'ApiController@getCustomerDrawee')->name('api.customer.drawee.find');
 
     $router->resource('attrs', 'AttrController');
+    $router->get('products/import', 'ProductImportController@index')->name('products.import');
+    $router->get('products/import/template', 'ProductImportController@template')->name('products.import.template');
     $router->resource('products', 'ProductController');
     $router->resource('product-category', 'ProductCategoryController');
     $router->resource('units', 'UnitController');

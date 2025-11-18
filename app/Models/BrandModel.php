@@ -9,4 +9,5 @@ class BrandModel extends Model
 {
     use SoftDeletes;
     protected $table = 'brand';
+    protected $guarded = ['id'];
 }
