@@ -149,7 +149,7 @@ class ProductController extends AdminController
                     ->default(head($units->keys()->toArray()) ?? '')
                     ->required();
 
-                $row->width(6)->number('warning_num')
+                $row->width(6)->text('warning_num')
                     ->default(0)
                     ->help('填0则不预警')
                     ->required();
