@@ -289,9 +289,20 @@ class ProductImportService extends BaseService
                 throw new RuntimeException('属性定义格式应为 “属性=值1,值2”');
             }
 
-            $attr = AttrModel::query()->where('name', $attrName)->first();
+            $attr = AttrModel::withoutGlobalScope('status')
+                ->withTrashed()
+                ->where('name', $attrName)
+                ->first();
             if (! $attr) {
-                throw new RuntimeException('属性【'.$attrName.'】不存在或未启用');
+                $attr = AttrModel::create(['name' => $attrName, 'status' => 1]);
+            } else {
+                if ($attr->trashed()) {
+                    $attr->restore();
+                }
+                if ((int)($attr->status ?? 1) !== 1) {
+                    $attr->status = 1;
+                    $attr->save();
+                }
             }
 
             $valueNames = preg_split('/[,，]/u', $values);
@@ -336,7 +347,10 @@ class ProductImportService extends BaseService
             }
 
             if (! $attrValue) {
-                throw new RuntimeException(sprintf('属性ID:%s 中未找到属性值：%s', $attrId, $value));
+                $attrValue = AttrValueModel::withTrashed()->firstOrCreate(
+                    ['attr_id' => $attrId, 'name' => $value],
+                    ['created_at' => now(), 'updated_at' => now()]
+                );
             }
 
             if ((int) $attrValue->attr_id !== $attrId) {

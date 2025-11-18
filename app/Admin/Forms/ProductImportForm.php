@@ -69,7 +69,7 @@ class ProductImportForm extends Form
 <div class="alert alert-info mb-0">
     <p>1. 支持 xlsx/xls/csv，单个文件建议不超过 2MB；</p>
     <p>2. 属性定义格式示例：<code>香型=花香型,果香型;容量=500ml,1000ml</code>；</p>
-    <p>3. 属性与属性值需提前在「物料属性」中维护；</p>
+    <p>3. 属性与属性值、品牌、单位，不存在时会自动创建；</p>
     <p>4. 如存在相同物料编号，将在导入时自动覆盖原数据；</p>
     <p>5. <a href="{$templateUrl}" target="_blank">下载导入模板</a></p>
 </div>
