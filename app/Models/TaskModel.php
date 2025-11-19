@@ -8,8 +8,6 @@
  * // +----------------------------------------------------------------------
  * // | Licensed ( LICENSE-1.0.0 )
  * // +----------------------------------------------------------------------
- * // | Author: yxx <1365831278@qq.com>
- * // +----------------------------------------------------------------------
  */
 
 namespace App\Models;
@@ -95,8 +93,9 @@ class TaskModel extends BaseModel
 
     const STATUS_COLOR = [
         self::STATUS_WAIT      => 'gray',
-        self::STATUS_DRAW    => 'yellow',
-        self::STATUS_FINISH => 'success',
+        self::STATUS_DRAW      => 'yellow',
+        self::STATUS_FINISH    => 'success',
+        self::STATUS_STOP      => 'danger',
     ];
 
     protected $table = 'task';
