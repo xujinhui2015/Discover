@@ -85,11 +85,17 @@ class ProductObserver
     {
         // 拼音码
         $productModel->name && $productModel->py_code = up_pinyin_abbr($productModel->name);
+    }
 
+    /**
+     * @param ProductModel $productModel
+     */
+    public function saved(ProductModel $productModel): void
+    {
         // 若商品无规格,自动绑定一个基础规格
-        if (ProductAttrModel::query()
-            ->where('product_id', $productModel->id)
-            ->doesntExist()) {
+        if ($productModel->id && ProductAttrModel::query()
+                ->where('product_id', $productModel->id)
+                ->doesntExist()) {
 
             $attrId = AttrModel::query()
                 ->where('name', '通用规格')
@@ -102,14 +108,6 @@ class ProductObserver
                     ->pluck('id')
             ]);
         }
-
-    }
-
-    /**
-     * @param ProductModel $productModel
-     */
-    public function saved(ProductModel $productModel): void
-    {
     }
 
     /**
