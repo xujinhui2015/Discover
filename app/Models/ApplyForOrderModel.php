@@ -101,5 +101,10 @@ class ApplyForOrderModel extends BaseModel
         return $this->hasMany(ApplyForReturnOrderModel::class, 'apply_for_order_id');
     }
 
+    public function getProductNamesAttribute()
+    {
+        return '123213';
+    }
+
 
 }

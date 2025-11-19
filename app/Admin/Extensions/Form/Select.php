@@ -110,13 +110,31 @@ $(document).on('change', "{$this->getElementClassSelector()}", function () {
         brand.val(data.data.brand_str);
         sku_id.find("option").remove();
 
+        // $(sku_id).select2({
+        //     data: $.map(data.data.product_attr, function (d) {
+        //         d.id = d.id;
+        //         d.text = d.text;
+        //         return d;
+        //     })
+        // }).val(sku_id.attr('data-value')).trigger('change');
+
         $(sku_id).select2({
-            data: $.map(data.data.product_attr, function (d) {
-                d.id = d.id;
-                d.text = d.text;
-                return d;
+        data: $.map(data.data.product_attr, function (d) {
+                return {
+                    id: d.id,
+                    text: d.text
+                };
             })
-        }).val(sku_id.attr('data-value')).trigger('change');
+        });
+
+        // 如果有 data-value，则选 data-value；否则选第一个
+        let firstId = data.data.product_attr.length > 0 ? data.data.product_attr[0].id : null;
+        let value = sku_id.attr('data-value') || firstId;
+
+        if (value) {
+            $(sku_id).val(value).trigger('change');
+        }
+
     });
 });
 $("{$this->getElementClassSelector()}").trigger('change');

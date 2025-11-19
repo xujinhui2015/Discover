@@ -8,8 +8,6 @@
  * // +----------------------------------------------------------------------
  * // | Licensed ( LICENSE-1.0.0 )
  * // +----------------------------------------------------------------------
- * // | Author: yxx <1365831278@qq.com>
- * // +----------------------------------------------------------------------
  */
 
 namespace App\Admin\Actions\Grid;
@@ -24,7 +22,7 @@ class AddApplyForOrder extends RowAction
     {
         $url = route('apply-for-orders.create', ['with_id' => $this->getKey()]);
         return <<<HTML
-<a class="{$this->getElementClass()} dialog-create" href="javascript:void(0)" data-url="$url">{$this->title()}</a>
+<a style="padding: 1px 4px; border-radius: 2px; display: inline-flex; align-items: center; cursor: pointer; transition: all 0.2s ease;" class="{$this->getElementClass()} dialog-create btn btn-xs btn-sm btn-info grid-actions-btn" href="javascript:void(0)" data-url="$url">{$this->title()}</a>
 HTML;
     }
 

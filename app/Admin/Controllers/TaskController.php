@@ -8,14 +8,13 @@
  * // +----------------------------------------------------------------------
  * // | Licensed ( LICENSE-1.0.0 )
  * // +----------------------------------------------------------------------
- * // | Author: yxx <1365831278@qq.com>
- * // +----------------------------------------------------------------------
  */
 
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\AddApplyForOrder;
 use App\Admin\Actions\Grid\AddMakeProduct;
+use App\Admin\Actions\Grid\TaskActions;
 use App\Admin\Extensions\Grid\ApplyOfOrders;
 use App\Admin\Renderables\ProductTable;
 use App\Admin\Repositories\Task;
@@ -27,7 +26,11 @@ use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Controllers\AdminController;
 use Dcat\Admin\Models\Administrator;
+use Dcat\Admin\Admin;
 use Yxx\LaravelQuick\Exceptions\Api\ApiUnAuthException;
+
+// 引入自定义样式
+Admin::css('/static/css/modern-task-style.css?v=' . time());
 
 class TaskController extends AdminController
 {
@@ -39,6 +42,8 @@ class TaskController extends AdminController
     protected function grid()
     {
         return Grid::make(new Task(['sku', 'user', 'sku.product', 'craft', 'operator_user']), function (Grid $grid) {
+            // 使用自定义的TaskActions类来渲染操作列
+            $grid->setActionClass(TaskActions::class);
             $grid->column('id')->sortable();
             $grid->column('order_no');
             $grid->column('info', '物料信息')->display(function () {
@@ -49,7 +54,21 @@ class TaskController extends AdminController
 //            $grid->column('craft.name', '生产工艺');
             $grid->column('plan_num');
             $grid->column('finish_num');
-            $grid->column('status_str', '状态')->label(TaskModel::STATUS_COLOR);
+            $grid->column('status', '状态')
+                ->display(function ($value) {
+                    // 添加状态说明的tooltip
+                    $descriptions = [
+                        TaskModel::STATUS_WAIT => '任务已创建，等待领取材料',
+                        TaskModel::STATUS_DRAW => '已领取材料，可以开始生产',
+                        TaskModel::STATUS_FINISH => '任务已完成生产',
+                        TaskModel::STATUS_STOP => '任务已停止',
+                    ];
+                    // 为待处理状态添加脉冲动画效果
+                    $class = $this->status === TaskModel::STATUS_WAIT ? 'label-pulse' : '';
+                    $color = TaskModel::STATUS_COLOR[$this->status];
+                    $tooltip = $descriptions[$this->status] ?? '';
+                    return "<span class='label label-$color $class' title='$tooltip' data-toggle='tooltip'>" . TaskModel::STATUS[$this->status] . "</span>";
+                });
 //            $grid->column('other')->emp();
 //            $grid->column('user.name', "任务创建人");
             $grid->column('operator_user.name', "生产人员");
@@ -115,7 +134,7 @@ class TaskController extends AdminController
 //                    ->loadpku(route('api.product.find'))
 //                    ->model(ProductModel::class, 'id', 'name');
 
-                $row->width(4)->ipt('unit', '单位')->rem(3)->default('-')->disable();
+                $row->width(4)->text('unit', '单位')->default('-')->disable();
             });
             $form->row(function (Form\Row $row) {
                 $row->width(4)->select('sku_id', '属性选择')->options()->required();

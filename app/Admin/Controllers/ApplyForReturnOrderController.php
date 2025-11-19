@@ -19,6 +19,7 @@ use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Repositories\ApplyForReturnOrder;
 use App\Models\ApplyForOrderModel;
+use App\Models\ApplyForReturnOrderModel;
 use App\Models\ProductModel;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -40,7 +41,9 @@ class ApplyForReturnOrderController extends OrderController
             $grid->column('order_no');
             $grid->column('user.username', '创建用户');
             $grid->column('other')->emp();
-            $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
+            $grid->column('review_status', '审核状态')
+                ->using($this->oredr_model::REVIEW_STATUS)
+                ->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at');
             $grid->disableQuickEditButton();
             $grid->disableCreateButton();
@@ -92,7 +95,8 @@ class ApplyForReturnOrderController extends OrderController
                 }
             }
             $users = Administrator::query()->latest()->pluck('name', 'id');
-            $row->width(6)->select('apply_id', '审批人')->options($users)->default(head($users->keys()->toArray()))->required();
+            $row->width(6)->select('apply_id', '审批人')
+                ->options($users)->default(head($users->keys()->toArray()));
         });
         $form->row(function (Form\Row $row) {
             $row->width(6)->text('other', '备注')->saveAsString();
@@ -123,6 +127,12 @@ class ApplyForReturnOrderController extends OrderController
             return $this->sku['attr_value_ids_str'] ?? '';
         });
 
-        $grid->column('should_num', '返仓数量')->edit();
+        $grid->column('should_num', '返仓数量')
+            ->if(function () {
+                return ApplyForReturnOrderModel::query()
+                    ->where('id', $this->order_id)
+                    ->value('review_status') == ApplyForReturnOrderModel::REVIEW_STATUS_WAIT;
+            })
+            ->edit();
     }
 }

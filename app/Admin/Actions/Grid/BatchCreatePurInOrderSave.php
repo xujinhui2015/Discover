@@ -67,6 +67,7 @@ class BatchCreatePurInOrderSave extends BatchAction
             'user_id'     => Admin::user()->id,
             'with_id'     => $purchaseOrderModel->id,
         ]);
+
         $items    = $purchaseOrderModel->items->map(function (PurchaseItemModel $purchaseItemModel) {
             //  获取当前已经入库的商品数量
 

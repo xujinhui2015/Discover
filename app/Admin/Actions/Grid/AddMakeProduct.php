@@ -31,7 +31,7 @@ class AddMakeProduct extends RowAction
         $url = route('make-product-orders.edit', $makeProductOrder->id);
         $showBtn = $makeProductOrder->review_status === BaseModel::REVIEW_STATUS_OK ? 'no' : 'yes';
         return <<<HTML
-<a class="{$this->getElementClass()}" data-show-btn="{$showBtn}" href="javascript:void(0)" data-action="$url">{$this->title()}</a>
+<a style="padding: 1px 4px; border-radius: 2px; display: inline-flex; align-items: center; cursor: pointer; transition: all 0.2s ease;" class="{$this->getElementClass()} btn btn-xs btn-sm btn-success grid-actions-btn" data-show-btn="{$showBtn}" href="javascript:void(0)" data-action="$url">{$this->title()}</a>
 HTML;
     }
 

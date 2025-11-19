@@ -14,6 +14,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -53,5 +54,10 @@ class AttrValueModel extends BaseModel
             self::$attr_values = static::pluck('name', 'id');
         }
         return self::$attr_values;
+    }
+
+    public function attr(): BelongsTo
+    {
+        return $this->belongsTo(AttrModel::class, 'attr_id');
     }
 }

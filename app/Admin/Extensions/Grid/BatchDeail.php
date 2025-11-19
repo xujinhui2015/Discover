@@ -29,7 +29,7 @@ class BatchDeail extends AbstractDisplayer
             $url = $params;
         }
         $this->addScript();
-        return "<a class='{$this->selector}' data-url='{$url}' href='javascript:void(0)' >详情</a>";
+        return "<a class='{$this->selector} btn btn-primary btn-sm' style=' padding: 2px 6px;line-height: 1;white-space: nowrap;font-size: 14px;' data-url='{$url}' href='javascript:void(0)' >选择</a>";
     }
 
     protected function addScript()

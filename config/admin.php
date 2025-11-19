@@ -31,7 +31,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<img src="/public/logo.png" width="35"> &nbsp;时尚星约 ERP',
+    'logo' => '<img src="/logo.png" width="35"> &nbsp;时尚星约 ERP',
 
     /*
     |--------------------------------------------------------------------------
@@ -43,7 +43,7 @@ return [
     | '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<img src="/vendors/dcat-admin/images/logo.png">',
+    'logo-mini' => '<img src="/logo.png">',
 
     /*
      |--------------------------------------------------------------------------

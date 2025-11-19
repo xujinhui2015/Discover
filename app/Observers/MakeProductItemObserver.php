@@ -22,7 +22,8 @@ class MakeProductItemObserver
     {
         if ($makeProductItemModel->isDirty('actual_num')) {
             $task = $makeProductItemModel->order->with_order;
-            $avgCostPrice = bcdiv($task->sum_cost_price, $makeProductItemModel->actual_num, 2);
+            // 判断除数不能为0
+            $avgCostPrice = $makeProductItemModel->actual_num > 0 ? bcdiv($task->sum_cost_price, $makeProductItemModel->actual_num, 2) : 0;
             $makeProductItemModel->cost_price = $avgCostPrice;
         }
     }

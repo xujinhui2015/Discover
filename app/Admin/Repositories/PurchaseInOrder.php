@@ -33,9 +33,12 @@ class PurchaseInOrder extends EloquentRepository
      */
     public function getWithOrder(): Collection
     {
-        return PurchaseOrderModel::where([
-            'status'        => PurchaseOrderModel::STATUS_WAIT,
-            'review_status' => PurchaseOrderModel::REVIEW_STATUS_OK
-        ])->orderBy('id', 'desc')->pluck('order_no', 'id');
+        return PurchaseOrderModel::whereIn('status', [
+                PurchaseOrderModel::STATUS_WAIT,
+                PurchaseOrderModel::STATUS_PART_RETURNED,
+            ])
+            ->where('review_status', PurchaseOrderModel::REVIEW_STATUS_OK)
+            ->orderBy('id', 'desc')
+            ->pluck('order_no', 'id');
     }
 }

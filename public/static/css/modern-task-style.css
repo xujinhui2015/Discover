@@ -1,0 +1,657 @@
+/* 生产任务列表页面现代化样式 */
+
+/* 确保样式一致性和可用性 */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    color: #303133;
+    background-color: #f5f7fa;
+}
+
+/* 保持适当的间距和对齐 */
+.toolbar,
+.grid-filter,
+.card,
+.table-wrapper {
+    margin-bottom: 15px;
+    border: 1px solid #e4e7ed;
+    background-color: #fff;
+    border-radius: 6px;
+}
+
+/* 确保表格行之间有清晰的分隔 */
+.table tbody tr {
+    border-bottom: 1px solid #ebeef5;
+}
+
+/* 确保按钮有足够的点击区域和对比度 */
+.btn {
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid #dcdfe6;
+    background-color: #fff;
+    color: #606266;
+}
+
+.btn-primary {
+    background-color: #409eff;
+    color: #fff;
+    border-color: #409eff;
+}
+
+.btn-success {
+    background-color: #67c23a;
+    color: #fff;
+    border-color: #67c23a;
+}
+
+.btn-warning {
+    background-color: #e6a23c;
+    color: #fff;
+    border-color: #e6a23c;
+}
+
+.btn-danger {
+    background-color: #f56c6c;
+    color: #fff;
+    border-color: #f56c6c;
+}
+
+/* 确保状态标签清晰可辨 */
+.label {
+    font-weight: 500;
+    color: #fff;
+    border: 1px solid transparent;
+}
+
+/* 全局样式优化 */
+.dcat-content {
+    padding: 20px;
+    background-color: #f5f7fa;
+}
+
+/* 工具栏样式优化 */
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e6e6e6;
+    padding: 15px 20px;
+    border: 1px solid #e4e7ed;
+}
+
+/* 搜索框样式优化 */
+.form-control {
+    border-radius: 6px;
+    border: 1px solid #dcdfe6;
+    /* 移除过渡效果 */
+}
+
+.form-control:focus {
+    border-color: #409eff;
+    box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.1);
+}
+
+/* 按钮样式现代化 */
+.btn {
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    /* 移除过渡效果 */
+}
+
+.btn-primary {
+    background-color: #409eff;
+    border: 1px solid #409eff;
+}
+
+.btn-primary:hover {
+    background-color: #66b1ff;
+}
+
+/* 表格样式现代化 */
+.table {
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e4e7ed;
+    border-collapse: collapse;
+}
+
+.table thead th {
+    background-color: #fafafa;
+    color: #000000;
+    font-weight: 600;
+    text-align: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e4e7ed;
+    border-right: 1px solid #ebeef5;
+}
+
+.table thead th:last-child {
+    border-right: none;
+}
+
+.table tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #ebeef5;
+    border-right: 1px solid #ebeef5;
+    vertical-align: middle;
+    /* 移除过渡效果 */
+}
+
+.table tbody td:last-child {
+    border-right: none;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* 状态标签样式优化 */
+.label {
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+    min-width: 70px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    /* 移除过渡效果 */
+}
+
+/* 优化不同状态的标签样式 */
+.label-gray {
+    background-color: #f2f6fc;
+    color: #409eff;
+    border-color: #d9ecff;
+}
+
+.label-gray:hover {
+    background-color: #ecf5ff;
+    border-color: #adc6ff;
+}
+
+.label-yellow {
+    background-color: #fdf6ec;
+    color: #e6a23c;
+    border-color: #faecd8;
+}
+
+.label-yellow:hover {
+    background-color: #fcf3e0;
+    border-color: #fad484;
+}
+
+.label-success {
+    background-color: #f0f9eb;
+    color: #67c23a;
+    border-color: #e1f3d8;
+}
+
+.label-success:hover {
+    background-color: #e6f7e1;
+    border-color: #b3e19d;
+}
+
+.label-danger {
+    background-color: #fef0f0;
+    color: #f56c6c;
+    border-color: #fde2e2;
+}
+
+.label-danger:hover {
+    background-color: #fdeded;
+    border-color: #fab6b6;
+}
+
+/* 简化状态标签样式 */
+.label:hover {
+    /* 移除复杂悬停效果 */
+}
+
+/* Tooltip样式优化 */
+.label[title] {
+    position: relative;
+}
+
+/* 移除了脉冲动画效果 */
+.label-pulse {
+    /* 保留标签样式但移除动画 */
+}
+
+/* 操作按钮样式优化 */
+.grid-expand-button,
+.grid-quick-create-btn,
+.grid-actions-btn {
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin-right: 5px;
+    font-size: 12px;
+    /* 移除过渡效果 */
+    border: 1px solid #dcdfe6;
+}
+
+/* 现代化按钮样式 - 简化版 */
+.modern-btn {
+    background-color: #4e73df !important;
+    color: white !important;
+    font-weight: 500;
+    border: 1px solid #4e73df !important;
+    font-size: 12px;
+    padding: 2px 8px !important;
+    border-radius: 4px !important;
+}
+
+.modern-btn:hover {
+    background-color: #375cc9 !important;
+}
+
+.modern-btn:active {
+    background-color: #2c47a0 !important;
+}
+
+.grid-actions .dropdown-toggle {
+    border-radius: 4px;
+}
+
+/* 分页样式优化 */
+.pagination {
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+
+.page-item.active .page-link {
+    background-color: #409eff;
+    border-color: #409eff;
+}
+
+.page-link {
+    color: #606266;
+    border-radius: 4px;
+    margin: 0 2px;
+    border: 1px solid #dcdfe6;
+}
+
+.page-link:hover {
+    color: #409eff;
+    border-color: #c6e2ff;
+}
+
+/* 展开行样式优化 */
+.expand-row {
+    background-color: #fafafa;
+    border-top: 1px solid #ebeef5;
+    border-bottom: 1px solid #ebeef5;
+}
+
+/* 筛选器样式优化 */
+.grid-filter {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #e4e7ed;
+}
+
+.grid-filter .filter-group {
+    margin-bottom: 15px;
+}
+
+/* 统计信息样式 */
+.grid-pagination-info {
+    color: #909399;
+    font-size: 13px;
+}
+
+/* 调整整体布局间距 */
+.dcat-page-wrapper {
+    padding: 20px;
+}
+
+.card {
+    margin-bottom: 24px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* 工具栏布局优化 */
+.grid-toolbar {
+    padding: 16px 20px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ebeef5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* 表格内容布局优化 */
+.table-wrapper {
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e4e7ed;
+}
+
+/* 单元格间距优化 */
+.table tbody td {
+    padding: 14px 16px;
+    vertical-align: middle;
+}
+
+/* 响应式设计优化 */
+@media (max-width: 1200px) {
+    .dcat-content {
+        padding: 16px;
+    }
+    
+    .grid-filter .filter-group {
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dcat-page-wrapper {
+        padding: 10px;
+    }
+    
+    .dcat-content {
+        padding: 10px 5px;
+    }
+    
+    .card-header,
+    .card-body {
+        padding: 12px;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+    
+    .label {
+        padding: 4px 8px;
+        font-size: 11px;
+        min-width: 60px;
+    }
+    
+    /* 移动端筛选器优化 */
+    .grid-filter {
+        padding: 12px;
+    }
+    
+    .grid-filter .filter-group {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    /* 移动端操作按钮优化 */
+    .grid-actions {
+        min-width: 60px;
+    }
+    
+    .grid-actions-btn {
+        padding: 3px 8px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .table-wrapper {
+        overflow-x: auto;
+    }
+    
+    .table {
+        min-width: 600px;
+    }
+    
+    /* 移动端分页优化 */
+    .pagination {
+        justify-content: center;
+    }
+    
+    .page-item {
+        margin: 0 1px;
+    }
+    
+    .page-link {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
+
+/* 操作按钮布局优化 */
+.grid-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* 统计信息区域优化 */
+.grid-pagination {
+    padding: 16px 20px;
+    background-color: #ffffff;
+    border-top: 1px solid #ebeef5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+/* 分页组件布局优化 - 解决页码和下拉框对齐问题 */
+/* 提高选择器优先级确保样式生效 */
+#DataTables_Table_0_length,
+.dataTables_wrapper .dataTables_length {
+    display: flex;
+    align-items: center !important;
+    margin: 0;
+    height: 36px;
+}
+
+#DataTables_Table_0_length label,
+.dataTables_wrapper .dataTables_length label {
+    display: flex;
+    align-items: center !important;
+    gap: 8px;
+    margin: 0;
+    font-weight: normal;
+    height: 100%;
+}
+
+#DataTables_Table_0_length select,
+.dataTables_wrapper .dataTables_length select {
+    height: 36px !important;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+    vertical-align: middle;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+/* 确保下拉框和页码按钮完全对齐 */
+#DataTables_Table_0_paginate,
+.dataTables_wrapper .dataTables_paginate {
+    display: flex;
+    align-items: center !important;
+    margin: 0;
+    height: 36px;
+}
+
+#DataTables_Table_0_paginate ul.pagination,
+.dataTables_wrapper .dataTables_paginate ul.pagination {
+    margin: 0;
+    display: flex;
+    align-items: center !important;
+    height: 100%;
+}
+
+#DataTables_Table_0_paginate .pagination li,
+.dataTables_wrapper .dataTables_paginate .pagination li {
+    display: flex;
+    align-items: center !important;
+    height: 100%;
+}
+
+#DataTables_Table_0_paginate .pagination li a,
+#DataTables_Table_0_paginate .pagination li span,
+.dataTables_wrapper .dataTables_paginate .pagination li a,
+.dataTables_wrapper .dataTables_paginate .pagination li span {
+    height: 36px !important;
+    min-width: 36px !important;
+    display: flex;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 8px;
+    margin: 0 1px;
+    box-sizing: border-box;
+}
+
+/* 确保分页区域所有元素垂直对齐 */
+.grid-pagination > div {
+    display: flex;
+    align-items: center !important;
+    height: 36px;
+}
+
+/* 数据信息区域对齐 */
+#DataTables_Table_0_info,
+.dataTables_wrapper .dataTables_info {
+    display: flex;
+    align-items: center !important;
+    margin: 0;
+    padding: 0;
+    height: 36px;
+}
+
+/* 移除可能导致不对齐的margin和padding */
+.pagination {
+    margin: 0 !important;
+    height: 36px;
+}
+
+/* 确保页面大小选择器和分页控件在同一水平线上 */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_paginate {
+    vertical-align: middle;
+}
+
+/* 确保内容区域不会被过度压缩 */
+.dcat-content-inner {
+    min-height: calc(100vh - 200px);
+}
+
+/* 添加全局动画和过渡效果 */
+
+/* 移除卡片过渡动画 */
+.card,
+.grid-filter,
+.table-wrapper {
+    /* 移除过渡效果 */
+}
+
+.card:hover,
+.grid-filter:hover {
+    /* 移除悬停效果 */
+}
+
+/* 移除按钮过渡效果 */
+.btn {
+    /* 移除过渡效果和变换 */
+}
+
+.btn:active {
+    /* 移除变换效果 */
+}
+
+/* 移除表格行过渡动画 */
+.table tbody tr {
+    /* 移除过渡效果 */
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    /* 移除复杂效果 */
+}
+
+/* 移除了加载动画 */
+
+/* 移除了渐入动画效果 */
+
+/* 简化表单元素焦点效果 */
+.form-control,
+.select2-selection {
+    /* 移除过渡效果 */
+}
+
+.form-control:focus,
+.select2-selection:focus {
+    border-color: #409eff;
+    /* 移除变换效果 */
+}
+
+/* 移除筛选器动画 */
+.grid-filter-box {
+    overflow: hidden;
+    /* 移除过渡效果 */
+}
+
+/* 移除了下拉菜单展开动画 */
+.dropdown-menu {
+    /* 保留基本样式 */
+}
+
+/* 简化滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 移除了展开行动画效果 */
+.grid-expand {
+    /* 保留基本样式 */
+}
+
+.grid-expand > .expand-content {
+    /* 保留基本样式 */
+}
+
+/* 移除了状态标签的发光动画效果 */
+
+/* 简化后的样式总结 */
+/* 1. 移除了所有动画效果（keyframes规则和animation属性） */
+/* 2. 删除了复杂的过渡效果（transition属性和transform变换） */
+/* 3. 移除了过度的阴影效果，替换为简单的边框样式 */
+/* 4. 保留了基本的交互反馈，但简化了视觉效果 */
+/* 5. 确保了界面元素的对比度和可访问性 */
+/* 6. 保持了一致的边框和颜色系统 */

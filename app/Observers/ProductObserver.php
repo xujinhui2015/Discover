@@ -14,8 +14,12 @@
 
 namespace App\Observers;
 
+use App\Models\AttrModel;
+use App\Models\AttrValueModel;
+use App\Models\ProductAttrModel;
 use App\Models\ProductModel;
 use Dcat\Admin\Admin;
+use Illuminate\Support\Facades\DB;
 
 class ProductObserver
 {
@@ -27,7 +31,7 @@ class ProductObserver
      */
     public function created(ProductModel $productModel)
     {
-        //
+
     }
 
     /**
@@ -81,6 +85,24 @@ class ProductObserver
     {
         // 拼音码
         $productModel->name && $productModel->py_code = up_pinyin_abbr($productModel->name);
+
+        // 若商品无规格,自动绑定一个基础规格
+        if (ProductAttrModel::query()
+            ->where('product_id', $productModel->id)
+            ->doesntExist()) {
+
+            $attrId = AttrModel::query()
+                ->where('name', '通用规格')
+                ->value('id');
+            $productModel->product_attr()->create([
+                'attr_id' => $attrId,
+                'attr_value_ids' => AttrValueModel::query()
+                    ->where('attr_id', $attrId)
+                    ->where('name', '基础规格')
+                    ->pluck('id')
+            ]);
+        }
+
     }
 
     /**

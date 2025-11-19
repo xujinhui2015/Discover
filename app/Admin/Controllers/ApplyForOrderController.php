@@ -25,9 +25,11 @@ use App\Admin\Extensions\Grid\BatchDeail;
 use App\Admin\Repositories\ApplyForOrder;
 use App\Admin\Repositories\ApplyForReturnOrder;
 use App\Admin\Repositories\Product;
+use App\Models\ApplyForItemModel;
 use App\Models\ApplyForOrderModel;
 use App\Models\ApplyForReturnOrderModel;
 use App\Models\ProductModel;
+use App\Models\ProductSkuModel;
 use App\Models\PurchaseOrderModel;
 use App\Models\TaskModel;
 use Dcat\Admin\Form;
@@ -50,7 +52,22 @@ class ApplyForOrderController extends OrderController
             $grid->column('with_order.order_no', '任务单号')->emp();
             $grid->column('order_no');
             $grid->column('user.username', '创建用户');
-            $grid->column('other')->emp();
+//            $grid->column('other')->emp();
+            $grid->column('product_names', '物料名称')->display(function () {
+                $productNames = ProductModel::query()
+                    ->whereIn('id', ProductSkuModel::query()
+                        ->whereIn('id', ApplyForItemModel::query()
+                            ->where('order_id', $this->id)
+                            ->select('sku_id'))
+                        ->select('product_id'))
+                    ->pluck('name')
+                    ->toArray();
+                $displayNames = '';
+                foreach ($productNames as $productName) {
+                    $displayNames .= '<span class="badge" style="background:#5c6bc6">' . $productName . '</span><br>';
+                }
+                return $displayNames;
+            });
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at');
             $grid->disableQuickEditButton();

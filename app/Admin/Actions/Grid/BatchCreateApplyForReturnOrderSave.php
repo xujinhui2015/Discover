@@ -48,6 +48,7 @@ class BatchCreateApplyForReturnOrderSave extends BatchAction
             'apply_for_order_id' => $applyForOrderModel->id,
             'order_no' => build_order_no('SLR'),
             'user_id' => Admin::user()->id,
+            'apply_id' => Admin::user()->id,
             'other' => $applyForOrderModel->other,
             'status' => ApplyForOrderModel::REVIEW_STATUS_WAIT,
         ]);
