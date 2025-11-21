@@ -14,6 +14,9 @@
 
 namespace App\Models;
 
+use Dcat\Admin\Models\Administrator;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -55,9 +58,39 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|SaleInOrderModel whereAddressId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SaleInOrderModel whereDraweeId($value)
  */
-class SaleInOrderModel extends BaseModel
+class SaleInOrderModel extends SaleBaseModel
 {
     use SoftDeletes;
 
     protected $table = 'sale_in_order';
+
+    public function with_order(): BelongsTo
+    {
+        return $this->belongsTo(SaleOutOrderModel::class, 'with_id');
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(SaleInItemModel::class, 'order_id');
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(CustomerModel::class, 'customer_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(Administrator::class, 'user_id');
+    }
+
+    public function address(): BelongsTo
+    {
+        return $this->belongsTo(CustomerAddressModel::class, 'address_id');
+    }
+
+    public function drawee(): BelongsTo
+    {
+        return $this->belongsTo(DraweeModel::class, 'drawee_id');
+    }
 }

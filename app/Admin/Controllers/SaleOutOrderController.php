@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Grid\BatchCreateSaleInOrderSave;
 use App\Admin\Actions\Grid\BatchCreateSaleOutOrder;
 use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
@@ -52,6 +53,33 @@ class SaleOutOrderController extends OrderController
             $grid->actions(EditOrder::make());
             $grid->tools(BatchOrderPrint::make());
             $grid->tools(BatchCreateSaleOutOrder::make());
+//            $grid->batchActions(BatchCreateSaleInOrderSave::make());
+
+            $grid->filter(function (Grid\Filter $filter) {
+            });
+        });
+    }
+
+    public function iFrameGrid()
+    {
+        return Grid::make(new SaleOutOrder(['customer', 'user']), function (Grid $grid) {
+            $grid->model()->where([
+                'review_status' => SaleOutOrderModel::REVIEW_STATUS_OK
+            ])->orderBy('id', 'desc');
+
+            $grid->column('id')->sortable();
+            $grid->column('customer.name', '客户');
+            $grid->column('order_no');
+            $grid->column('other')->emp();
+            $grid->column('user.name', '创建用户');
+            $grid->column('status', '状态')->using($this->oredr_model::STATUS)->label($this->oredr_model::STATUS_COLOR);
+            $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
+            $grid->column('created_at');
+            $grid->column('apply_at', "审核时间")->emp();
+            $grid->tools(BatchCreateSaleInOrderSave::make());
+
+            $grid->disableActions();
+            $grid->disableCreateButton();
 
             $grid->filter(function (Grid\Filter $filter) {
             });

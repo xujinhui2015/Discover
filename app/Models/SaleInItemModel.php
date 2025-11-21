@@ -14,6 +14,9 @@
 
 namespace App\Models;
 
+use App\Traits\HasStandard;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 /**
  * App\Models\SaleInItemModel
  *
@@ -50,5 +53,21 @@ namespace App\Models;
  */
 class SaleInItemModel extends BaseModel
 {
+    use HasStandard;
+
     protected $table = 'sale_in_item';
+
+    protected $with = ['sku'];
+
+    protected $appends = ['standard_str'];
+
+    public function sku(): BelongsTo
+    {
+        return $this->belongsTo(ProductSkuModel::class, 'sku_id');
+    }
+
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(SaleInOrderModel::class, 'order_id');
+    }
 }

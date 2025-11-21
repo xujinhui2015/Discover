@@ -32,6 +32,7 @@ use App\Models\ProductModel;
 use App\Models\PurchaseInOrderModel;
 use App\Models\PurchaseItemModel;
 use App\Models\PurchaseOrderModel;
+use App\Models\SaleInOrderModel;
 use App\Models\SaleOrderModel;
 use App\Models\SaleOutBatchModel;
 use App\Models\SaleOutItemModel;
@@ -61,6 +62,7 @@ use App\Observers\ProductObserver;
 use App\Observers\PurchaseInOrderObserver;
 use App\Observers\PurchaseItemObserver;
 use App\Observers\PurchaseOrderObserver;
+use App\Observers\SaleInOrderObserver;
 use App\Observers\SaleOrderObserver;
 use App\Observers\SaleOutBatchObserver;
 use App\Observers\SaleOutItemObserver;
@@ -125,5 +127,6 @@ class AppServiceProvider extends ServiceProvider
         StatementItemModel::observe(StatementItemObserver::class);
         StatementOrderModel::observe([StatementOrderObserver::class, OrderNoCreatedObserver::class]);
         ApplyForReturnOrderModel::observe([ApplyForReturnOrderObserver::class, OrderNoCreatedObserver::class]);
+        SaleInOrderModel::observe([SaleInOrderObserver::class]);
     }
 }

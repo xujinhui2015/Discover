@@ -53,6 +53,7 @@ Route::group([
     $router->resource('sale-orders', 'SaleOrderController');
     $router->resource('sale-items', 'SaleItemController');
     $router->resource('sale-in-orders', 'SaleInOrderController');
+    $router->resource('sale-in-items', 'SaleInItemController');
     $router->resource('sale-out-orders', 'SaleOutOrderController');
     $router->resource('sale-out-items', 'SaleOutItemController');
     $router->resource('customers', 'CustomerController');
