@@ -21,8 +21,9 @@ class AddApplyForOrder extends RowAction
     public function html()
     {
         $url = route('apply-for-orders.create', ['with_id' => $this->getKey()]);
+        $style = 'display:block; padding:6px 10px; margin:4px 0; border-radius:4px; text-align:center; cursor:pointer; transition:all 0.2s ease; width:100%; box-sizing:border-box; white-space:nowrap;';
         return <<<HTML
-<a style="padding: 1px 4px; border-radius: 2px; display: inline-flex; align-items: center; cursor: pointer; transition: all 0.2s ease;" class="{$this->getElementClass()} dialog-create btn btn-xs btn-sm btn-info grid-actions-btn" href="javascript:void(0)" data-url="$url">{$this->title()}</a>
+<a style="{$style}" class="{$this->getElementClass()} dialog-create btn btn-sm btn-info grid-actions-btn" href="javascript:void(0)" data-url="$url">{$this->title()}</a>
 HTML;
     }
 

@@ -77,9 +77,7 @@ class TaskController extends AdminController
             $grid->disableRowSelector();
             $grid->actions(function (\Dcat\Admin\Grid\Displayers\Actions $actions) {
                 if ($this->status !== TaskModel::STATUS_FINISH) {
-                    $actions->append("</br>");
                     $actions->append(new AddApplyForOrder());
-                    $actions->append("</br>");
                 } else {
                     $actions->disableQuickEdit();
                 }

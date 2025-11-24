@@ -35,11 +35,12 @@ class TaskActions extends Actions
         }
 
         $label = trans('admin.quick_edit');
+        $style = 'display:block; padding:6px 10px; margin:4px 0; border-radius:4px; text-align:center; cursor:pointer; transition:all 0.2s ease; width:100%; box-sizing:border-box; white-space:nowrap;';
 
         return <<<EOF
-<a title="{$label}" style="padding: 1px 4px; border-radius: 2px; display: inline-flex; align-items: center; cursor: pointer; transition: all 0.2s ease;" class="{$this->grid->getRowName()}-edit btn btn-xs btn-sm btn-primary" data-url="{$this->resource()}/{$this->getKey()}/edit" href="javascript:void(0);">
+<a title="{$label}" style="{$style}" class="{$this->grid->getRowName()}-edit btn btn-sm btn-primary grid-actions-btn" data-url="{$this->resource()}/{$this->getKey()}/edit" href="javascript:void(0);">
     查看任务
-</a>&nbsp;
+</a>
 EOF;
     }
 }
