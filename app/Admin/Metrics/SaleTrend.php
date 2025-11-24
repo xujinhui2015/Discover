@@ -25,7 +25,7 @@ class SaleTrend extends Line
     public function handle(Request $request)
     {
         $option = $request->get('option', '7');
-        
+
         switch ($option) {
             case '365':
                 $days = 12;
@@ -56,12 +56,12 @@ class SaleTrend extends Line
         for ($i = 0; $i < $days; $i++) {
             $date = $startDate->copy()->addDays($i * $interval)->startOfDay();
             $nextDate = $date->copy()->addDays($interval)->startOfDay();
-            
+
             $amount = SaleOrderAmountModel::query()
                 ->whereBetween('created_at', [$date, $nextDate])
                 ->sum('should_amount');
-            
-            $data[] = (float) $amount;
+
+            $data[] = (float)$amount;
             $totalAmount += $amount;
         }
 

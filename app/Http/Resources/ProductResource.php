@@ -21,18 +21,18 @@ class ProductResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      * @return array
      */
     public function toArray($request)
     {
         return [
-            'id'           => $this->id,
-            'name'         => $this->name,
-            'unit'         => $this->unit->name ?? '',
-            'brand_str'         => $this->brand->name ?? '',
+            'id' => $this->id,
+            'name' => $this->name,
+            'unit' => $this->unit->name ?? '',
+            'brand_str' => $this->brand->name ?? '',
             'product_attr' => $this->sku_id_text,
-            'type_str'     => $this->type_str
+            'type_str' => $this->type_str
         ];
     }
 }

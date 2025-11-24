@@ -28,11 +28,11 @@ class OrderDelete extends BatchAction
 
     public function handle(Request $request)
     {
-        $model      = $request->input('model');
+        $model = $request->input('model');
         $modelClass = "\\App\Models\\" . $model;
-        $keys       = $this->getKey();
+        $keys = $this->getKey();
 
-        if (! class_exists($modelClass)) {
+        if (!class_exists($modelClass)) {
             throw new Exception("参数错误！");
         }
 
@@ -62,7 +62,7 @@ class OrderDelete extends BatchAction
         return [
             'table' => $this->getTable(),
             'model' => $this->getModel(),
-            'id'    => request()->route()->parameter($this->getTable()),
+            'id' => request()->route()->parameter($this->getTable()),
         ];
     }
 

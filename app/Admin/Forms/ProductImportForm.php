@@ -46,8 +46,8 @@ class ProductImportForm extends Form
             $stats['skipped']
         );
 
-        if (! empty($errors)) {
-            $message .= ' 部分行导入失败：'.implode('；', array_slice($errors, 0, 5));
+        if (!empty($errors)) {
+            $message .= ' 部分行导入失败：' . implode('；', array_slice($errors, 0, 5));
         }
 
         return $this->success($message, route('products.index'));
@@ -62,7 +62,7 @@ class ProductImportForm extends Form
             ->rules('required|mimes:xlsx,xls,csv')
             ->uniqueName()
             ->required()
-            ->help('文件首行需包含表头：'.implode('、', ProductImportService::TEMPLATE_HEADERS));
+            ->help('文件首行需包含表头：' . implode('、', ProductImportService::TEMPLATE_HEADERS));
 
         $templateUrl = route('products.import.template');
         $tips = <<<HTML

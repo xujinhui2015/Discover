@@ -72,7 +72,7 @@ JS;
         return admin_controller_name() . 'Model';
     }
 
-    public function getOrderId():int
+    public function getOrderId(): int
     {
         return request()->route()->parameter($this->getTable());
     }

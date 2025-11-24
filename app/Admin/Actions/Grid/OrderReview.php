@@ -42,7 +42,7 @@ class OrderReview extends AbstractTool
     protected $model;
 
     const REVIEW_STATUS = [
-        BaseModel::REVIEW_STATUS_OK       => '审核',
+        BaseModel::REVIEW_STATUS_OK => '审核',
         BaseModel::REVIEW_STATUS_REREVIEW => '反审核',
     ];
 
@@ -50,7 +50,7 @@ class OrderReview extends AbstractTool
     {
         $title = Arr::get(self::REVIEW_STATUS, $review_status);
         if (isset($review_status) && $title) {
-            $this->title         = $title;
+            $this->title = $title;
             $this->review_status = $review_status;
         }
     }
@@ -66,18 +66,18 @@ class OrderReview extends AbstractTool
             });
             return $this->response()->success("单据{$title}成功！")->refresh();
         } catch (\Exception $exception) {
-            return $this->response()->error("单据{$title}失败！". $exception->getMessage());
+            return $this->response()->error("单据{$title}失败！" . $exception->getMessage());
         }
     }
 
     protected function check(Request $request): void
     {
-        $id         = $request->input('id');
-        $model      = $request->input('model');
+        $id = $request->input('id');
+        $model = $request->input('model');
         $modelClass = "\\App\Models\\" . $model;
         $table = $request->input('table');
 
-        if (! class_exists($modelClass)) {
+        if (!class_exists($modelClass)) {
             throw new ApiRequestException("参数错误！");
         }
 
@@ -141,7 +141,7 @@ class OrderReview extends AbstractTool
 
     }
 
-    public function saleOrderCheck():void
+    public function saleOrderCheck(): void
     {
         if ($this->model->items->count() === 0) {
             throw new \Exception('订单明细不能为空！');
@@ -151,7 +151,7 @@ class OrderReview extends AbstractTool
         }
     }
 
-    public function purchaseOrderCheck():void
+    public function purchaseOrderCheck(): void
     {
         if ($this->model->items->count() === 0) {
             throw new \Exception('订单明细不能为空！');
@@ -161,18 +161,18 @@ class OrderReview extends AbstractTool
         }
     }
 
-    public function statementOrderCheck():void
+    public function statementOrderCheck(): void
     {
         if ($this->model->items->count() === 0) {
             throw new \Exception('订单明细不能为空！');
         }
     }
 
-    public function applyForOrderCheck():void
+    public function applyForOrderCheck(): void
     {
         $taskStatus = $this->model->with_order->status;
         if ($taskStatus > TaskModel::STATUS_DRAW) {
-            throw new \Exception("任务状态为". TaskModel::STATUS[$taskStatus] .",无法完成审核");
+            throw new \Exception("任务状态为" . TaskModel::STATUS[$taskStatus] . ",无法完成审核");
         }
         if ($this->model->items->count() === 0) {
             throw new \Exception('订单明细不能为空！');
@@ -182,11 +182,11 @@ class OrderReview extends AbstractTool
         }
     }
 
-    public function makeProductOrderCheck():void
+    public function makeProductOrderCheck(): void
     {
         $taskStatus = $this->model->with_order->status;
         if ($taskStatus !== TaskModel::STATUS_DRAW) {
-            throw new \Exception("任务状态为". TaskModel::STATUS[$taskStatus] .",无法完成审核");
+            throw new \Exception("任务状态为" . TaskModel::STATUS[$taskStatus] . ",无法完成审核");
         }
 
         if ($this->model->items->count() === 0) {
@@ -197,14 +197,14 @@ class OrderReview extends AbstractTool
         }
     }
 
-    public function CostOrderCheck():void
+    public function CostOrderCheck(): void
     {
         if ($this->model->items->count() === 0) {
             throw new \Exception('订单明细不能为空！');
         }
     }
 
-    public function InventoryOrderCheck():void
+    public function InventoryOrderCheck(): void
     {
         $with_order = $this->model->with_order;
         if ($with_order->status !== InventoryModel::STATUS_WAIT) {
@@ -218,7 +218,7 @@ class OrderReview extends AbstractTool
 //        }
     }
 
-    public function applyForReturnOrderCheck():void
+    public function applyForReturnOrderCheck(): void
     {
         $applyForReturnOrderItems = $this->model->items;
         $applyForOrderItems = $this->model->apply_for_order->items;
@@ -276,14 +276,14 @@ HTML;
     protected function parameters(): array
     {
         return [
-            'table'         => $this->getTable(),
-            'model'         => $this->getModel(),
+            'table' => $this->getTable(),
+            'model' => $this->getModel(),
             'review_status' => $this->review_status,
             'id' => request()->route()->parameter($this->getTable()),
         ];
     }
 
-    public function getTable():string
+    public function getTable(): string
     {
         return Str::snake(admin_controller_name());
     }

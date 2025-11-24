@@ -52,23 +52,23 @@ class BatchCreateSaleInOrderSave extends BatchAction
     protected function orderSync(SaleOutOrderModel $saleOutOrderModel): void
     {
         $in_order = SaleInOrderModel::create([
-            'order_no'    => build_order_no('TH'),
+            'order_no' => build_order_no('TH'),
             'customer_id' => $saleOutOrderModel->customer_id,
-            'status'      => SaleInOrderModel::STATUS_SEND,
-            'other'       => $saleOutOrderModel->other,
-            'user_id'     => Admin::user()->id,
-            'with_id'     => $saleOutOrderModel->id,
-            'address_id'  => $saleOutOrderModel->address_id,
-            'drawee_id'   => $saleOutOrderModel->drawee_id,
+            'status' => SaleInOrderModel::STATUS_SEND,
+            'other' => $saleOutOrderModel->other,
+            'user_id' => Admin::user()->id,
+            'with_id' => $saleOutOrderModel->id,
+            'address_id' => $saleOutOrderModel->address_id,
+            'drawee_id' => $saleOutOrderModel->drawee_id,
         ]);
         $items = $saleOutOrderModel->items->map(function (SaleOutItemModel $saleOutItemModel) {
             return [
-                'sku_id'      => $saleOutItemModel->sku_id,
-                'should_num'  => $saleOutItemModel->actual_num,
-                'actual_num'  => 0,
-                'return_num'  => 0,
-                'price'       => $saleOutItemModel->price,
-                'standard'    => $saleOutItemModel->standard,
+                'sku_id' => $saleOutItemModel->sku_id,
+                'should_num' => $saleOutItemModel->actual_num,
+                'actual_num' => 0,
+                'return_num' => 0,
+                'price' => $saleOutItemModel->price,
+                'standard' => $saleOutItemModel->standard,
             ];
         });
         $in_order->items()->createMany($items);

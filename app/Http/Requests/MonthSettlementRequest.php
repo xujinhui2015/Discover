@@ -26,7 +26,7 @@ class MonthSettlementRequest extends FormRequest
     }
 
     /**
-     * @param  Validator  $validator
+     * @param Validator $validator
      * @throws ApiRequestException
      */
     protected function failedValidation(Validator $validator)

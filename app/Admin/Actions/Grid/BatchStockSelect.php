@@ -40,12 +40,12 @@ HTML;
     {
         $url = route('sku-stock-batchs.index', [
             Grid::IFRAME_QUERY_NAME => 1,
-            'sku_id'                => request()->input('sku_id'),
-            'item_id'               => request()->input('item_id'),
-            'table'                 => admin_controller_name(),
-            'standard'              => request()->input('standard'),
+            'sku_id' => request()->input('sku_id'),
+            'item_id' => request()->input('item_id'),
+            'table' => admin_controller_name(),
+            'standard' => request()->input('standard'),
 //            'percent'               => request()->input('percent'),
-            'order_id'              => $this->getOrderId(),
+            'order_id' => $this->getOrderId(),
         ]);
         return <<<JS
         $("#my-more-select-batch-resourc").on("click",function(){
@@ -63,7 +63,7 @@ HTML;
 JS;
     }
 
-    public function getOrderId():int
+    public function getOrderId(): int
     {
         return request()->route()->parameter($this->getTable()) ?? 0;
     }

@@ -34,11 +34,11 @@ class Delete extends BatchAction
      */
     public function handle(Request $request)
     {
-        $model      = $request->input('model');
+        $model = $request->input('model');
         $modelClass = "\\App\Models\\" . $model;
-        $keys       = $this->getKey();
+        $keys = $this->getKey();
 
-        if (! class_exists($modelClass)) {
+        if (!class_exists($modelClass)) {
             throw new \Exception("参数错误！");
         }
 

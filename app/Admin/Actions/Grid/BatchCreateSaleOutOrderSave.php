@@ -39,7 +39,7 @@ class BatchCreateSaleOutOrderSave extends BatchAction
      */
     public function handle(Request $request)
     {
-        $index                     = $request->input('_index');
+        $index = $request->input('_index');
         DB::transaction(function () {
             foreach ($this->getKey() as $key) {
                 $sale_order = SaleOrderModel::findOrFail($key);
@@ -52,22 +52,22 @@ class BatchCreateSaleOutOrderSave extends BatchAction
     protected function orderSync(SaleOrderModel $saleOrderModel): void
     {
         $out_order = SaleOutOrderModel::create([
-            'order_no'    => build_order_no('CK'),
+            'order_no' => build_order_no('CK'),
             'customer_id' => $saleOrderModel->customer_id,
-            'status'      => SaleOutOrderModel::STATUS_SEND,
-            'other'       => $saleOrderModel->other,
-            'user_id'     => Admin::user()->id,
-            'with_id'     => $saleOrderModel->id,
-            'address_id'  => $saleOrderModel->address_id,
-            'drawee_id'   => $saleOrderModel->drawee_id,
+            'status' => SaleOutOrderModel::STATUS_SEND,
+            'other' => $saleOrderModel->other,
+            'user_id' => Admin::user()->id,
+            'with_id' => $saleOrderModel->id,
+            'address_id' => $saleOrderModel->address_id,
+            'drawee_id' => $saleOrderModel->drawee_id,
         ]);
-        $items    = $saleOrderModel->items->map(function (SaleItemModel $saleItemModel) {
+        $items = $saleOrderModel->items->map(function (SaleItemModel $saleItemModel) {
             return [
-                'sku_id'      => $saleItemModel->sku_id,
-                'should_num'  => $saleItemModel->should_num,
-                'price'       => $saleItemModel->price,
+                'sku_id' => $saleItemModel->sku_id,
+                'should_num' => $saleItemModel->should_num,
+                'price' => $saleItemModel->price,
 //                'percent'     => $saleItemModel->percent,
-                'standard'    => $saleItemModel->standard,
+                'standard' => $saleItemModel->standard,
             ];
         });
         $out_order->items()->createMany($items);

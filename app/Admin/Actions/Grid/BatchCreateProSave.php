@@ -47,11 +47,11 @@ HTML;
 
     public function handle(Request $request)
     {
-        $index       = $request->input("_index");
+        $index = $request->input("_index");
         $order_model = $request->input("_order_model");
-        $order_id    = $request->input('_order_id');
+        $order_id = $request->input('_order_id');
 
-        $this->order    = ("\\App\Models\\" . $order_model)::findOrFail($order_id);
+        $this->order = ("\\App\Models\\" . $order_model)::findOrFail($order_id);
         $this->products = ProductModel::whereIn('id', $this->getKey())->get();
 
         $func = 'save' . $order_model;
@@ -90,7 +90,7 @@ HTML;
     {
         $this->order->items()->createMany($this->products->map(function (ProductModel $productModel) {
             return [
-                'sku_id'   => $productModel->sku_pluck->keys()->first(),
+                'sku_id' => $productModel->sku_pluck->keys()->first(),
                 'batch_no' => 'PC' . date('Ymd'),
             ];
         }));
@@ -103,7 +103,7 @@ HTML;
     {
         $this->order->items()->createMany($this->products->map(function (ProductModel $productModel) {
             return [
-                'sku_id'   => $productModel->sku_pluck->keys()->first(),
+                'sku_id' => $productModel->sku_pluck->keys()->first(),
                 'batch_no' => 'PC' . date('Ymd'),
             ];
         }));
@@ -116,7 +116,7 @@ HTML;
     {
         $this->order->items()->createMany($this->products->map(function (ProductModel $productModel) {
             return [
-                'sku_id'   => $productModel->sku_pluck->keys()->first(),
+                'sku_id' => $productModel->sku_pluck->keys()->first(),
                 'batch_no' => 'PC' . date('Ymd'),
             ];
         }));
@@ -126,7 +126,7 @@ HTML;
     {
         $this->order->items()->createMany($this->products->map(function (ProductModel $productModel) {
             return [
-                'sku_id'   => $productModel->sku_pluck->keys()->first(),
+                'sku_id' => $productModel->sku_pluck->keys()->first(),
                 'batch_no' => 'PC' . date('Ymd'),
             ];
         }));
@@ -134,8 +134,8 @@ HTML;
 
     public function actionScript(): string
     {
-        $warning     = "请选择保存的数据！";
-        $order_id    = request()->input("order_id");
+        $warning = "请选择保存的数据！";
+        $order_id = request()->input("order_id");
         $order_model = request()->input("order_model");
 
         return <<<JS

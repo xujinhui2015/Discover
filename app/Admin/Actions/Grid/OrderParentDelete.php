@@ -13,12 +13,12 @@ class OrderParentDelete extends AbstractTool
 
     public function handle(Request $request)
     {
-        $id         = $request->input('id');
-        $model      = $request->input('model');
+        $id = $request->input('id');
+        $model = $request->input('model');
         $modelClass = "\\App\Models\\" . $model;
         $table = $request->input('table');
 
-        $modelObject =   $modelClass::find($id);
+        $modelObject = $modelClass::find($id);
 
         if ($modelObject->review_status == $modelObject::REVIEW_STATUS_OK) {
             return $this->response()->error('无法删除已审核的单据');
@@ -31,7 +31,7 @@ class OrderParentDelete extends AbstractTool
     }, 1000);
 ");
         } catch (\Exception $exception) {
-            return $this->response()->error("单据删除成功失败！". $exception->getMessage());
+            return $this->response()->error("单据删除成功失败！" . $exception->getMessage());
         }
     }
 
@@ -59,13 +59,13 @@ HTML;
     protected function parameters(): array
     {
         return [
-            'table'         => $this->getTable(),
-            'model'         => $this->getModel(),
+            'table' => $this->getTable(),
+            'model' => $this->getModel(),
             'id' => request()->route()->parameter($this->getTable()),
         ];
     }
 
-    public function getTable():string
+    public function getTable(): string
     {
         return Str::snake(admin_controller_name());
     }

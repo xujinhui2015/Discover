@@ -27,7 +27,7 @@ class OrderStatus extends Round
     public function handle(Request $request)
     {
         $option = $request->get('option', 'all');
-        
+
         switch ($option) {
             case 'sale':
                 $doing = SaleOrderModel::query()
@@ -42,14 +42,14 @@ class OrderStatus extends Round
                 $returned = SaleOrderModel::query()
                     ->where('status', SaleOrderModel::STATUS_RETURNED)
                     ->count();
-                
+
                 $this->labels = ['受理中', '已发货', '已签收', '已退回'];
                 $this->withContent($doing, $send, $sign, $returned);
                 $this->withChart([$doing, $send, $sign, $returned]);
                 $this->chartLabels(['受理中', '已发货', '已签收', '已退回']);
                 $this->chartTotal('总数', $doing + $send + $sign + $returned);
                 break;
-                
+
             case 'purchase':
                 $wait = PurchaseOrderModel::query()
                     ->where('status', PurchaseOrderModel::STATUS_WAIT)
@@ -66,19 +66,19 @@ class OrderStatus extends Round
                 $partReturned = PurchaseOrderModel::query()
                     ->where('status', PurchaseOrderModel::STATUS_PART_RETURNED)
                     ->count();
-                
+
                 $this->labels = ['待收货', '已收货', '退回中', '已退回', '部分收货'];
                 $this->withContent($wait, $arrive, $returning, $returned, $partReturned);
                 $this->withChart([$wait, $arrive, $returning, $returned, $partReturned]);
                 $this->chartLabels(['待收货', '已收货', '退回中', '已退回', '部分收货']);
                 $this->chartTotal('总数', $wait + $arrive + $returning + $returned + $partReturned);
                 break;
-                
+
             case 'all':
             default:
                 $saleCount = SaleOrderModel::query()->count();
                 $purchaseCount = PurchaseOrderModel::query()->count();
-                
+
                 $this->labels = ['销售订单', '采购订单'];
                 $this->withContent($saleCount, $purchaseCount);
                 $this->withChart([$saleCount, $purchaseCount]);

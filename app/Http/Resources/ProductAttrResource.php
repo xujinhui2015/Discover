@@ -22,7 +22,7 @@ class ProductAttrResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      * @return array
      */
     public function toArray($request)
@@ -30,7 +30,7 @@ class ProductAttrResource extends JsonResource
         return [
             'attr_id' => $this->attr_id,
             //            'attr_name' => $this->attr->name ?? '',
-            'value'   => array_map(function (int $id) {
+            'value' => array_map(function (int $id) {
                 return ['id' => $id, 'text' => AttrValueModel::whereId($id)->value('name')];
             }, $this->attr_value_ids),
         ];

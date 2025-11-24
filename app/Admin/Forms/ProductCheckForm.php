@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ProductCheckForm extends Form implements LazyRenderable
 {
     use LazyWidget;
+
     /**
      * Handle the form request.
      *

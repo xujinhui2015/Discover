@@ -49,7 +49,7 @@ HTML;
     protected function parameters(): array
     {
         return [
-            'url'           => route('order.print', [
+            'url' => route('order.print', [
                 'ids' => $this->getOrderId(),
                 'model' => $this->getModel(),
                 'slug' => admin_controller_slug(),
@@ -70,7 +70,7 @@ HTML;
         return admin_controller_name() . 'Model';
     }
 
-    public function getOrderId():int
+    public function getOrderId(): int
     {
         return request()->route()->parameter($this->getTable());
     }

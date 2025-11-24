@@ -23,7 +23,7 @@ class TaskActions extends Actions
      */
     protected function renderQuickEdit()
     {
-        if (! static::$resolvedDialog) {
+        if (!static::$resolvedDialog) {
             static::$resolvedDialog = true;
 
             [$width, $height] = $this->grid->option('dialog_form_area');

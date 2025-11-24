@@ -41,20 +41,20 @@ HTML;
 
     public function handle(Request $request)
     {
-        $index                     = $request->input('_index');
-        $func = "statement" .$request->input('_func');
+        $index = $request->input('_index');
+        $func = "statement" . $request->input('_func');
         try {
             if (method_exists($this, $func)) {
                 \call_user_func([$this, $func]);
             }
             return $this->response()->script("parent.layer.close({$index})");
         } catch (\Exception $exception) {
-            return  $this->response()->error($exception->getMessage())->refresh();
+            return $this->response()->error($exception->getMessage())->refresh();
         }
     }
 
     /**
-     * @param  int  $category
+     * @param int $category
      * @return Collection
      */
     public function getCostOrders(int $category): Collection
@@ -76,7 +76,7 @@ HTML;
                 $model = ($category === StatementOrderModel::CATEGORY_SUPPLIER)
                     ? SupplierModel::query() : CustomerModel::query();
                 $company = $model->findOrFail($companyId);
-                throw new \Exception(StatementOrderModel::CATEGORY[$category] . $company->name ."有一笔待审核的结算单！");
+                throw new \Exception(StatementOrderModel::CATEGORY[$category] . $company->name . "有一笔待审核的结算单！");
             }
 
             $collection->transform(function (CostOrderModel $costOrderModel) {
@@ -103,7 +103,7 @@ HTML;
         });
     }
 
-    public function statementOrderExists(int $category, $companyId):bool
+    public function statementOrderExists(int $category, $companyId): bool
     {
         return StatementOrderModel::query()->where([
             'category' => $category,
@@ -115,7 +115,7 @@ HTML;
     /**
      * @throws \Exception
      */
-    public function statementSupplier():void
+    public function statementSupplier(): void
     {
         $costOrders = $this->getCostOrders(CostOrderModel::CATEGORY_SUPPLIER);
 
@@ -125,7 +125,7 @@ HTML;
     /**
      * @throws \Exception
      */
-    public function statementCustomer():void
+    public function statementCustomer(): void
     {
         $costOrders = $this->getCostOrders(CostOrderModel::CATEGORY_CUSTOMER);
 

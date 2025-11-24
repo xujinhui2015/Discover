@@ -55,19 +55,19 @@ class NewUsers extends Line
         switch ($request->get('option')) {
             case '365':
                 // 卡片内容
-                $this->withContent(mt_rand(1000, 5000).'k');
+                $this->withContent(mt_rand(1000, 5000) . 'k');
                 // 图表数据
                 $this->withChart(collect($generator(30))->toArray());
                 break;
             case '30':
                 // 卡片内容
-                $this->withContent(mt_rand(400, 1000).'k');
+                $this->withContent(mt_rand(400, 1000) . 'k');
                 // 图表数据
                 $this->withChart(collect($generator(30))->toArray());
                 break;
             case '28':
                 // 卡片内容
-                $this->withContent(mt_rand(400, 1000).'k');
+                $this->withContent(mt_rand(400, 1000) . 'k');
                 // 图表数据
                 $this->withChart(collect($generator(28))->toArray());
                 break;
@@ -76,7 +76,7 @@ class NewUsers extends Line
                 // 卡片内容
                 $this->withContent('89.2k');
                 // 图表数据
-                $this->withChart([28, 40, 36, 52, 38, 60, 55, ]);
+                $this->withChart([28, 40, 36, 52, 38, 60, 55,]);
         }
     }
 

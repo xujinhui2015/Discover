@@ -87,11 +87,11 @@ class BatchStockSelectSave extends BatchAction
             $skuStockBatch = SkuStockBatchModel::query()->findOrFail($stock_batch_id);
             SaleOutBatchModel::create([
                 'stock_batch_id' => $stock_batch_id,
-                'sku_id'         => $this->sku_id,
-                'item_id'        => $this->item_id,
-                'standard'       => $this->standard,
+                'sku_id' => $this->sku_id,
+                'item_id' => $this->item_id,
+                'standard' => $this->standard,
 //                'percent'        => $this->percent,
-                'cost_price'     => $skuStockBatch->cost_price,
+                'cost_price' => $skuStockBatch->cost_price,
             ]);
         }
     }
@@ -101,9 +101,9 @@ class BatchStockSelectSave extends BatchAction
         foreach ($this->getKey() as $stock_batch_id) {
             ApplyForBatchModel::create([
                 'stock_batch_id' => $stock_batch_id,
-                'sku_id'         => $this->sku_id,
-                'item_id'        => $this->item_id,
-                'standard'       => $this->standard,
+                'sku_id' => $this->sku_id,
+                'item_id' => $this->item_id,
+                'standard' => $this->standard,
 //                'percent'        => $this->percent,
             ]);
         }
@@ -115,10 +115,10 @@ class BatchStockSelectSave extends BatchAction
             $skuStockBatch = SkuStockBatchModel::query()->findOrFail($stock_batch_id);
             InventoryItemModel::create([
                 'stock_batch_id' => $stock_batch_id,
-                'should_num'         => $skuStockBatch->num,
-                'actual_num'        => $skuStockBatch->num,
-                'order_id'          => $this->order_id,
-                'cost_price'        => $skuStockBatch->cost_price,
+                'should_num' => $skuStockBatch->num,
+                'actual_num' => $skuStockBatch->num,
+                'order_id' => $this->order_id,
+                'cost_price' => $skuStockBatch->cost_price,
             ]);
         }
     }
@@ -133,8 +133,8 @@ HTML;
     public function actionScript(): string
     {
         $warning = "请选择保存的数据！";
-        $table   = request()->input('table');
-        $sku_id  = request()->input('sku_id');
+        $table = request()->input('table');
+        $sku_id = request()->input('sku_id');
         $item_id = request()->input('item_id');
         $standard = request()->input('standard');
 //        $percent = request()->input('percent');
