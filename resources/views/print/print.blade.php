@@ -80,20 +80,9 @@
 
         .invoice-header {
             text-align: center;
-            margin-bottom: 16px;
-            padding-bottom: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 0;
             position: relative;
-        }
-
-        .invoice-header::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 10%;
-            width: 80%;
-            height: 1px;
-            background: linear-gradient(to right, transparent, #666, transparent);
-            border: none;
         }
 
         .company-name {
@@ -209,7 +198,7 @@
             }
 
             .invoice-header::after {
-                border-color: #333 !important;
+                border-color: transparent !important;
             }
         }
     </style>
@@ -229,7 +218,7 @@
                 <div class="invoice-header">
                     <div class="company-name">{{ config('app.name') ?? '' }}</div>
                     <div class="invoice-title">{{ $orderName }}</div>
-                    <div class="contact-info">打印时间：{{ now()->format('Y-m-d H:i') }}</div>
+                    <div class="contact-info">电话：020-86326688 传真：020-36265293</div>
                 </div>
 
                 <div class="customer-info">
