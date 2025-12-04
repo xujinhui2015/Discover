@@ -31,6 +31,7 @@ use Dcat\Admin\Grid;
 use Dcat\Admin\Grid\Tools;
 use Dcat\Admin\Controllers\AdminController;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 
 
 class ProductController extends AdminController
@@ -64,9 +65,7 @@ class ProductController extends AdminController
             });
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('product_id', '物料名称')
-                    ->select(ProductModel::pluck('name', 'id'))
-                    ->width(4);
+                $filter->like('name', '物料名称')->width(4);
                 $filter->like('item_no', '物料编号')->width(4);
                 $filter->equal('type', '分类')
                     ->select(ProductModel::TYPE)
@@ -116,8 +115,14 @@ class ProductController extends AdminController
             $form->row(function (Form\Row $row) use ($form) {
                 $row->width(6)->text('item_no')
                     ->default(ProductRepository::buildItemNo())
-                    ->creationRules(['unique:product'])
-                    ->updateRules(['unique:product,item_no,{{id}}'])
+                    ->creationRules([
+                        Rule::unique('product', 'item_no')->whereNull('deleted_at'),
+                    ])
+                    ->updateRules([
+                        Rule::unique('product', 'item_no')
+                            ->ignore($form->getKey())
+                            ->whereNull('deleted_at'),
+                    ])
                     ->help('用于商家内部管理所使用的自定义编码')
                     ->required();
 
