@@ -85,6 +85,10 @@ class ProductObserver
     {
         // 拼音码
         $productModel->name && $productModel->py_code = up_pinyin_abbr($productModel->name);
+
+        if ($productModel->barcode === null) {
+            $productModel->barcode = '';
+        }
     }
 
     /**
@@ -94,6 +98,17 @@ class ProductObserver
     {
         if (ProductModel::$skipDefaultAttrBinding) {
             return;
+        }
+
+        // 若请求中已经显式传入了规格，跳过自动绑定
+        $requestAttrs = request()->input('product_attr');
+        if (is_array($requestAttrs)) {
+            $hasCustomAttr = collect($requestAttrs)->filter(function (array $row) {
+                return ! empty($row['attr_id']) && ! empty($row['attr_value_ids']);
+            })->isNotEmpty();
+            if ($hasCustomAttr) {
+                return;
+            }
         }
 
         // 若商品无规格,自动绑定一个基础规格
