@@ -172,9 +172,6 @@ class ProductImportService extends BaseService
         $warning = $this->resolveWarningNum(Arr::get($row, '预警库存'));
 
         $attrRows = $this->parseAttrDefinitions(Arr::get($row, '属性定义'));
-        if (empty($attrRows)) {
-            throw new RuntimeException('请输入属性定义，多个属性使用“;”分隔');
-        }
         $skuRows = $this->buildSkuRows($attrRows);
 
         return [
@@ -429,11 +426,8 @@ class ProductImportService extends BaseService
             $product->product_attr()->createMany($productAttr);
         }
 
-        if (empty($skuRows)) {
-            throw new RuntimeException('无法根据属性定义生成SKU，请检查配置');
+        if (! empty($skuRows)) {
+            $product->sku()->createMany($skuRows);
         }
-
-        $product->sku()->createMany($skuRows);
     }
 }
-
