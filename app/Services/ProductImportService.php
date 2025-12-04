@@ -33,6 +33,7 @@ class ProductImportService extends BaseService
 {
     public const TEMPLATE_HEADERS = [
         '物料编号',
+        '专属编码',
         '物料名称',
         '分类',
         '品牌',
@@ -45,6 +46,7 @@ class ProductImportService extends BaseService
     public const TEMPLATE_SAMPLE = [
         [
             '物料编号' => '00000001',
+            '专属编码' => '6901234567890',
             '物料名称' => '示例香精',
             '分类'   => '成品',
             '品牌'   => '默认品牌',
@@ -156,6 +158,7 @@ class ProductImportService extends BaseService
 
         $itemNo = Arr::get($row, '物料编号');
         $itemNo = $itemNo ?: $this->generateItemNo();
+        $barcode = Arr::get($row, '专属编码');
 
         $type = $this->resolveProductType(Arr::get($row, '分类'));
         $brandId = $this->resolveBrandId(Arr::get($row, '品牌'));
@@ -170,6 +173,7 @@ class ProductImportService extends BaseService
 
         return [
             'item_no'      => $itemNo,
+            'barcode'      => $barcode ?: '',
             'name'         => $name,
             'type'         => $type,
             'brand_id'     => $brandId,

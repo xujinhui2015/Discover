@@ -17,6 +17,7 @@ class ProductTable extends LazyRenderable
         return Grid::make(new ProductModel(), function (Grid $grid) {
             $grid->column('id');
             $grid->column('item_no', '物料编号')->emp();
+            $grid->column('barcode', '专属编码')->emp();
             $grid->column('name', '物料名称');
             $grid->column('type', '分类')->using(ProductModel::TYPE);
             $grid->column('brand.name', '品牌')->emp();

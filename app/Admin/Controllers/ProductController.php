@@ -45,6 +45,7 @@ class ProductController extends AdminController
         return Grid::make(new Product(), function (Grid $grid) {
             $grid->column('id')->sortable();
             $grid->column('item_no')->emp();
+            $grid->column('barcode', '专属编码')->emp();
             $grid->column('name')->emp();
 //            $grid->column('py_code')->emp();
             $grid->column('type', '分类')->using(ProductModel::TYPE);
@@ -86,6 +87,7 @@ class ProductController extends AdminController
             $grid->model()->whereHas('sku');
             $grid->column('id')->sortable();
             $grid->column('item_no');
+            $grid->column('barcode', '专属编码')->emp();
             $grid->column('name');
 //            $grid->column('py_code');
             $grid->column('type', '分类')->using(ProductModel::TYPE);
@@ -118,36 +120,37 @@ class ProductController extends AdminController
                     ->updateRules(['unique:product,item_no,{{id}}'])
                     ->help('用于商家内部管理所使用的自定义编码')
                     ->required();
-                $row->width(6)->text('name')->required();
+
+                $row->width(6)->text('barcode', '专属编码');
+
+
             });
 
-            $form->row(function (Form\Row $row) use ($form) {
+            $form->row(function (Form\Row $row) {
+                $row->width(6)->text('name')->required();
 
                 $brands = BrandRepository::pluck('name', 'id');;
                 $row->width(6)->select('brand_id', '品牌')
                     ->options($brands)
                     ->default(head($brands->keys()->toArray()) ?? '')
                     ->required();
-
-                $row->select('type', '分类')
-                    ->options(ProductModel::TYPE)
-                    ->default(ProductModel::TYPE_NOT_FINISH)
-                    ->required();
-
-
             });
 
             $form->row(function (Form\Row $row) use ($form) {
-//                $row->width(6)->select('product_category_id', '分类')
-//                    ->options(ProductCategoryModel::selectOptions())
-//                    ->default(0)
-//                    ->required();
+                $row->width(6)->select('type', '分类')
+                    ->options(ProductModel::TYPE)
+                    ->default(ProductModel::TYPE_NOT_FINISH)
+                    ->required();
 
                 $units = UnitRepository::pluck('name', 'id');
                 $row->width(6)->select('unit_id', '单位')
                     ->options($units)
                     ->default(head($units->keys()->toArray()) ?? '')
                     ->required();
+            });
+
+            $form->row(function (Form\Row $row) use ($form) {
+
 
                 $row->width(6)->text('warning_num')
                     ->default(0)
