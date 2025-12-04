@@ -76,6 +76,13 @@ class ProductModel extends BaseModel
 
     protected $appends = ['attr_value_arr', 'sku_key_value', 'sku_pluck', 'sku_id_text', 'type_str'];
 
+    /**
+     * When true, observers skip auto-binding the default specification.
+     *
+     * @var bool
+     */
+    public static bool $skipDefaultAttrBinding = false;
+
     const TYPE_FINISH = 1;
     const TYPE_NOT_FINISH = 0;
     const TYPE_WRAPPER = 2;

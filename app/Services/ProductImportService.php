@@ -102,10 +102,16 @@ class ProductImportService extends BaseService
 
             try {
                 DB::transaction(function () use ($normalized, &$stats) {
-                    $payload = $this->buildProductPayload($normalized);
-                    [$product, $mode] = $this->storeProduct($payload);
-                    $this->syncProductRelations($product, $payload['product_attr'], $payload['sku_rows']);
-                    $stats[$mode]++;
+                    ProductModel::$skipDefaultAttrBinding = true;
+
+                    try {
+                        $payload = $this->buildProductPayload($normalized);
+                        [$product, $mode] = $this->storeProduct($payload);
+                        $this->syncProductRelations($product, $payload['product_attr'], $payload['sku_rows']);
+                        $stats[$mode]++;
+                    } finally {
+                        ProductModel::$skipDefaultAttrBinding = false;
+                    }
                 });
             } catch (Throwable $e) {
                 $errors[] = sprintf('第 %s 行：%s', $line, $e->getMessage());

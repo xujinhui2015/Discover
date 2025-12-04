@@ -92,6 +92,10 @@ class ProductObserver
      */
     public function saved(ProductModel $productModel): void
     {
+        if (ProductModel::$skipDefaultAttrBinding) {
+            return;
+        }
+
         // 若商品无规格,自动绑定一个基础规格
         if ($productModel->id && ProductAttrModel::query()
                 ->where('product_id', $productModel->id)
