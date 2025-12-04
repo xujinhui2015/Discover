@@ -29,18 +29,16 @@ class BatchDeleteProduct extends BatchAction
         $allSkuIds = ProductSkuModel::whereIn('product_id', $ids)
             ->pluck('product_id', 'id');
 
-        if (PurchaseItemModel::where('sku_id', $allSkuIds->keys())->exists()) {
+        if (PurchaseItemModel::whereIn('sku_id', $allSkuIds->keys())->exists()) {
             return $this->response()->error('删除失败：已存在采购单据')->refresh();
         }
 
-        if (SkuStockModel::where('sku_id', $allSkuIds->keys())->exists()) {
+        if (SkuStockModel::whereIn('sku_id', $allSkuIds->keys())->exists()) {
             return $this->response()->error('删除失败：已存在库存')->refresh();
         }
 
         // 删除商品
-        foreach ($ids as $id) {
-            ProductModel::query()->whereIn('id', $allSkuIds->values())->first()->delete();
-        }
+        ProductModel::query()->whereIn('id', $ids)->delete();
 
         return $this->response()->success('删除成功')->refresh();
     }
