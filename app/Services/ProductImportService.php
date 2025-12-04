@@ -402,14 +402,10 @@ class ProductImportService extends BaseService
     protected function storeProduct(array $payload): array
     {
         /** @var ProductModel|null $product */
-        $product = ProductModel::withTrashed()->where('item_no', $payload['item_no'])->first();
+        $product = ProductModel::where('item_no', $payload['item_no'])->first();
         $mode = 'created';
 
         if ($product) {
-            if ($product->trashed()) {
-                $product->restore();
-            }
-
             $product->fill($payload)->save();
             $mode = 'updated';
 
