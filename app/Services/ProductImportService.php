@@ -227,7 +227,7 @@ class ProductImportService extends BaseService
     protected function resolveBrandId(?string $name): int
     {
         if (! $name) {
-            throw new RuntimeException('品牌不能为空');
+            return 0;
         }
 
         /** @var BrandModel|Builder $query */
