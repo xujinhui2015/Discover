@@ -77,6 +77,7 @@ class ClearTableCommand extends Command
         DB::table('supplier')->truncate();
         DB::table('task')->truncate();
         DB::table('unit')->truncate();
+        DB::table('apply_for_order')->truncate();
 
 
     }
