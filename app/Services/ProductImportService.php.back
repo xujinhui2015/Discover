@@ -35,7 +35,7 @@ use RuntimeException;
 use Throwable;
 use Yxx\LaravelQuick\Services\BaseService;
 
-class ProductImportServiceBck extends BaseService
+class ProductImportService extends BaseService
 {
     public const TEMPLATE_HEADERS = [
         '物料编号',
