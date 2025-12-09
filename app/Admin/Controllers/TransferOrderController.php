@@ -7,6 +7,7 @@ use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Repositories\TransferOrder;
 use App\Models\PositionModel;
 use App\Models\ProductModel;
+use App\Models\SkuStockBatchModel;
 use App\Models\TransferOrderModel;
 use Dcat\Admin\Admin;
 use Dcat\Admin\Form;
@@ -43,6 +44,61 @@ class TransferOrderController extends OrderController
              $row->width(6)->select('user_id', '创建人')->options($users)->default(Admin::user()->id)->required();
              $row->width(6)->text('other', '备注')->saveAsString();
         });
+
+        // 通用保存校验（创建/编辑均执行）
+        $form->saving(function (Form $form) {
+            $items = $form->input('items') ?: [];
+
+            foreach ($items as $index => $item) {
+                $row = is_numeric($index) ? ((int) $index + 1) : str_replace('new_', '', (string) $index);
+
+                $skuId = $item['sku_id'] ?? null;
+                $batchNo = $item['batch_no'] ?? null;
+                $numRaw = $item['num'] ?? null;
+                $num = $numRaw === null ? null : (float) str_replace(',', '', $numRaw);
+
+                $outPositionId = $item['out_position_id'] ?? null;
+                $inPositionId = $item['in_position_id'] ?? null;
+
+                $batch = null;
+                if ($skuId && $batchNo) {
+                    $batch = SkuStockBatchModel::query()
+                        ->where('sku_id', $skuId)
+                        ->where('batch_no', $batchNo)
+                        ->when($outPositionId, function ($query) use ($outPositionId) {
+                            $query->where('position_id', $outPositionId);
+                        })
+                        ->first(['num', 'position_id']);
+
+                    // 若未传调出仓库（readonly禁用提交），则不限定仓库再查一次
+                    if (! $batch) {
+                        $batch = SkuStockBatchModel::query()
+                            ->where('sku_id', $skuId)
+                            ->where('batch_no', $batchNo)
+                            ->first(['num', 'position_id']);
+                    }
+                }
+
+                // 补齐调出仓库用于校验
+                if (! $outPositionId && $batch) {
+                    $outPositionId = $batch->position_id;
+                }
+
+                if ($outPositionId && $inPositionId && (int) $outPositionId === (int) $inPositionId) {
+                    return $form->error("第{$row}行：调入仓库不能与调出仓库相同");
+                }
+
+                if ($skuId && $batchNo && $num !== null) {
+                    if (! $batch) {
+                        return $form->error("第{$row}行：所选批次不存在或库存不足");
+                    }
+
+                    if ($num - (float) $batch->num > 0.0001) {
+                        return $form->error("第{$row}行：数量不可大于批次数量（可用 {$batch->num}）");
+                    }
+                }
+            }
+        });
     }
 
     protected function creating(Form &$form): void
@@ -63,6 +119,9 @@ class TransferOrderController extends OrderController
                 $table->select('in_position_id', '调入仓库')->options(PositionModel::pluck('name', 'id'))->required();
             })->useTable()->width(12)->enableHorizontal();
         });
+
+        // 保证错误提示在弹窗上方显示
+        Admin::style('.toast-container{z-index:2147483647!important;}');
 
         Admin::script(
             <<<JS
