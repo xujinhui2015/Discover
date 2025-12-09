@@ -22,7 +22,7 @@ class TransferItemModel extends BaseModel
     {
         static::saving(function (TransferItemModel $item) {
             // 批次调整时，同步数量为所选批次的库存，保持与新增页面一致的体验
-            if (! $item->isDirty('batch_no')) {
+            if (! $item->exists || ! $item->isDirty('batch_no')) {
                 return true;
             }
 
