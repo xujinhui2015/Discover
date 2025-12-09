@@ -43,6 +43,7 @@ use App\Models\StatementItemModel;
 use App\Models\StatementOrderModel;
 use App\Models\StockHistoryModel;
 use App\Models\TaskModel;
+use App\Models\TransferOrderModel;
 use App\Observers\AccountantDateObserver;
 use App\Observers\ApplyForBatchObserver;
 use App\Observers\ApplyForItemObserver;
@@ -73,6 +74,7 @@ use App\Observers\StatementItemObserver;
 use App\Observers\StatementOrderObserver;
 use App\Observers\StockHistoryObserver;
 use App\Observers\TaskObserver;
+use App\Observers\TransferOrderObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -128,5 +130,6 @@ class AppServiceProvider extends ServiceProvider
         StatementOrderModel::observe([StatementOrderObserver::class, OrderNoCreatedObserver::class]);
         ApplyForReturnOrderModel::observe([ApplyForReturnOrderObserver::class, OrderNoCreatedObserver::class]);
         SaleInOrderModel::observe([SaleInOrderObserver::class]);
+        TransferOrderModel::observe([TransferOrderObserver::class, OrderNoCreatedObserver::class]);
     }
 }

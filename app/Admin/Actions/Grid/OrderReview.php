@@ -168,6 +168,16 @@ class OrderReview extends AbstractTool
         }
     }
 
+    public function transferOrderCheck(): void
+    {
+        if ($this->model->items->count() === 0) {
+            throw new \Exception('订单明细不能为空！');
+        }
+        if ($this->model->items()->where('num', 0)->count()) {
+            throw new \Exception('明细数量不能为0！');
+        }
+    }
+
     public function applyForOrderCheck(): void
     {
         $taskStatus = $this->model->with_order->status;

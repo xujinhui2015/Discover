@@ -33,6 +33,7 @@ Route::group([
     $router->post('api/with/order', 'ApiController@withOrder')->name('api.with.order');
     $router->get('api/get-customer-address', 'ApiController@getCustomerAddress')->name('api.customer.address.find');
     $router->get('api/get-customer-drawee', 'ApiController@getCustomerDrawee')->name('api.customer.drawee.find');
+    $router->get('api/get-sku-batches', 'ApiController@getSkuBatches')->name('api.sku.batches');
 
     $router->resource('attrs', 'AttrController');
     $router->get('products/import', 'ProductImportController@index')->name('products.import');
@@ -71,6 +72,8 @@ Route::group([
     $router->resource('inventory-orders', 'InventoryOrderController');
     $router->resource('inventory-items', 'InventoryItemController');
     $router->resource('init-stock-orders', 'InitStockOrderController');
+    $router->resource('transfer-orders', 'TransferOrderController');
+    $router->resource('transfer-items', 'TransferItemController');
     $router->resource('init-stock-items', 'InitStockItemController');
     $router->get('order-prints', 'PrintController@print')->name('order.print');
     $router->resource('accountant-dates', "AccountantDateController");

@@ -68,6 +68,28 @@ class StockHistoryObserver
                     'num' => DB::raw("num - $stockHistoryModel->out_num"),
                 ]);
                 break;
+            case StockHistoryModel::TRANSFER_TYPE:
+                SkuStockBatchModel::updateOrCreate([
+                    'position_id' => $stockHistoryModel->out_position_id,
+                    'batch_no'    => $stockHistoryModel->batch_no,
+                    'sku_id'      => $stockHistoryModel->sku_id,
+//                    'percent'     => $stockHistoryModel->percent,
+                    'standard'       => $stockHistoryModel->standard,
+                ], [
+                    'num' => DB::raw("num - $stockHistoryModel->out_num"),
+                ]);
+
+                SkuStockBatchModel::updateOrCreate([
+                    'position_id' => $stockHistoryModel->in_position_id,
+                    'batch_no'    => $stockHistoryModel->batch_no,
+                    'sku_id'      => $stockHistoryModel->sku_id,
+//                    'percent'     => $stockHistoryModel->percent,
+                    'standard'       => $stockHistoryModel->standard,
+                ], [
+                    'num'        => DB::raw("num + $stockHistoryModel->in_num"),
+                    'cost_price' => $stockHistoryModel->cost_price,
+                ]);
+                break;
         }
     }
 }

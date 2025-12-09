@@ -110,4 +110,27 @@ class ApiController extends Controller
         $data        = $customer->draweeIdText($customer_id)->textIdtoArray('id', 'name');
         return Response::json($data);
     }
+
+    public function getSkuBatches(Request $request): JsonResponse
+    {
+        $skuId = $request->get('q');
+        if (!$skuId) {
+            return Response::json([]);
+        }
+
+        $batches = \App\Models\SkuStockBatchModel::where('sku_id', $skuId)
+            ->where('num', '>', 0)
+            ->with('position')
+            ->get()
+            ->map(function ($batch) {
+                return [
+                    'id' => $batch->batch_no,
+                    'text' => $batch->batch_no . ' (仓库: ' . ($batch->position->name ?? '-') . ', 库存: ' . $batch->num . ')',
+                    'position_id' => $batch->position_id,
+                    'num' => $batch->num,
+                ];
+            });
+
+        return Response::json($batches);
+    }
 }
