@@ -13,7 +13,7 @@ class TransferItemModel extends BaseModel
 
     protected $with = ['sku', 'out_position', 'in_position'];
 
-    protected $appends = ['standard_str'];
+    protected $appends = ['standard_str', 'product_id'];
 
     public function sku(): BelongsTo
     {
@@ -33,5 +33,17 @@ class TransferItemModel extends BaseModel
     public function order(): BelongsTo
     {
         return $this->belongsTo(TransferOrderModel::class, 'order_id');
+    }
+
+    /**
+     * Ensure product_id is available for nested forms when the column is absent on the table.
+     */
+    public function getProductIdAttribute(): ?int
+    {
+        if (array_key_exists('product_id', $this->attributes)) {
+            return (int) $this->attributes['product_id'];
+        }
+
+        return $this->sku ? (int) $this->sku->product_id : null;
     }
 }

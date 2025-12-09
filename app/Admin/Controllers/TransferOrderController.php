@@ -12,11 +12,29 @@ use App\Models\TransferOrderModel;
 use Dcat\Admin\Admin;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
+use Dcat\Admin\Layout\Content;
 use Dcat\Admin\Models\Administrator;
 use Illuminate\Support\Fluent;
 
 class TransferOrderController extends OrderController
 {
+    public function edit($id, Content $content)
+    {
+        $this->order = $this->oredr_model::findOrFail($id);
+
+        // 待审核状态时，只显示表单编辑（hasMany），不显示下方的 Grid
+        if ($this->order->review_status === TransferOrderModel::REVIEW_STATUS_WAIT) {
+            return $content
+                ->title($this->title())
+                ->description($this->description()['edit'] ?? trans('admin.edit'))
+                ->body($this->form()->edit($id))
+                ->full();
+        }
+
+        // 已审核状态时，使用父类默认行为（显示表单 + Grid）
+        return parent::edit($id, $content);
+    }
+
     protected function grid()
     {
         return Grid::make(new TransferOrder(['user']), function (Grid $grid) {
@@ -120,8 +138,8 @@ class TransferOrderController extends OrderController
             })->useTable()->width(12)->enableHorizontal();
         });
 
-        // 保证错误提示在弹窗上方显示
-        Admin::style('.toast-container{z-index:2147483647!important;}');
+        // 保证错误提示在弹窗上方显示；hasMany 行宽过多时提供横向滚动
+        Admin::style('.toast-container{z-index:2147483647!important;} .has-many-items{overflow-x:auto;} .has-many-items .table-has-many{min-width:1200px;}');
 
         Admin::script(
             <<<JS
@@ -171,6 +189,89 @@ class TransferOrderController extends OrderController
 })();
 JS
         );
+    }
+
+    protected function editing(Form &$form): void
+    {
+        $form->row(function (Form\Row $row) {
+            $row->reviewicon('review_status', '审核状态');
+        });
+
+        // 待审核状态时，允许像新增时一样编辑物料信息
+        if ($this->order && $this->order->review_status === TransferOrderModel::REVIEW_STATUS_WAIT) {
+            $form->row(function (Form\Row $row) {
+                $row->hasMany('items', '', function (Form\NestedForm $table) {
+                    $table->select('product_id', '物料名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
+                    $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
+                    $table->select('sku_id', '属性选择')->options()->load('batch_no', route('api.sku.batches'))->required();
+
+                    $table->select('batch_no', '批次号')->options()->required()->addElementClass('batch-select');
+
+                    // Using standard constant from InitStockOrderModel
+                    $table->select('standard', '通用标准')->options(\App\Models\InitStockOrderModel::STANDARD)->default(0);
+
+                    $table->select('out_position_id', '调出仓库')->options(PositionModel::pluck('name', 'id'))->required()->readonly()->addElementClass('out-position-select');
+                    $table->tableDecimal('num', '数量')->default(0.00)->required()->addElementClass('num-input');
+                    $table->select('in_position_id', '调入仓库')->options(PositionModel::pluck('name', 'id'))->required();
+                })->useTable()->width(12)->enableHorizontal();
+            });
+
+            // 保证错误提示在弹窗上方显示；hasMany 行宽过多时提供横向滚动
+            Admin::style('.toast-container{z-index:2147483647!important;} .has-many-items{overflow-x:auto;} .has-many-items .table-has-many{min-width:1200px;}');
+
+            Admin::script(
+                <<<JS
+(function () {
+    function lockOutPositionSelect(outPositionSelect) {
+        if (! outPositionSelect || ! outPositionSelect.length) {
+            return;
+        }
+
+        // Prevent manual opening while keeping value submitted
+        outPositionSelect.off('select2:opening.lock').on('select2:opening.lock', function (event) {
+            event.preventDefault();
+        });
+
+        var selection = outPositionSelect.next('.select2');
+        if (selection.length) {
+            selection.find('.select2-selection').css('pointer-events', 'none');
+        }
+    }
+
+    function handleBatchSelect(selectEl, data) {
+        var currentRow = selectEl.closest('tr');
+
+        if (data.num !== undefined && data.num !== null) {
+            currentRow.find('.num-input').val(data.num);
+        }
+
+        var outPositionSelect = currentRow.find('.out-position-select');
+        if (outPositionSelect.length && data.position_id !== undefined && data.position_id !== null) {
+            outPositionSelect.val(data.position_id).trigger('change');
+        }
+
+        lockOutPositionSelect(outPositionSelect);
+    }
+
+    $(document).on('select2:select change', '.batch-select', function (e) {
+        var data = (e.params && e.params.data) ? e.params.data : ($(this).select2('data')[0] || {});
+        handleBatchSelect($(this), data);
+    });
+
+    // 初始化时锁定调出仓库下拉，避免手动修改
+    $(function () {
+        $('.out-position-select').each(function () {
+            lockOutPositionSelect($(this));
+        });
+    });
+})();
+JS
+            );
+        }
+
+        $form->disableFooter();
+        $form->disableHeader();
+        $form->disableAjaxSubmit();
     }
 
     public function setItems(Grid &$grid): void

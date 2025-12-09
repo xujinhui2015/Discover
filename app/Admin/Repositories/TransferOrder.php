@@ -6,4 +6,9 @@ use Dcat\Admin\Repositories\EloquentRepository;
 class TransferOrder extends EloquentRepository
 {
     protected $eloquentClass = Model::class;
+
+    public function __construct($relations = [])
+    {
+        parent::__construct($relations);
+    }
 }
