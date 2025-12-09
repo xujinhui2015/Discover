@@ -129,7 +129,8 @@ $(document).on('change', "{$this->getElementClassSelector()}", function () {
 
         // 如果有 data-value，则选 data-value；否则选第一个
         let firstId = data.data.product_attr.length > 0 ? data.data.product_attr[0].id : null;
-        let value = sku_id.attr('data-value') || firstId;
+        let currentSkuValue = $(sku_id).val();
+        let value = sku_id.attr('data-value') || currentSkuValue || firstId;
 
         if (value) {
             $(sku_id).val(value).trigger('change');

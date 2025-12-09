@@ -7,6 +7,7 @@ use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Repositories\TransferOrder;
 use App\Models\PositionModel;
 use App\Models\ProductModel;
+use App\Models\ProductSkuModel;
 use App\Models\SkuStockBatchModel;
 use App\Models\TransferOrderModel;
 use Dcat\Admin\Admin;
@@ -100,17 +101,8 @@ class TransferOrderController extends OrderController
                     $batch = SkuStockBatchModel::query()
                         ->where('sku_id', $skuId)
                         ->where('batch_no', $batchNo)
-                        ->when($outPositionId, function ($query) use ($outPositionId) {
-                            $query->where('position_id', $outPositionId);
-                        })
+                        ->where('position_id', $outPositionId)
                         ->first(['num', 'position_id']);
-
-                    if (! $batch) {
-                        $batch = SkuStockBatchModel::query()
-                            ->where('sku_id', $skuId)
-                            ->where('batch_no', $batchNo)
-                            ->first(['num', 'position_id']);
-                    }
                 }
 
                 if ($skuId && $batchNo && $num !== null) {
@@ -131,41 +123,10 @@ class TransferOrderController extends OrderController
     protected function creating(Form &$form): void
     {
         $form->row(function (Form\Row $row) {
-            $row->hasMany('items', '', function (Form\NestedForm $table) {
-                $table->select('product_id', '物料名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
-                $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
-                $table->select('sku_id', '属性选择')->options()->load('batch_no', route('api.sku.batches'))->required();
-
-                $table->select('batch_no', '批次号')->options()->required()->addElementClass('batch-select');
-
-                // Using standard constant from InitStockOrderModel
-                $table->select('standard', '通用标准')->options(\App\Models\InitStockOrderModel::STANDARD)->default(0);
-
-                $table->tableDecimal('num', '数量')->default(0.00)->required()->addElementClass('num-input');
-            })->useTable()->width(12)->enableHorizontal();
+            $this->buildItemFormRows($row);
         });
 
-        // 保证错误提示在弹窗上方显示；hasMany 行宽过多时提供横向滚动
-        Admin::style('.toast-container{z-index:2147483647!important;} .has-many-items{overflow-x:auto;} .has-many-items .table-has-many{min-width:1200px;}');
-
-        Admin::script(
-            <<<JS
-(function () {
-    function handleBatchSelect(selectEl, data) {
-        var currentRow = selectEl.closest('tr');
-
-        if (data.num !== undefined && data.num !== null) {
-            currentRow.find('.num-input').val(data.num);
-        }
-    }
-
-    $(document).on('select2:select change', '.batch-select', function (e) {
-        var data = (e.params && e.params.data) ? e.params.data : ($(this).select2('data')[0] || {});
-        handleBatchSelect($(this), data);
-    });
-})();
-JS
-        );
+        $this->appendBatchAssets($form);
     }
 
     protected function editing(Form &$form): void
@@ -177,26 +138,127 @@ JS
         // 待审核状态时，允许像新增时一样编辑物料信息
         if ($this->order && $this->order->review_status === TransferOrderModel::REVIEW_STATUS_WAIT) {
             $form->row(function (Form\Row $row) {
-                $row->hasMany('items', '', function (Form\NestedForm $table) {
-                    $table->select('product_id', '物料名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
-                    $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
-                    $table->select('sku_id', '属性选择')->options()->load('batch_no', route('api.sku.batches'))->required();
-
-                    $table->select('batch_no', '批次号')->options()->required()->addElementClass('batch-select');
-
-                    // Using standard constant from InitStockOrderModel
-                    $table->select('standard', '通用标准')->options(\App\Models\InitStockOrderModel::STANDARD)->default(0);
-
-                    $table->tableDecimal('num', '数量')->default(0.00)->required()->addElementClass('num-input');
-                })->useTable()->width(12)->enableHorizontal();
+                $this->buildItemFormRows($row);
             });
 
-            // 保证错误提示在弹窗上方显示；hasMany 行宽过多时提供横向滚动
-            Admin::style('.toast-container{z-index:2147483647!important;} .has-many-items{overflow-x:auto;} .has-many-items .table-has-many{min-width:1200px;}');
+            $this->appendBatchAssets($form);
+        }
 
-            Admin::script(
-                <<<JS
+        $form->disableFooter();
+        $form->disableHeader();
+        $form->disableAjaxSubmit();
+    }
+
+    protected function buildItemFormRows(Form\Row $row): void
+    {
+        $row->hasMany('items', '', function (Form\NestedForm $table) {
+            $table->select('product_id', '物料名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
+            $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
+            $table->select('sku_id', '属性选择')->options(function ($id) {
+                if (! $id) {
+                    return [];
+                }
+
+                $sku = ProductSkuModel::find($id);
+
+                if (! $sku) {
+                    return [];
+                }
+
+                return [$sku->id => $sku->attr_value_ids_str];
+            })->required()->addElementClass('transfer-sku');
+
+            $table->select('batch_no', '批次号')->options(function ($value) {
+                if (! $value) {
+                    return [];
+                }
+
+                return [$value => $value];
+            })->required()->addElementClass('batch-select')->addElementClass('transfer-batch');
+
+            // Using standard constant from InitStockOrderModel
+            $table->select('standard', '通用标准')->options(\App\Models\InitStockOrderModel::STANDARD)->default(0);
+
+            $table->tableDecimal('num', '数量')->default(0.00)->required()->addElementClass('num-input');
+        })->useTable()->width(12)->enableHorizontal();
+    }
+
+    protected function appendBatchAssets(Form $form): void
+    {
+        // 保证错误提示在弹窗上方显示；hasMany 行宽过多时提供横向滚动
+        Admin::style('.toast-container{z-index:2147483647!important;} .has-many-items{overflow-x:auto;} .has-many-items .table-has-many{min-width:1200px;}');
+
+        $formSelector = '#'.$form->getElementId();
+        $batchUrl = route('api.sku.batches');
+
+        Admin::script(
+            <<<JS
 (function () {
+    var formSelector = "{$formSelector}";
+    var batchUrl = "{$batchUrl}";
+    var skuSelector = formSelector + ' .transfer-sku';
+    var batchSelector = formSelector + ' .transfer-batch';
+    var outPositionSelector = formSelector + ' .field_out_position_id';
+    var productSelector = formSelector + ' .field_product_id';
+
+    // 记录初始选中值，避免加载时被重置
+    $(skuSelector).each(function () {
+        var currentVal = $(this).val();
+        if (currentVal) {
+            $(this).attr('data-value', currentVal);
+        }
+    });
+    $(batchSelector).each(function () {
+        var currentVal = $(this).val();
+        if (currentVal) {
+            $(this).attr('data-value', currentVal);
+        }
+    });
+
+    function findOutPositionId() {
+        return $(outPositionSelector).val() || '';
+    }
+
+    function refreshBatchOptions(skuSelectEl) {
+        var skuId = skuSelectEl.val();
+        var currentRow = skuSelectEl.closest('.fields-group');
+        var batchSelectEl = currentRow.find('.transfer-batch');
+
+        if (! batchSelectEl.length) {
+            return;
+        }
+
+        var outPositionId = findOutPositionId();
+
+        if (! skuId || ! outPositionId) {
+            batchSelectEl.attr('data-value', '');
+            batchSelectEl.find('option').remove();
+            batchSelectEl.val(null).trigger('change');
+            return;
+        }
+
+        $.ajax(batchUrl + '?q=' + skuId + '&out_position_id=' + outPositionId).then(function (data) {
+            batchSelectEl.find('option').remove();
+            batchSelectEl.select2({
+                data: $.map(data, function (d) {
+                    return d;
+                })
+            });
+
+            var current = batchSelectEl.attr('data-value') || batchSelectEl.val();
+            var value = null;
+
+            if (current) {
+                value = String(current).split(',');
+            } else if (data.length > 0) {
+                value = [String(data[0].id)];
+                batchSelectEl.attr('data-value', data[0].id);
+            }
+
+            batchSelectEl.val(value).trigger('change');
+        });
+    }
+
     function handleBatchSelect(selectEl, data) {
         var currentRow = selectEl.closest('tr');
 
@@ -205,18 +267,50 @@ JS
         }
     }
 
-    $(document).on('select2:select change', '.batch-select', function (e) {
+    $(document).off('change', skuSelector);
+    $(document).on('change', skuSelector, function () {
+        var skuSelect = $(this);
+        var rowEl = skuSelect.closest('.fields-group');
+        var prevSku = skuSelect.data('prev-sku-id');
+        var currentSku = skuSelect.val();
+
+        // SKU 变化时清空批次选择的缓存值，避免沿用旧物料的批次
+        if (prevSku && prevSku !== currentSku) {
+            rowEl.find('.transfer-batch').attr('data-value', '').find('option').remove();
+        }
+
+        skuSelect.data('prev-sku-id', currentSku);
+        refreshBatchOptions(skuSelect);
+    });
+
+    $(document).off('change', outPositionSelector);
+    $(document).on('change', outPositionSelector, function () {
+        $(batchSelector).each(function () {
+            $(this).attr('data-value', '').find('option').remove();
+            $(this).val(null).trigger('change');
+        });
+
+        $(skuSelector).trigger('change');
+    });
+
+    // 物料变化时清空批次，避免沿用旧物料的批次
+    $(document).off('change', productSelector);
+    $(document).on('change', productSelector, function () {
+        var rowEl = $(this).closest('.fields-group');
+        rowEl.find('.transfer-batch').attr('data-value', '').find('option').remove();
+        rowEl.find('.transfer-batch').val(null).trigger('change');
+    });
+
+    $(document).off('select2:select change', formSelector + ' .batch-select');
+    $(document).on('select2:select change', formSelector + ' .batch-select', function (e) {
         var data = (e.params && e.params.data) ? e.params.data : ($(this).select2('data')[0] || {});
         handleBatchSelect($(this), data);
     });
+
+    $(skuSelector).trigger('change');
 })();
 JS
-            );
-        }
-
-        $form->disableFooter();
-        $form->disableHeader();
-        $form->disableAjaxSubmit();
+        );
     }
 
     public function setItems(Grid &$grid): void

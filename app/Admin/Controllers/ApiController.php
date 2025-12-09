@@ -114,11 +114,14 @@ class ApiController extends Controller
     public function getSkuBatches(Request $request): JsonResponse
     {
         $skuId = $request->get('q');
-        if (!$skuId) {
+        $outPositionId = $request->get('out_position_id');
+
+        if (! $skuId || ! $outPositionId) {
             return Response::json([]);
         }
 
         $batches = \App\Models\SkuStockBatchModel::where('sku_id', $skuId)
+            ->where('position_id', $outPositionId)
             ->where('num', '>', 0)
             ->with('position')
             ->get()
