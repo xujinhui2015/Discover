@@ -104,7 +104,7 @@ class TransferOrderController extends OrderController
     protected function creating(Form &$form): void
     {
         $form->row(function (Form\Row $row) {
-            $row->hasMany('items', '明细', function (Form\NestedForm $table) {
+            $row->hasMany('items', '', function (Form\NestedForm $table) {
                 $table->select('product_id', '物料名称')->options(ProductModel::pluck('name', 'id'))->loadpku(route('api.product.find'))->required();
                 $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
                 $table->select('sku_id', '属性选择')->options()->load('batch_no', route('api.sku.batches'))->required();
