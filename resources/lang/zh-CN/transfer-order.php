@@ -20,6 +20,8 @@ return [
         'order_no' => '单号',
         'created_at' => '业务日期',
         'review_status' => '审核状态',
+        'out_position.name' => '调出仓库',
+        'in_position.name' => '调入仓库',
         'user.name' => '创建人',
         'audit_user.name' => '审核人',
         'finished_at' => '完成时间',

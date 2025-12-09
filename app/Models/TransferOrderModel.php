@@ -41,6 +41,16 @@ class TransferOrderModel extends BaseModel
         return $this->hasMany(TransferItemModel::class, 'order_id');
     }
 
+    public function out_position(): BelongsTo
+    {
+        return $this->belongsTo(PositionModel::class, 'out_position_id');
+    }
+
+    public function in_position(): BelongsTo
+    {
+        return $this->belongsTo(PositionModel::class, 'in_position_id');
+    }
+
     public function getReviewStatusStrAttribute(): string
     {
         return self::REVIEW_STATUS[$this->review_status] ?? '';

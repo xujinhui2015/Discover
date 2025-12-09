@@ -16,6 +16,8 @@ class CreateTransferOrderTables extends Migration
         Schema::create('transfer_order', function (Blueprint $table) {
             $table->id();
             $table->string('order_no')->unique()->comment('单号');
+            $table->unsignedBigInteger('out_position_id')->nullable()->after('audit_user_id')->comment('调出仓库');
+            $table->unsignedBigInteger('in_position_id')->nullable()->after('out_position_id')->comment('调入仓库');
             $table->tinyInteger('review_status')->default(0)->comment('状态:0待审核,1已审核');
             $table->unsignedBigInteger('user_id')->comment('创建用户');
             $table->unsignedBigInteger('audit_user_id')->nullable()->comment('审核用户');
@@ -31,8 +33,6 @@ class CreateTransferOrderTables extends Migration
             $table->unsignedBigInteger('order_id')->comment('订单ID');
             $table->unsignedBigInteger('sku_id')->comment('SKU ID');
             $table->decimal('num', 10, 3)->default(0)->comment('数量');
-            $table->unsignedBigInteger('out_position_id')->comment('调出仓库');
-            $table->unsignedBigInteger('in_position_id')->comment('调入仓库');
             $table->string('batch_no')->comment('批次号');
             $table->string('percent')->nullable()->comment('含绒量');
             $table->tinyInteger('standard')->default(0)->comment('检验标准');

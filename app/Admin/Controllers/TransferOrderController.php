@@ -14,7 +14,6 @@ use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Layout\Content;
 use Dcat\Admin\Models\Administrator;
-use Illuminate\Support\Fluent;
 
 class TransferOrderController extends OrderController
 {
@@ -37,9 +36,11 @@ class TransferOrderController extends OrderController
 
     protected function grid()
     {
-        return Grid::make(new TransferOrder(['user']), function (Grid $grid) {
+        return Grid::make(new TransferOrder(['user', 'out_position', 'in_position']), function (Grid $grid) {
             $grid->column('id')->sortable();
             $grid->column('order_no', '单号');
+            $grid->column('out_position.name', '调出仓库');
+            $grid->column('in_position.name', '调入仓库');
             $grid->column('user.name', '创建用户');
             $grid->column('other', '备注')->emp();
             $grid->column('review_status', '状态')->using(TransferOrderModel::REVIEW_STATUS)->label(TransferOrderModel::REVIEW_STATUS_COLOR);
@@ -53,9 +54,15 @@ class TransferOrderController extends OrderController
 
     protected function setForm(Form &$form): void
     {
+        $positions = PositionModel::pluck('name', 'id');
+
         $form->row(function (Form\Row $row) {
             $row->width(6)->text('order_no', '单号')->default(build_order_no('DB'))->required()->readOnly();
             $row->width(6)->text('created_at', '业务日期')->default(now())->required()->readOnly();
+        });
+        $form->row(function (Form\Row $row) use ($positions) {
+            $row->width(6)->select('out_position_id', '调出仓库')->options($positions)->required();
+            $row->width(6)->select('in_position_id', '调入仓库')->options($positions)->required();
         });
         $form->row(function (Form\Row $row) {
              $users = Administrator::query()->latest()->pluck('name', 'id');
@@ -65,9 +72,19 @@ class TransferOrderController extends OrderController
 
         // 通用保存校验（创建/编辑均执行）
         $form->saving(function (Form $form) {
+            $outPositionId = $form->input('out_position_id');
+            $inPositionId = $form->input('in_position_id');
             $items = $form->input('items') ?: [];
 
-            foreach ($items as $index => $item) {
+            if (! $outPositionId || ! $inPositionId) {
+                return $form->error('请先选择调出仓库和调入仓库');
+            }
+
+            if ($outPositionId && $inPositionId && (int) $outPositionId === (int) $inPositionId) {
+                return $form->error('调入仓库不能与调出仓库相同');
+            }
+
+            foreach ($items as $index => &$item) {
                 $row = is_numeric($index) ? ((int) $index + 1) : str_replace('new_', '', (string) $index);
 
                 $skuId = $item['sku_id'] ?? null;
@@ -75,8 +92,8 @@ class TransferOrderController extends OrderController
                 $numRaw = $item['num'] ?? null;
                 $num = $numRaw === null ? null : (float) str_replace(',', '', $numRaw);
 
-                $outPositionId = $item['out_position_id'] ?? null;
-                $inPositionId = $item['in_position_id'] ?? null;
+                $item['out_position_id'] = $outPositionId;
+                $item['in_position_id'] = $inPositionId;
 
                 $batch = null;
                 if ($skuId && $batchNo) {
@@ -88,22 +105,12 @@ class TransferOrderController extends OrderController
                         })
                         ->first(['num', 'position_id']);
 
-                    // 若未传调出仓库（readonly禁用提交），则不限定仓库再查一次
                     if (! $batch) {
                         $batch = SkuStockBatchModel::query()
                             ->where('sku_id', $skuId)
                             ->where('batch_no', $batchNo)
                             ->first(['num', 'position_id']);
                     }
-                }
-
-                // 补齐调出仓库用于校验
-                if (! $outPositionId && $batch) {
-                    $outPositionId = $batch->position_id;
-                }
-
-                if ($outPositionId && $inPositionId && (int) $outPositionId === (int) $inPositionId) {
-                    return $form->error("第{$row}行：调入仓库不能与调出仓库相同");
                 }
 
                 if ($skuId && $batchNo && $num !== null) {
@@ -116,6 +123,8 @@ class TransferOrderController extends OrderController
                     }
                 }
             }
+            unset($item);
+            request()->merge(['items' => $items]);
         });
     }
 
@@ -132,9 +141,7 @@ class TransferOrderController extends OrderController
                 // Using standard constant from InitStockOrderModel
                 $table->select('standard', '通用标准')->options(\App\Models\InitStockOrderModel::STANDARD)->default(0);
 
-                $table->select('out_position_id', '调出仓库')->options(PositionModel::pluck('name', 'id'))->required()->readonly()->addElementClass('out-position-select');
                 $table->tableDecimal('num', '数量')->default(0.00)->required()->addElementClass('num-input');
-                $table->select('in_position_id', '调入仓库')->options(PositionModel::pluck('name', 'id'))->required();
             })->useTable()->width(12)->enableHorizontal();
         });
 
@@ -144,47 +151,17 @@ class TransferOrderController extends OrderController
         Admin::script(
             <<<JS
 (function () {
-    function lockOutPositionSelect(outPositionSelect) {
-        if (! outPositionSelect || ! outPositionSelect.length) {
-            return;
-        }
-
-        // Prevent manual opening while keeping value submitted
-        outPositionSelect.off('select2:opening.lock').on('select2:opening.lock', function (event) {
-            event.preventDefault();
-        });
-
-        var selection = outPositionSelect.next('.select2');
-        if (selection.length) {
-            selection.find('.select2-selection').css('pointer-events', 'none');
-        }
-    }
-
     function handleBatchSelect(selectEl, data) {
         var currentRow = selectEl.closest('tr');
 
         if (data.num !== undefined && data.num !== null) {
             currentRow.find('.num-input').val(data.num);
         }
-
-        var outPositionSelect = currentRow.find('.out-position-select');
-        if (outPositionSelect.length && data.position_id !== undefined && data.position_id !== null) {
-            outPositionSelect.val(data.position_id).trigger('change');
-        }
-
-        lockOutPositionSelect(outPositionSelect);
     }
 
     $(document).on('select2:select change', '.batch-select', function (e) {
         var data = (e.params && e.params.data) ? e.params.data : ($(this).select2('data')[0] || {});
         handleBatchSelect($(this), data);
-    });
-
-    // 初始化时锁定调出仓库下拉，避免手动修改
-    $(function () {
-        $('.out-position-select').each(function () {
-            lockOutPositionSelect($(this));
-        });
     });
 })();
 JS
@@ -210,9 +187,7 @@ JS
                     // Using standard constant from InitStockOrderModel
                     $table->select('standard', '通用标准')->options(\App\Models\InitStockOrderModel::STANDARD)->default(0);
 
-                    $table->select('out_position_id', '调出仓库')->options(PositionModel::pluck('name', 'id'))->required()->readonly()->addElementClass('out-position-select');
                     $table->tableDecimal('num', '数量')->default(0.00)->required()->addElementClass('num-input');
-                    $table->select('in_position_id', '调入仓库')->options(PositionModel::pluck('name', 'id'))->required();
                 })->useTable()->width(12)->enableHorizontal();
             });
 
@@ -222,47 +197,17 @@ JS
             Admin::script(
                 <<<JS
 (function () {
-    function lockOutPositionSelect(outPositionSelect) {
-        if (! outPositionSelect || ! outPositionSelect.length) {
-            return;
-        }
-
-        // Prevent manual opening while keeping value submitted
-        outPositionSelect.off('select2:opening.lock').on('select2:opening.lock', function (event) {
-            event.preventDefault();
-        });
-
-        var selection = outPositionSelect.next('.select2');
-        if (selection.length) {
-            selection.find('.select2-selection').css('pointer-events', 'none');
-        }
-    }
-
     function handleBatchSelect(selectEl, data) {
         var currentRow = selectEl.closest('tr');
 
         if (data.num !== undefined && data.num !== null) {
             currentRow.find('.num-input').val(data.num);
         }
-
-        var outPositionSelect = currentRow.find('.out-position-select');
-        if (outPositionSelect.length && data.position_id !== undefined && data.position_id !== null) {
-            outPositionSelect.val(data.position_id).trigger('change');
-        }
-
-        lockOutPositionSelect(outPositionSelect);
     }
 
     $(document).on('select2:select change', '.batch-select', function (e) {
         var data = (e.params && e.params.data) ? e.params.data : ($(this).select2('data')[0] || {});
         handleBatchSelect($(this), data);
-    });
-
-    // 初始化时锁定调出仓库下拉，避免手动修改
-    $(function () {
-        $('.out-position-select').each(function () {
-            lockOutPositionSelect($(this));
-        });
     });
 })();
 JS
