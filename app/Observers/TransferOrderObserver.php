@@ -25,10 +25,10 @@ class TransferOrderObserver
             $order->apply_at = $order->apply_at ?: now();
 
             $order->items->each(function (TransferItemModel $item) use ($order) {
-                // Get Cost Price from Source Batch
+                // Get Cost Price from Source Batch (use order 出库仓位)
                 $sourceBatch = SkuStockBatchModel::where([
                     'sku_id' => $item->sku_id,
-                    'position_id' => $item->out_position_id,
+                    'position_id' => $order->out_position_id,
                     'batch_no' => $item->batch_no,
                     'standard' => $item->standard,
                 ])->first();
@@ -38,8 +38,8 @@ class TransferOrderObserver
 
                 StockHistoryModel::create([
                     'sku_id' => $item->sku_id,
-                    'in_position_id' => $item->in_position_id,
-                    'out_position_id' => $item->out_position_id,
+                    'in_position_id' => $order->in_position_id,
+                    'out_position_id' => $order->out_position_id,
                     'cost_price' => $costPrice,
                     'type' => StockHistoryModel::TRANSFER_TYPE,
                     'flag' => StockHistoryModel::TRANSFER,

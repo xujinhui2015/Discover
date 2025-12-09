@@ -15,23 +15,13 @@ use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Layout\Content;
 use Dcat\Admin\Models\Administrator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Fluent;
 
 class TransferOrderController extends OrderController
 {
     public function edit($id, Content $content)
     {
-        $this->order = $this->oredr_model::findOrFail($id);
-
-        // 待审核状态时，只显示表单编辑（hasMany），不显示下方的 Grid
-        if ($this->order->review_status === TransferOrderModel::REVIEW_STATUS_WAIT) {
-            return $content
-                ->title($this->title())
-                ->description($this->description()['edit'] ?? trans('admin.edit'))
-                ->body($this->form()->edit($id))
-                ->full();
-        }
-
-        // 已审核状态时，使用父类默认行为（显示表单 + Grid）
         return parent::edit($id, $content);
     }
 
@@ -77,6 +67,10 @@ class TransferOrderController extends OrderController
             $inPositionId = $form->input('in_position_id');
             $items = $form->input('items') ?: [];
 
+            $form->model()->loadMissing('items.sku');
+            $itemsRelation = $form->model()->items ?? [];
+            $currentItems = ($itemsRelation instanceof Collection ? $itemsRelation : collect($itemsRelation))->keyBy('id');
+
             if (! $outPositionId || ! $inPositionId) {
                 return $form->error('请先选择调出仓库和调入仓库');
             }
@@ -88,13 +82,17 @@ class TransferOrderController extends OrderController
             foreach ($items as $index => &$item) {
                 $row = is_numeric($index) ? ((int) $index + 1) : str_replace('new_', '', (string) $index);
 
+                if (($item['id'] ?? null) && isset($currentItems[$item['id']])) {
+                    $existing = $currentItems[$item['id']];
+                    $item['sku_id'] = $item['sku_id'] ?? $existing->sku_id;
+                    $item['product_id'] = $item['product_id'] ?? $existing->product_id;
+                    $item['standard'] = $item['standard'] ?? $existing->standard;
+                }
+
                 $skuId = $item['sku_id'] ?? null;
                 $batchNo = $item['batch_no'] ?? null;
                 $numRaw = $item['num'] ?? null;
                 $num = $numRaw === null ? null : (float) str_replace(',', '', $numRaw);
-
-                $item['out_position_id'] = $outPositionId;
-                $item['in_position_id'] = $inPositionId;
 
                 $batch = null;
                 if ($skuId && $batchNo) {
@@ -131,22 +129,7 @@ class TransferOrderController extends OrderController
 
     protected function editing(Form &$form): void
     {
-        $form->row(function (Form\Row $row) {
-            $row->reviewicon('review_status', '审核状态');
-        });
-
-        // 待审核状态时，允许像新增时一样编辑物料信息
-        if ($this->order && $this->order->review_status === TransferOrderModel::REVIEW_STATUS_WAIT) {
-            $form->row(function (Form\Row $row) {
-                $this->buildItemFormRows($row);
-            });
-
-            $this->appendBatchAssets($form);
-        }
-
-        $form->disableFooter();
-        $form->disableHeader();
-        $form->disableAjaxSubmit();
+        parent::editing($form);
     }
 
     protected function buildItemFormRows(Form\Row $row): void
@@ -315,6 +298,8 @@ JS
 
     public function setItems(Grid &$grid): void
     {
+        $order = $this->order;
+
         $grid->column('sku.product.name', '物料名称');
         $grid->column('sku.product.unit.name', '单位');
         $grid->column('sku.product.type_str', '分类');
@@ -324,9 +309,47 @@ JS
         $grid->column('standard', '通用标准')->display(function () {
              return \App\Models\InitStockOrderModel::STANDARD[$this->standard] ?? $this->standard;
         });
-        $grid->column('out_position.name', '调出仓库');
-        $grid->column('in_position.name', '调入仓库');
-        $grid->column('batch_no', '批次号');
-        $grid->column('num', '数量');
+        $grid->column('batch_no', '批次号')->if(function () use ($order) {
+             return $order && $order->review_status === TransferOrderModel::REVIEW_STATUS_WAIT;
+        })->selectplus(function (Fluent $fluent) use ($order) {
+            $options = [];
+            $outPositionId = $order ? $order->out_position_id : null;
+
+            if ($fluent->sku_id && $outPositionId) {
+                $options = SkuStockBatchModel::query()
+                    ->where('sku_id', $fluent->sku_id)
+                    ->where('position_id', $outPositionId)
+                    ->get()
+                    ->mapWithKeys(function (SkuStockBatchModel $batch) {
+                        return [$batch->batch_no => $batch->batch_no . ' (库存: ' . $batch->num . ')'];
+                    })
+                    ->toArray();
+            }
+
+            if ($fluent->batch_no && ! isset($options[$fluent->batch_no])) {
+                $options[$fluent->batch_no] = $fluent->batch_no;
+            }
+
+            return $options;
+        });
+        $grid->column('num', '数量')->if(function () use ($order) {
+             return $order && $order->review_status === TransferOrderModel::REVIEW_STATUS_WAIT;
+        })->edit();
+    }
+
+    public function setItemsCommon(Grid &$grid): void
+    {
+        $grid->tools(\App\Admin\Actions\Grid\OrderPrint::make());
+
+        if ($this->order && $this->order->review_status !== $this->oredr_model::REVIEW_STATUS_OK) {
+            $grid->tools(\App\Admin\Actions\Grid\OrderReview::make(show_order_review($this->order->review_status)));
+            $grid->tools(\App\Admin\Actions\Grid\OrderDelete::make());
+            $grid->tools(\App\Admin\Actions\Grid\OrderParentDelete::make());
+        }
+
+        $grid->disableActions();
+        $grid->disablePagination();
+        $grid->disableCreateButton();
+        $grid->disableBatchDelete();
     }
 }
