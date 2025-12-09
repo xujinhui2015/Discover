@@ -7,6 +7,7 @@ use App\Models\StockHistoryModel;
 use App\Models\TransferItemModel;
 use App\Models\TransferOrderModel;
 use Dcat\Admin\Admin;
+use Exception;
 
 class TransferOrderObserver
 {
@@ -23,6 +24,25 @@ class TransferOrderObserver
             $order->audit_user_id = Admin::user()->id;
             $order->finished_at = now();
             $order->apply_at = $order->apply_at ?: now();
+
+            // 审核前校验批次库存是否足够
+            foreach ($order->items as $index => $item) {
+                $row = $index + 1;
+
+                $batch = SkuStockBatchModel::query()
+                    ->where('sku_id', $item->sku_id)
+                    ->where('batch_no', $item->batch_no)
+                    ->where('position_id', $order->out_position_id)
+                    ->first();
+
+                if (! $batch) {
+                    throw new Exception("第{$row}行批次不存在或无库存，禁止审核");
+                }
+
+                if ($item->num - (float) $batch->num > 0.0001) {
+                    throw new Exception("第{$row}行数量大于批次可用库存（可用 {$batch->num}），禁止审核");
+                }
+            }
 
             $order->items->each(function (TransferItemModel $item) use ($order) {
                 // Get Cost Price from Source Batch (use order 出库仓位)
