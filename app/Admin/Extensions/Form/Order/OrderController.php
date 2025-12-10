@@ -269,6 +269,25 @@ CSS
         })->resource(Str::of($this->item_name)->kebab()->plural());
     }
 
+    protected function reviewPermissionSlug(): string
+    {
+        return order_review_permission_slug();
+    }
+
+    protected function hasReviewPermission(): bool
+    {
+        $user = Admin::user();
+
+        return $user ? $user->can($this->reviewPermissionSlug()) : false;
+    }
+
+    protected function shouldShowReviewTool(): bool
+    {
+        return $this->order
+            && $this->order->review_status !== $this->oredr_model::REVIEW_STATUS_OK
+            && $this->hasReviewPermission();
+    }
+
     /**
      * @param Grid $grid
      */
@@ -276,7 +295,9 @@ CSS
     {
         $grid->tools(OrderPrint::make());
         if ($this->order && $this->order->review_status !== $this->oredr_model::REVIEW_STATUS_OK) {
-            $grid->tools(OrderReview::make(show_order_review($this->order->review_status)));
+            if ($this->shouldShowReviewTool()) {
+                $grid->tools(OrderReview::make(show_order_review($this->order->review_status)));
+            }
             $grid->tools(OrderDelete::make());
 
             // 物料返仓不允许新增物料

@@ -342,7 +342,9 @@ JS
         $grid->tools(\App\Admin\Actions\Grid\OrderPrint::make());
 
         if ($this->order && $this->order->review_status !== $this->oredr_model::REVIEW_STATUS_OK) {
-            $grid->tools(\App\Admin\Actions\Grid\OrderReview::make(show_order_review($this->order->review_status)));
+            if ($this->shouldShowReviewTool()) {
+                $grid->tools(\App\Admin\Actions\Grid\OrderReview::make(show_order_review($this->order->review_status)));
+            }
 //            $grid->tools(\App\Admin\Actions\Grid\OrderDelete::make());
             $grid->tools(\App\Admin\Actions\Grid\OrderParentDelete::make());
         }

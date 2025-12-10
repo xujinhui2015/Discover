@@ -193,6 +193,7 @@ return [
             'auth/login',
             'auth/logout',
             'auth/setting',
+            'api/*',
         ],
     ],
 

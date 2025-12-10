@@ -157,7 +157,7 @@ class MakeProductOrderController extends OrderController
     public function setItemsCommon(Grid &$grid): void
     {
         $grid->tools(OrderPrint::make());
-        if ($this->order && $this->order->review_status !== $this->oredr_model::REVIEW_STATUS_OK && $this->order->with_order->status === TaskModel::STATUS_DRAW) {
+        if ($this->order && $this->order->with_order->status === TaskModel::STATUS_DRAW && $this->shouldShowReviewTool()) {
             $grid->tools(OrderReview::make(show_order_review($this->order->review_status)));
         }
         $grid->disableActions();

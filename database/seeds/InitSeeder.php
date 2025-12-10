@@ -17,6 +17,7 @@ use Dcat\Admin\Models\Menu;
 use Dcat\Admin\Models\Role;
 use Dcat\Admin\Models\Permission;
 use Dcat\Admin\Models\Administrator;
+use Dcat\Admin\Support\Helper;
 use Illuminate\Support\Facades\DB;
 
 class InitSeeder extends Seeder
@@ -470,6 +471,84 @@ class InitSeeder extends Seeder
             ],
         ]);
 
+        $this->seedOrderReviewPermissions($createdAt);
+
         (new Menu())->flushCache();
+    }
+
+    protected function seedOrderReviewPermissions(string $createdAt): void
+    {
+        $parent = $this->savePermission(
+            'order-review',
+            [
+                'name' => '单据审核',
+                'http_method' => '',
+                'http_path' => '',
+                'parent_id' => 0,
+                'order' => (Permission::max('order') ?? 0) + 1,
+                'created_at' => $createdAt,
+                'updated_at' => $createdAt,
+            ]
+        );
+
+        $controllers = [
+            'ApplyForOrder',
+            'ApplyForReturnOrder',
+            'CostOrder',
+            'InitStockOrder',
+            'InventoryOrder',
+            'MakeProductOrder',
+            'PurchaseInOrder',
+            'PurchaseOrder',
+            'SaleInOrder',
+            'SaleOrder',
+            'SaleOutOrder',
+            'StatementOrder',
+            'TransferOrder',
+        ];
+
+        $permissionIds = [];
+        foreach ($controllers as $index => $controller) {
+            $permission = $this->savePermission(
+                order_review_permission_slug($controller),
+                [
+                    'name' => $this->buildOrderReviewName($controller),
+                    'http_method' => 'POST',
+                    'http_path' => '',
+                    'parent_id' => $parent->id,
+                    'order' => $parent->order + $index + 1,
+                    'created_at' => $createdAt,
+                    'updated_at' => $createdAt,
+                ]
+            );
+            $permissionIds[] = $permission->id;
+        }
+
+        $adminRole = Role::query()->where('slug', Role::ADMINISTRATOR)->first();
+        if ($adminRole) {
+            $adminRole->permissions()->syncWithoutDetaching(array_merge($permissionIds, [$parent->id]));
+        }
+    }
+
+    protected function savePermission(string $slug, array $data): Permission
+    {
+        $permission = Permission::query()->firstOrNew(['slug' => $slug]);
+        $permission->forceFill($data);
+        $permission->save();
+
+        return $permission;
+    }
+
+    protected function buildOrderReviewName(string $controller): string
+    {
+        $slug = Helper::slug($controller);
+        $labelKey = "{$slug}.labels.{$controller}";
+        $label = trans($labelKey);
+
+        if (! is_string($label) || $label === $labelKey) {
+            $label = $controller;
+        }
+
+        return $label . '审核';
     }
 }

@@ -111,7 +111,9 @@ class InventoryOrderController extends OrderController
         $grid->tools(OrderPrint::make());
         if ($this->order && $this->order->review_status !== $this->oredr_model::REVIEW_STATUS_OK) {
             $with_order = $this->order->with_order;
-            $with_order->status === InventoryModel::STATUS_WAIT && $grid->tools(OrderReview::make(show_order_review($this->order->review_status)));
+            if ($with_order->status === InventoryModel::STATUS_WAIT && $this->shouldShowReviewTool()) {
+                $grid->tools(OrderReview::make(show_order_review($this->order->review_status)));
+            }
             $grid->tools(OrderDelete::make());
             $grid->tools(BatchStockSelect::make());
         }

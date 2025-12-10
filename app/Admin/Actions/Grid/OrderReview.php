@@ -55,6 +55,15 @@ class OrderReview extends AbstractTool
         }
     }
 
+    protected function authorize($user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        return $user->can($this->getPermissionSlug(request()));
+    }
+
     public function handle(Request $request)
     {
         $title = Arr::get(self::REVIEW_STATUS, $request->input("review_status"));
@@ -290,12 +299,27 @@ HTML;
             'model' => $this->getModel(),
             'review_status' => $this->review_status,
             'id' => request()->route()->parameter($this->getTable()),
+            'permission_slug' => order_review_permission_slug(),
         ];
     }
 
     public function getTable(): string
     {
         return Str::snake(admin_controller_name());
+    }
+
+    protected function getPermissionSlug(?Request $request = null): string
+    {
+        $request = $request ?: request();
+
+        if ($request && $request->filled('permission_slug')) {
+            return (string) $request->input('permission_slug');
+        }
+
+        $table = $request ? $request->input('table') : null;
+        $controller = $table ? Str::studly(str_replace(['-', '_'], ' ', $table)) : null;
+
+        return order_review_permission_slug($controller);
     }
 
     /**

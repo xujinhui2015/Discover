@@ -166,7 +166,9 @@ class StatementOrderController extends OrderController
     {
         $grid->tools(OrderPrint::make());
         if ($this->order && $this->order->review_status !== $this->oredr_model::REVIEW_STATUS_OK) {
-            $grid->tools(OrderReview::make(show_order_review($this->order->review_status)));
+            if ($this->shouldShowReviewTool()) {
+                $grid->tools(OrderReview::make(show_order_review($this->order->review_status)));
+            }
             $grid->tools(OrderDelete::make());
         }
         $grid->disableActions();

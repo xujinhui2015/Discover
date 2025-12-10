@@ -15,6 +15,8 @@
 use App\Models\AttrValueModel;
 use App\Models\BaseModel;
 use App\Models\OrderNoGeneratorModel;
+use Dcat\Admin\Support\Helper;
+use Illuminate\Support\Str;
 
 if (! file_exists("lower_pinyin_abbr")) {
     /**
@@ -91,6 +93,22 @@ if (! function_exists('show_order_review')) {
             return BaseModel::REVIEW_STATUS_OK;
         }
         return BaseModel::REVIEW_STATUS_REREVIEW;
+    }
+}
+
+if (! function_exists('order_review_permission_slug')) {
+    /**
+     * 生成单据审核的权限标识，支持传入控制器名或表名格式。
+     *
+     * @param string|null $controllerName
+     * @return string
+     */
+    function order_review_permission_slug(string $controllerName = null): string
+    {
+        $name = $controllerName ?: admin_controller_name();
+        $studlyName = Str::studly(str_replace(['-', '_'], ' ', $name));
+
+        return 'review-' . Helper::slug($studlyName);
     }
 }
 
