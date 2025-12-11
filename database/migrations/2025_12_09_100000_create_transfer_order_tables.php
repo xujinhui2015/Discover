@@ -16,8 +16,8 @@ class CreateTransferOrderTables extends Migration
         Schema::create('transfer_order', function (Blueprint $table) {
             $table->id();
             $table->string('order_no')->unique()->comment('单号');
-            $table->unsignedBigInteger('out_position_id')->nullable()->after('audit_user_id')->comment('调出仓库');
-            $table->unsignedBigInteger('in_position_id')->nullable()->after('out_position_id')->comment('调入仓库');
+            $table->unsignedBigInteger('out_position_id')->nullable()->comment('调出仓库');
+            $table->unsignedBigInteger('in_position_id')->nullable()->comment('调入仓库');
             $table->tinyInteger('review_status')->default(0)->comment('状态:0待审核,1已审核');
             $table->unsignedBigInteger('user_id')->comment('创建用户');
             $table->unsignedBigInteger('audit_user_id')->nullable()->comment('审核用户');
