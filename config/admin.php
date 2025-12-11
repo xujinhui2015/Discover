@@ -195,6 +195,23 @@ return [
             'auth/setting',
             'api/*',
             'apply-for-batchs*',
+            // 供弹窗/子表单使用的资源路由放行，避免非超管权限拦截
+            'inventory-items*',
+            'sku-stock-batchs*',
+            'sale-out-batchs*',
+            'purchase-items*',
+            'sale-in-items*',
+            'sale-items*',
+            'purchase-in-items*',
+            'sale-out-items*',
+            'apply-for-items*',
+            'apply-for-return-items*',
+            'make-product-items*',
+            'init-stock-items*',
+            'transfer-items*',
+            // 兜底：凡是 *-items / *-batchs 的弹窗资源统一放行
+            '*-items*',
+            '*-batchs*',
         ],
     ],
 
