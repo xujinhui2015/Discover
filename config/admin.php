@@ -194,6 +194,7 @@ return [
             'auth/logout',
             'auth/setting',
             'api/*',
+            'apply-for-batchs*',
         ],
     ],
 
