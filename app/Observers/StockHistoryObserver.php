@@ -69,6 +69,36 @@ class StockHistoryObserver
                 ]);
                 break;
             case StockHistoryModel::TRANSFER_TYPE:
+                // 新调拨逻辑：分为出库/入库两条记录，按 flag 区分；
+                // 兼容旧数据（flag 未设置或为 TRANSFER）时，仍执行双向更新。
+                if ($stockHistoryModel->flag === StockHistoryModel::OUT) {
+                    SkuStockBatchModel::updateOrCreate([
+                        'position_id' => $stockHistoryModel->out_position_id,
+                        'batch_no'    => $stockHistoryModel->batch_no,
+                        'sku_id'      => $stockHistoryModel->sku_id,
+//                    'percent'     => $stockHistoryModel->percent,
+                        'standard'       => $stockHistoryModel->standard,
+                    ], [
+                        'num' => DB::raw("num - $stockHistoryModel->out_num"),
+                    ]);
+                    break;
+                }
+
+                if ($stockHistoryModel->flag === StockHistoryModel::IN) {
+                    SkuStockBatchModel::updateOrCreate([
+                        'position_id' => $stockHistoryModel->in_position_id,
+                        'batch_no'    => $stockHistoryModel->batch_no,
+                        'sku_id'      => $stockHistoryModel->sku_id,
+//                    'percent'     => $stockHistoryModel->percent,
+                        'standard'       => $stockHistoryModel->standard,
+                    ], [
+                        'num'        => DB::raw("num + $stockHistoryModel->in_num"),
+                        'cost_price' => $stockHistoryModel->cost_price,
+                    ]);
+                    break;
+                }
+
+                // 兼容旧的单条调拨记录：同时扣减出库仓、增加入库仓
                 SkuStockBatchModel::updateOrCreate([
                     'position_id' => $stockHistoryModel->out_position_id,
                     'batch_no'    => $stockHistoryModel->batch_no,
