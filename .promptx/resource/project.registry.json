@@ -4,8 +4,8 @@
   "metadata": {
     "version": "2.0.0",
     "description": "project 级资源注册表",
-    "createdAt": "2025-12-12T05:42:52.379Z",
-    "updatedAt": "2025-12-12T05:42:52.390Z",
+    "createdAt": "2025-12-12T08:35:12.370Z",
+    "updatedAt": "2025-12-12T08:35:12.404Z",
     "resourceCount": 1
   },
   "resources": [
@@ -17,9 +17,9 @@
       "description": "知识库，提供专业知识和信息",
       "reference": "@project://.promptx/resource/roles/discover-dev-engineer/knowledge/discover-project.knowledge.md",
       "metadata": {
-        "createdAt": "2025-12-12T05:42:52.387Z",
-        "updatedAt": "2025-12-12T05:42:52.387Z",
-        "scannedAt": "2025-12-12T05:42:52.387Z",
+        "createdAt": "2025-12-12T08:35:12.397Z",
+        "updatedAt": "2025-12-12T08:35:12.397Z",
+        "scannedAt": "2025-12-12T08:35:12.397Z",
         "path": "roles/discover-dev-engineer/knowledge/discover-project.knowledge.md"
       }
     }
