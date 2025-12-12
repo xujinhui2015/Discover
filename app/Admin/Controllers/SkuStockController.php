@@ -16,6 +16,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Renderables\SkuStockBatchTable;
 use App\Admin\Repositories\SkuStock;
+use App\Models\AttrModel;
 use App\Models\SkuStockBatchModel;
 use App\Models\SkuStockModel;
 use Dcat\Admin\Grid;
@@ -72,6 +73,38 @@ class SkuStockController extends AdminController
                         });
                     });
                 }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
+
+                $attrIdFilter = $filter->where('attr_id', function (Builder $query) {
+                    $attrId = (string) $this->getValue();
+                    if ($attrId === '') {
+                        return;
+                    }
+
+                    $query->whereHasIn('sku', function (Builder $query) use ($attrId) {
+                        $query->whereExists(function ($query) use ($attrId) {
+                            $query->selectRaw('1')
+                                ->from('attr_value')
+                                ->where('attr_id', $attrId)
+                                ->whereRaw('FIND_IN_SET(attr_value.id, product_sku.attr_value_ids)');
+                        });
+                    });
+                }, '属性')->width(3);
+                $attrIdFilter->select(AttrModel::query()->pluck('name', 'id'))
+                    ->load('attr_value_id', 'api/get-attr-value');
+
+                $attrValueFilter = $filter->where('attr_value_id', function (Builder $query) {
+                    $attrValueId = (string) $this->getValue();
+                    if ($attrValueId === '') {
+                        return;
+                    }
+
+                    $query->whereHasIn('sku', function (Builder $query) use ($attrValueId) {
+                        $query->whereRaw("CONCAT(',', IFNULL(attr_value_ids, ''), ',') LIKE ?", ["%,{$attrValueId},%"]);
+                    });
+                }, '属性值')
+                    ->width(3);
+                $attrValueFilter->select([])->placeholder('请选择属性值');
+
                 $filter->group('num', function ($group) {
                     $group->gt('大于');
                     $group->lt('小于');

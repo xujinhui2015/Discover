@@ -112,7 +112,43 @@
       "args": [
         "luban"
       ]
+    },
+    {
+      "from": "initial",
+      "command": "remember",
+      "timestamp": "2025-12-12T09:55:23.792Z",
+      "args": [
+        {
+          "role": "luban",
+          "engrams": [
+            {
+              "content": "项目中所有单据的新建页面里，“业务时间”字段允许用户修改。",
+              "schema": "单据 新建 业务时间 可修改",
+              "strength": 0.75,
+              "type": "ATOMIC"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "from": "initial",
+      "command": "remember",
+      "timestamp": "2025-12-12T10:01:29.576Z",
+      "args": [
+        {
+          "role": "luban",
+          "engrams": [
+            {
+              "content": "更正：之前关于“单据新建时业务时间可修改”的记忆无效，以后续说明为准。",
+              "schema": "更正 前述无效 业务时间 记忆",
+              "strength": 0.9,
+              "type": "LINK"
+            }
+          ]
+        }
+      ]
     }
   ],
-  "lastUpdated": "2025-12-12T08:45:36.028Z"
+  "lastUpdated": "2025-12-12T10:01:29.582Z"
 }
