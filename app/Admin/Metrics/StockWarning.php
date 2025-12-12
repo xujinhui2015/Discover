@@ -25,6 +25,8 @@ class StockWarning extends Card
         parent::init();
 
         $this->title('库存预警');
+        $this->height(260);
+        $this->class('dashboard-metric-tall', true);
     }
 
     public function handle(Request $request): void
@@ -91,4 +93,3 @@ HTML;
         return $this->toString($this->footer);
     }
 }
-

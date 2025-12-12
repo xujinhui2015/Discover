@@ -14,6 +14,8 @@ class SaleTrend extends Line
         parent::init();
 
         $this->title('销售趋势');
+        $this->height(260);
+        $this->class('dashboard-metric-tall', true);
         $this->dropdown([
             '7' => '最近7天',
             '28' => '最近28天',
@@ -93,4 +95,3 @@ HTML
         );
     }
 }
-

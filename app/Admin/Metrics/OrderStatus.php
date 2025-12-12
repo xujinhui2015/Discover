@@ -16,6 +16,8 @@ class OrderStatus extends Round
         parent::init();
 
         $this->title('订单状态统计');
+        $this->height(260);
+        $this->class('dashboard-metric-tall', true);
         $this->chartLabels(['销售订单', '采购订单']);
         $this->dropdown([
             'sale' => '销售订单',
@@ -173,4 +175,3 @@ HTML;
         return $this->content($html);
     }
 }
-

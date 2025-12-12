@@ -19,6 +19,8 @@ class PurchaseTrend extends Bar
 
         $this->contentWidth(5, 7);
         $this->title('采购趋势');
+        $this->height(260);
+        $this->class('dashboard-metric-tall', true);
         $this->dropdown([
             '7' => '最近7天',
             '28' => '最近28天',
@@ -100,11 +102,9 @@ class PurchaseTrend extends Bar
             $this->dropdown[request()->option] ?? '最近7天'
         );
 
-        $minHeight = '183px';
-
         return $this->content(
             <<<HTML
-<div class="d-flex p-1 flex-column justify-content-between" style="padding-top: 0;width: 100%;height: 100%;min-height: {$minHeight}">
+<div class="d-flex p-1 flex-column justify-content-between" style="padding-top: 0;width: 100%;height: 100%;">
     <div class="text-left">
         <h1 class="font-lg-2 mt-2 mb-0">{$title}</h1>
         <h5 class="font-medium-2" style="margin-top: 10px;">
@@ -117,4 +117,3 @@ HTML
         );
     }
 }
-
