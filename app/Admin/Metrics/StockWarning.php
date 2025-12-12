@@ -3,17 +3,40 @@
 namespace App\Admin\Metrics;
 
 use App\Models\SkuStockModel;
-use Closure;
-use Dcat\Admin\Widgets\Metrics\Card;
-use Illuminate\Contracts\Support\Renderable;
+use Dcat\Admin\Admin;
+use Dcat\Admin\Widgets\Metrics\Donut;
 use Illuminate\Http\Request;
 
-class StockWarning extends Card
+class StockWarning extends Donut
 {
+    protected array $labels = ['库存正常', '接近安全库存', '低于安全库存'];
+
     /**
-     * 卡片底部内容.
+     * 使用实心圆饼图（pie）展示占比.
      */
-    protected Renderable|Closure|string|null $footer = null;
+    protected function defaultChartOptions()
+    {
+        $color = Admin::color();
+
+        return [
+            'chart' => [
+                'type' => 'pie',
+                'toolbar' => [
+                    'show' => false,
+                ],
+            ],
+            'colors' => [$color->success(), $color->warning(), $color->danger()],
+            'legend' => [
+                'show' => false,
+            ],
+            'dataLabels' => [
+                'enabled' => false,
+            ],
+            'stroke' => [
+                'width' => 0,
+            ],
+        ];
+    }
 
     public function __construct()
     {
@@ -24,9 +47,19 @@ class StockWarning extends Card
     {
         parent::init();
 
+        $color = Admin::color();
+        $colors = [$color->success(), $color->warning(), $color->danger()];
+
         $this->title('库存预警');
         $this->height(260);
         $this->class('dashboard-metric-tall', true);
+        $this->chartLabels($this->labels);
+        $this->chartColors($colors);
+        $this->chartHeight(140);
+        $this->contentWidth(6, 6);
+
+        // pie 下居中展示图表
+        $this->chart->style('margin: 0 auto;width: 160px;float:none;display:block;');
     }
 
     public function handle(Request $request): void
@@ -47,49 +80,57 @@ class StockWarning extends Card
             ->count();
 
         $total = $lowStockCount + $nearStockCount + $normalStockCount;
-        
-        if ($total > 0) {
-            $warningCount = $lowStockCount + $nearStockCount;
-            $this->content($warningCount);
-            
-            if ($warningCount > 0) {
-                $this->footer(
-                    "<span class='text-danger'><i class=\"feather icon-alert-triangle\"></i> 低库存: {$lowStockCount} | 接近安全库存: {$nearStockCount}</span>"
-                );
-            } else {
-                $this->footer(
-                    "<span class='text-success'><i class=\"feather icon-check-circle\"></i> 库存正常</span>"
-                );
-            }
-        } else {
-            $this->content(0);
-            $this->footer('');
-        }
+        $normalPercent = $total > 0 ? round($normalStockCount / $total * 100, 1) : 0;
+        $nearPercent = $total > 0 ? round($nearStockCount / $total * 100, 1) : 0;
+        $lowPercent = $total > 0 ? round($lowStockCount / $total * 100, 1) : 0;
+
+        $this->withContent($normalStockCount, $nearStockCount, $lowStockCount, $normalPercent, $nearPercent, $lowPercent);
+        $this->withChart([$normalStockCount, $nearStockCount, $lowStockCount]);
     }
 
-    public function footer(Renderable|Closure|string $footer): static
-    {
-        $this->footer = $footer;
+    protected function withContent(
+        int $normalCount,
+        int $nearCount,
+        int $lowCount,
+        float $normalPercent,
+        float $nearPercent,
+        float $lowPercent
+    ): static {
+        $success = Admin::color()->success();
+        $warning = Admin::color()->warning();
+        $danger = Admin::color()->danger();
 
-        return $this;
-    }
+        $style = 'margin-bottom: 8px';
+        $labelWidth = 120;
 
-    public function renderContent(): string
-    {
-        $content = parent::renderContent();
-
-        return <<<HTML
-<div class="d-flex justify-content-between align-items-center mt-1" style="margin-bottom: 2px">
-    <h2 class="ml-1 font-large-1">{$content}</h2>
+        return $this->content(
+            <<<HTML
+<div class="d-flex pl-1 pr-1 pt-1" style="{$style}">
+    <div style="width: {$labelWidth}px">
+        <i class="fa fa-circle" style="color: {$success}"></i> {$this->labels[0]}
+    </div>
+    <div>{$normalPercent}% ({$normalCount})</div>
 </div>
-<div class="ml-1 mt-1 font-weight-bold text-80">
-    {$this->renderFooter()}
+<div class="d-flex pl-1 pr-1" style="{$style}">
+    <div style="width: {$labelWidth}px">
+        <i class="fa fa-circle" style="color: {$warning}"></i> {$this->labels[1]}
+    </div>
+    <div>{$nearPercent}% ({$nearCount})</div>
 </div>
-HTML;
+<div class="d-flex pl-1 pr-1" style="{$style}">
+    <div style="width: {$labelWidth}px">
+        <i class="fa fa-circle" style="color: {$danger}"></i> {$this->labels[2]}
+    </div>
+    <div>{$lowPercent}% ({$lowCount})</div>
+</div>
+HTML
+        );
     }
 
-    public function renderFooter(): string
+    public function withChart(array $data): static
     {
-        return $this->toString($this->footer);
+        return $this->chart([
+            'series' => $data,
+        ]);
     }
 }
