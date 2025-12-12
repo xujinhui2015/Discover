@@ -1,3 +1,7 @@
+激活：promptx
+使用这个角色行事：.promptx\resource\roles\discover-dev-engineer\discover-dev-engineer.role.md
+
+----------------------------------
 订单未审核状态的都可以删除
 低于安全库存 有状态提醒，参考豆包设计
 
