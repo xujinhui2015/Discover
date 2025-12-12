@@ -136,7 +136,7 @@ class ApplyForOrderController extends OrderController
     {
         $form->row(function (Form\Row $row) {
             $row->width(6)->text('order_no', '单号')->default(build_order_no('SL'))->required()->readOnly();
-            $row->width(6)->text('created_at', '业务日期')->default(now())->required()->readOnly();
+            $row->width(6)->datetime('created_at', '业务日期')->default(now())->required();
         });
         $with_order = $this->order_repository->getWithOrder();
         $form->row(function (Form\Row $row) use ($with_order,$form) {

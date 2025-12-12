@@ -108,7 +108,7 @@ class StatementOrderController extends OrderController
     {
         $form->row(function (Form\Row $row) {
             $row->width(6)->text('order_no', '单号')->default(build_order_no('JS'))->required()->readOnly();
-            $row->width(6)->text('created_at', '业务日期')->default(now())->required()->readOnly();
+            $row->width(6)->datetime('created_at', '业务日期')->default(now())->required();
         });
         $form->row(function (Form\Row $row) {
             $row->width(6)->text('category_str', '费用分类')->disable();
