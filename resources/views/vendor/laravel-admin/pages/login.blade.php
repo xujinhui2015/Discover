@@ -474,9 +474,12 @@
                     </div>
 
                     <!-- 登录按钮 -->
-                    <div class="error-message" id="error-message" style="display: none;">
+                    @php
+                        $loginError = $errors->first('username') ?: $errors->first('password') ?: $errors->first();
+                    @endphp
+                    <div class="error-message" id="error-message" style="{{ $loginError ? 'display: flex;' : 'display: none;' }}">
                         <span>⚠️</span>
-                        <span id="error-text"></span>
+                        <span id="error-text">{{ $loginError }}</span>
                     </div>
                     <button type="submit" class="login-button" id="login-button">
                         <span id="button-text">登录</span>
@@ -500,8 +503,14 @@
         });
     });
 
+    let bypassAjaxSubmit = false;
+
     // 表单提交处理
     document.getElementById('login-form').addEventListener('submit', function(e) {
+        if (bypassAjaxSubmit) {
+            return;
+        }
+
         e.preventDefault();
 
         const username = document.getElementById('username').value.trim();
@@ -528,39 +537,79 @@
         loadingSpinner.style.display = 'inline-block';
         loginButton.disabled = true;
 
-        // 创建表单数据
-        const formData = new FormData();
-        formData.append('username', username);
-        formData.append('password', password);
-        formData.append('remember', remember);
-        formData.append('_token', document.querySelector('meta[name="csrf-token"]')?.content || '');
+        // 创建表单数据（包含隐藏的 _token）
+        const formData = new FormData(this);
+        formData.set('username', username);
+        formData.set('password', password);
+        formData.set('remember', remember);
 
-        // 提交表单
-        fetch(window.location.href, {
+        const formAction = this.getAttribute('action') || window.location.href;
+
+        // 提交表单（按 Dcat Ajax 规范，失败返回 422 JSON）
+        fetch(formAction, {
             method: 'POST',
-            body: formData
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+            .then(async response => {
+                const contentType = response.headers.get('content-type') || '';
+
+                if (contentType.includes('application/json')) {
+                    const data = await response.json();
+                    return { response, data };
                 }
 
-                // 检查响应是否为JSON
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    return response.json();
-                } else {
-                    // 如果不是JSON，假设登录成功
-                    return { status: true, redirect: '/admin' };
-                }
+                // 如果服务端没有返回 JSON，回退为普通提交
+                bypassAjaxSubmit = true;
+                this.submit();
+                return null;
             })
-            .then(data => {
+            .then(result => {
+                if (!result) return;
+
+                const { response, data } = result;
                 // 恢复按钮状态
                 buttonText.textContent = '登录';
                 loadingSpinner.style.display = 'none';
                 loginButton.disabled = false;
 
-                if (data.status) {
+                if (response.status === 422 && data && data.errors) {
+                    const pickFirstError = (errors) => {
+                        if (!errors) return null;
+                        if (typeof errors === 'string') return errors;
+                        if (Array.isArray(errors)) return errors[0];
+                        if (typeof errors === 'object') {
+                            for (const key of Object.keys(errors)) {
+                                const v = errors[key];
+                                const msg = pickFirstError(v);
+                                if (msg) return msg;
+                            }
+                        }
+                        return null;
+                    };
+
+                    const firstError =
+                        pickFirstError(data.errors.username) ||
+                        pickFirstError(data.errors.password) ||
+                        pickFirstError(data.errors) ||
+                        '登录失败，请检查用户名和密码';
+
+                    errorText.textContent = firstError;
+                    errorMessage.style.display = 'flex';
+
+                    const loginCard = document.querySelector('.login-card');
+                    loginCard.classList.add('login-error');
+                    setTimeout(() => {
+                        loginCard.classList.remove('login-error');
+                    }, 500);
+
+                    return;
+                }
+
+                if (data && data.status) {
                     // 登录成功，添加成功动画
                     const loginCard = document.querySelector('.login-card');
                     loginCard.classList.add('login-success');
@@ -571,7 +620,7 @@
                     }, 500);
                 } else {
                     // 登录失败，显示错误信息并添加抖动动画
-                    errorText.textContent = data.message || '登录失败，请检查用户名和密码';
+                    errorText.textContent = (data && data.message) || '登录失败，请检查用户名和密码';
                     errorMessage.style.display = 'flex';
 
                     const loginCard = document.querySelector('.login-card');
@@ -690,4 +739,3 @@
         `;
     document.head.appendChild(style);
 </script>
-
