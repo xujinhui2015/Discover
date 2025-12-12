@@ -110,9 +110,9 @@ class SaleOutReportController extends Controller
                 $filter->where("product_name", function (Builder $query) {
                     $query->whereHasIn("sku.product", function (Builder $query) {
                         $query->where(function (Builder $query) {
-                            $query->orWhere("name", "like", $this->getValue()."%");
-                            $query->orWhere("py_code", "like", $this->getValue()."%");
-                            $query->orWhere('item_no', 'like', $this->getValue()."%");
+                            $query->orWhere("name", "like", "%" . $this->getValue()."%");
+                            $query->orWhere("py_code", "like", "%" . $this->getValue()."%");
+                            $query->orWhere('item_no', 'like', "%" . $this->getValue()."%");
                         });
                     });
                 }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
@@ -216,9 +216,9 @@ class SaleOutReportController extends Controller
                 $filter->where("product_name", function (Builder $query) {
                     $query->whereHasIn("sku.product", function (Builder $query) {
                         $query->where(function (Builder $query) {
-                            $query->orWhere("name", "like", $this->getValue()."%");
-                            $query->orWhere("py_code", "like", $this->getValue()."%");
-                            $query->orWhere('item_no', 'like', $this->getValue()."%");
+                            $query->orWhere("name", "like", "%" . $this->getValue()."%");
+                            $query->orWhere("py_code", "like", "%" . $this->getValue()."%");
+                            $query->orWhere('item_no', 'like', "%" . $this->getValue()."%");
                         });
                     });
                 }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
@@ -298,9 +298,9 @@ class SaleOutReportController extends Controller
                 $filter->where("product_name", function (Builder $query) {
                     $query->whereHasIn("sku.product", function (Builder $query) {
                         $query->where(function (Builder $query) {
-                            $query->orWhere("name", "like", $this->getValue()."%");
-                            $query->orWhere("py_code", "like", $this->getValue()."%");
-                            $query->orWhere('item_no', 'like', $this->getValue()."%");
+                            $query->orWhere("name", "like", "%" . $this->getValue()."%");
+                            $query->orWhere("py_code", "like", "%" . $this->getValue()."%");
+                            $query->orWhere('item_no', 'like', "%" . $this->getValue()."%");
                         });
                     });
                 }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);

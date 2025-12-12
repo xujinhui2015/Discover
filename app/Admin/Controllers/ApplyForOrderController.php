@@ -77,7 +77,7 @@ class ApplyForOrderController extends OrderController
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->where('with_order_order_no', function (Builder $builder) {
                     $builder->whereHasIn('with_order', function (Builder $builder) {
-                        $builder->where("order_no", "like", $this->getValue() . "%");
+                        $builder->where("order_no", "like", "%" . $this->getValue() . "%");
                     });
                 }, '任务单号')->width(3);
                 $filter->like('order_no')->width(3);
@@ -119,7 +119,7 @@ class ApplyForOrderController extends OrderController
 
                 $filter->where('with_order_order_no', function (Builder $builder) {
                     $builder->whereHasIn('with_order', function (Builder $builder) {
-                        $builder->where("order_no", "like", $this->getValue() . "%");
+                        $builder->where("order_no", "like", "%" . $this->getValue() . "%");
                     });
                 }, '任务单号')->width(3);
                 $filter->like('order_no')->width(3);

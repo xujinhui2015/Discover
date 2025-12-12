@@ -23,8 +23,6 @@ return [
         'sku.product.type_str' => '分类',
         'sku.attr_value_ids_str' => '属性',
         'standard_str' => '通用标准',
-        'out_position.name' => '调出仓库',
-        'in_position.name' => '调入仓库',
         'batch_no' => '批次号',
         'num' => '数量',
     ],

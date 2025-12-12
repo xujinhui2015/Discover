@@ -56,7 +56,7 @@ class ApplyForReturnOrderController extends OrderController
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->where('apply_for_order_order_no', function (Builder $builder) {
                     $builder->whereHasIn('apply_for_order', function (Builder $builder) {
-                        $builder->where("order_no", "like", $this->getValue() . "%");
+                        $builder->where("order_no", "like", "%" . $this->getValue() . "%");
                     });
                 }, '物料单号')->width(3);
                 $filter->like('order_no')->width(3);
