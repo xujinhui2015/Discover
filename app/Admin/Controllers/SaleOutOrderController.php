@@ -131,7 +131,9 @@ class SaleOutOrderController extends OrderController
         })->display(function () {
             return $this->sku['attr_value_ids_str'] ?? '';
         })->else()->selectplus(function (Fluent $fluent) {
-            return $fluent->sku['product']['sku_key_value'];
+            $options = data_get($fluent, 'sku.product.sku_key_value', []);
+
+            return is_array($options) ? $options : [];
         });
 
 //        $grid->column('percent', '含绒百分比')->if(function () use ($order) {
