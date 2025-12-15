@@ -21,10 +21,10 @@ class OrderStatus extends Round
         $this->class('dashboard-metric-tall', true);
         $this->chartLabels(['销售订单', '采购订单', '生产任务']);
         $this->dropdown([
+            'all' => '全部订单',
             'sale' => '销售订单',
             'purchase' => '采购订单',
             'task' => '生产任务',
-            'all' => '全部订单',
         ]);
     }
 
