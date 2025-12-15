@@ -4,6 +4,7 @@ namespace App\Admin\Metrics;
 
 use App\Models\PurchaseOrderModel;
 use App\Models\SaleOrderModel;
+use App\Models\TaskModel;
 use Dcat\Admin\Widgets\Metrics\Round;
 use Illuminate\Http\Request;
 
@@ -18,10 +19,11 @@ class OrderStatus extends Round
         $this->title('订单状态统计');
         $this->height(260);
         $this->class('dashboard-metric-tall', true);
-        $this->chartLabels(['销售订单', '采购订单']);
+        $this->chartLabels(['销售订单', '采购订单', '生产任务']);
         $this->dropdown([
             'sale' => '销售订单',
             'purchase' => '采购订单',
+            'task' => '生产任务',
             'all' => '全部订单',
         ]);
     }
@@ -76,16 +78,38 @@ class OrderStatus extends Round
                 $this->chartTotal('总数', $wait + $arrive + $returning + $returned + $partReturned);
                 break;
 
+            case 'task':
+                $wait = TaskModel::query()
+                    ->where('status', TaskModel::STATUS_WAIT)
+                    ->count();
+                $draw = TaskModel::query()
+                    ->where('status', TaskModel::STATUS_DRAW)
+                    ->count();
+                $finish = TaskModel::query()
+                    ->where('status', TaskModel::STATUS_FINISH)
+                    ->count();
+                $stop = TaskModel::query()
+                    ->where('status', TaskModel::STATUS_STOP)
+                    ->count();
+
+                $this->labels = ['待领料', '已领料', '已完成', '停止'];
+                $this->withContent($wait, $draw, $finish, $stop);
+                $this->withChart([$wait, $draw, $finish, $stop]);
+                $this->chartLabels(['待领料', '已领料', '已完成', '停止']);
+                $this->chartTotal('总数', $wait + $draw + $finish + $stop);
+                break;
+
             case 'all':
             default:
                 $saleCount = SaleOrderModel::query()->count();
                 $purchaseCount = PurchaseOrderModel::query()->count();
+                $taskCount = TaskModel::query()->count();
 
-                $this->labels = ['销售订单', '采购订单'];
-                $this->withContent($saleCount, $purchaseCount);
-                $this->withChart([$saleCount, $purchaseCount]);
-                $this->chartLabels(['销售订单', '采购订单']);
-                $this->chartTotal('总数', $saleCount + $purchaseCount);
+                $this->labels = ['销售订单', '采购订单', '生产任务'];
+                $this->withContent($saleCount, $purchaseCount, $taskCount);
+                $this->withChart([$saleCount, $purchaseCount, $taskCount]);
+                $this->chartLabels(['销售订单', '采购订单', '生产任务']);
+                $this->chartTotal('总数', $saleCount + $purchaseCount + $taskCount);
                 break;
         }
     }
