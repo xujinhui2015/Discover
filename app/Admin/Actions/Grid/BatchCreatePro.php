@@ -57,7 +57,7 @@ HTML;
             layer.open({
                 type: 2,
                 area: ['70%', '90%'], //宽高
-                content:[url,'no'],
+                content:[url,'yes'],
                 end: function(){
                     Dcat.reload();
                 }

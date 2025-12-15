@@ -30,6 +30,7 @@ use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Grid\Tools;
 use Dcat\Admin\Controllers\AdminController;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
@@ -83,6 +84,8 @@ class ProductController extends AdminController
     public function iFrameGrid()
     {
         return Grid::make(new Product(), function (Grid $grid) {
+            $grid->setName('product_select');
+
             $grid->model()->whereHas('sku');
             $grid->column('id')->sortable();
             $grid->column('item_no');
@@ -100,6 +103,24 @@ class ProductController extends AdminController
             $grid->tools(BatchCreateProSave::make());
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->where('keyword', function (Builder $builder) {
+                    $keyword = trim((string) $this->input);
+                    if ($keyword === '') {
+                        return;
+                    }
+
+                    $like = "%$keyword%";
+
+                    $builder->where(function (Builder $query) use ($like) {
+                        $query->where('name', 'like', $like)
+                            ->orWhere('py_code', 'like', $like)
+                            ->orWhere('item_no', 'like', $like);
+                    });
+                }, '搜索')
+                    ->placeholder('名称/拼音码/物料编号')
+                    ->width(6);
+
+                $filter->expand(false);
             });
         });
     }
