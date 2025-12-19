@@ -36,7 +36,7 @@ class SkuStockBatchController extends AdminController
     protected function grid()
     {
         return Grid::make(new SkuStockBatch(['sku.product']), function (Grid $grid) {
-            $grid->model()->where('num', ">", 0);
+//            $grid->model()->where('num', ">", 0);
             $grid->column('id')->sortable();
             $grid->column('sku.product.item_no', '物料编号');
             $grid->column('sku.product.name', '物料名称');
