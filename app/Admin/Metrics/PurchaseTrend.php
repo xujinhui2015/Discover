@@ -106,7 +106,7 @@ class PurchaseTrend extends Bar
             <<<HTML
 <div class="d-flex p-1 flex-column justify-content-between" style="padding-top: 0;width: 100%;height: 100%;">
     <div class="text-left">
-        <h1 class="font-lg-2 mt-2 mb-0">{$title}</h1>
+        <h1 class="font-lg-2 mt-2 mb-0" style="font-size: 22px; line-height: 1.2; white-space: nowrap;">{$title}</h1>
         <h5 class="font-medium-2" style="margin-top: 10px;">
             <span class="text-{$style}">{$value} </span>
             <span>vs {$label}</span>
