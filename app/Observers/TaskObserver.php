@@ -30,9 +30,20 @@ class TaskObserver
     public function saving(TaskModel $taskModel)
     {
         if ($taskModel->isDirty('status') && $taskModel->status === TaskModel::STATUS_DRAW) {
-            $item = $taskModel->make_product_order->items;
-            $avgCostPrice = bcdiv($taskModel->sum_cost_price, $item->actual_num, 2);
-            $item->cost_price = $avgCostPrice;
+            $makeProductOrder = $taskModel->make_product_order;
+            $item = $makeProductOrder ? $makeProductOrder->items : null;
+            if (!$item) {
+                return;
+            }
+
+            $actualNum = (string) ($item->actual_num ?? '0');
+            if (bccomp($actualNum, '0', 4) <= 0) {
+                $item->cost_price = '0.00';
+                $item->saveOrFail();
+                return;
+            }
+
+            $item->cost_price = bcdiv((string) $taskModel->sum_cost_price, $actualNum, 2);
             $item->saveOrFail();
         }
     }
