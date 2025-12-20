@@ -27,6 +27,7 @@ use Dcat\Admin\Grid;
 use Dcat\Admin\Controllers\AdminController;
 use Dcat\Admin\Models\Administrator;
 use Dcat\Admin\Admin;
+use Illuminate\Database\Eloquent\Builder;
 use Yxx\LaravelQuick\Exceptions\Api\ApiUnAuthException;
 
 // 引入自定义样式
@@ -85,6 +86,16 @@ class TaskController extends AdminController
             });
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->where('product_keyword', function (Builder $query) {
+                    $keyword = $this->getValue();
+                    $query->whereHasIn('sku.product', function (Builder $query) use ($keyword) {
+                        $query->where(function (Builder $query) use ($keyword) {
+                            $query->orWhere('name', 'like', '%' . $keyword . '%');
+                            $query->orWhere('py_code', 'like', '%' . $keyword . '%');
+                            $query->orWhere('item_no', 'like', '%' . $keyword . '%');
+                        });
+                    });
+                }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
                 $filter->like('order_no')->width(3);
                 $filter->equal('status', '状态')->select(TaskModel::STATUS)->width(3);
                 $filter->group('plan_num', function ($group) {

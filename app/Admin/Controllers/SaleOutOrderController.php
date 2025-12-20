@@ -26,6 +26,7 @@ use App\Models\SaleOrderModel;
 use App\Models\SaleOutOrderModel;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Fluent;
 
 class SaleOutOrderController extends OrderController
@@ -56,6 +57,18 @@ class SaleOutOrderController extends OrderController
 //            $grid->batchActions(BatchCreateSaleInOrderSave::make());
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->where('product_keyword', function (Builder $query) {
+                    $keyword = $this->getValue();
+                    $query->whereHasIn('items', function (Builder $query) use ($keyword) {
+                        $query->whereHasIn('sku.product', function (Builder $query) use ($keyword) {
+                            $query->where(function (Builder $query) use ($keyword) {
+                                $query->orWhere('name', 'like', '%' . $keyword . '%');
+                                $query->orWhere('py_code', 'like', '%' . $keyword . '%');
+                                $query->orWhere('item_no', 'like', '%' . $keyword . '%');
+                            });
+                        });
+                    });
+                }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
             });
         });
     }
@@ -82,6 +95,18 @@ class SaleOutOrderController extends OrderController
             $grid->disableCreateButton();
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->where('product_keyword', function (Builder $query) {
+                    $keyword = $this->getValue();
+                    $query->whereHasIn('items', function (Builder $query) use ($keyword) {
+                        $query->whereHasIn('sku.product', function (Builder $query) use ($keyword) {
+                            $query->where(function (Builder $query) use ($keyword) {
+                                $query->orWhere('name', 'like', '%' . $keyword . '%');
+                                $query->orWhere('py_code', 'like', '%' . $keyword . '%');
+                                $query->orWhere('item_no', 'like', '%' . $keyword . '%');
+                            });
+                        });
+                    });
+                }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
             });
         });
     }
