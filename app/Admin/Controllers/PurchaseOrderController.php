@@ -18,6 +18,7 @@ use App\Admin\Actions\Grid\BatchCreatePurInOrderSave;
 use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Extensions\Form\Order\OrderController;
+use App\Admin\Extensions\Grid\PurchaseOrderItemDetail;
 use App\Admin\Repositories\PurchaseOrder;
 use App\Models\ProductModel;
 use App\Models\PurchaseOrderModel;
@@ -37,16 +38,17 @@ class PurchaseOrderController extends OrderController
     protected function grid()
     {
         return Grid::make(new PurchaseOrder(['user', 'supplier']), function (Grid $grid) {
+            Admin::style('.grid-expand i{color:#222;font-weight:700;}');
             $grid->column('id')->sortable();
 //            $grid->column('check_status')->using(PurchaseOrderModel::CHECK_STATUS);
             $grid->column('order_no');
             $grid->column('other')->emp();
             $grid->column('status', '状态')->using(PurchaseOrderModel::STATUS)->label(PurchaseOrderModel::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using(PurchaseOrderModel::REVIEW_STATUS)->label(PurchaseOrderModel::REVIEW_STATUS_COLOR);
+            $grid->column('_', '物料明细')->expand(PurchaseOrderItemDetail::class);
             $grid->column('supplier.name', '供应商名称')->emp();
             $grid->column('user.username', '创建用户');
             $grid->column('created_at');
-            $grid->column('finished_at')->emp();
             $grid->tools(BatchOrderPrint::make());
             $grid->disableQuickEditButton();
             $grid->actions(new EditOrder());
@@ -59,6 +61,7 @@ class PurchaseOrderController extends OrderController
     public function iFrameGrid()
     {
         return Grid::make(new PurchaseOrder(['user', 'supplier']), function (Grid $grid) {
+            Admin::style('.grid-expand i{color:#222;font-weight:700;}');
             $grid->model()
                 ->whereIn('status', [
                     PurchaseOrderModel::STATUS_WAIT,
@@ -75,10 +78,10 @@ class PurchaseOrderController extends OrderController
             $grid->column('other')->emp();
             $grid->column('status', '状态')->using(PurchaseOrderModel::STATUS)->label(PurchaseOrderModel::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using(PurchaseOrderModel::REVIEW_STATUS)->label(PurchaseOrderModel::REVIEW_STATUS_COLOR);
+            $grid->column('_', '物料明细')->expand(PurchaseOrderItemDetail::class);
             $grid->column('supplier.name', '供应商名称')->emp();
             $grid->column('user.username', '创建用户');
             $grid->column('created_at');
-            $grid->column('finished_at')->emp();
             $grid->disableQuickEditButton();
             $grid->disableActions();
             $grid->disableCreateButton();
