@@ -74,9 +74,12 @@ class CustomerController extends AdminController
         return Form::make(new Customer(['drawee', 'address']), function (Form $form) {
             $form->text('link')->required();
             $form->text('name')->required();
-            $form->text('other')->required();
+            $form->text('other');
             $form->select('pay_method')->options(CustomerModel::PAY)->default(0)->required();
-            $form->mobile('phone')->required();
+            $form->text('phone')
+                ->required()
+                ->rules(['required', 'max:32', 'regex:/^[0-9-]+$/'])
+                ->help('支持手机号或座机，例如 0731-88280232');
             $form->multipleSelect('drawee', '付款人')->options($form->repository()->drawee())->customFormat(function (array $v) {
                 return array_column($v, 'id');
             });
