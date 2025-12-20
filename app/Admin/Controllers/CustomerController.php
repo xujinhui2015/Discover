@@ -40,9 +40,9 @@ class CustomerController extends AdminController
             $grid->column('pay_method')->using(CustomerModel::PAY);
             $grid->column('phone');
             $grid->column('created_at');
-            $grid->tools(function (Tools $tools) {
-                $tools->append(new ImportCustomerTool());
-            });
+//            $grid->tools(function (Tools $tools) {
+//                $tools->append(new ImportCustomerTool());
+//            });
             $grid->filter(function (Grid\Filter $filter) {
             });
         });
