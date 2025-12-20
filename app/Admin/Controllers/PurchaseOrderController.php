@@ -43,13 +43,13 @@ class PurchaseOrderController extends OrderController
             $grid->column('id')->sortable();
 //            $grid->column('check_status')->using(PurchaseOrderModel::CHECK_STATUS);
             $grid->column('order_no');
-            $grid->column('other')->emp();
             $grid->column('status', '状态')->using(PurchaseOrderModel::STATUS)->label(PurchaseOrderModel::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using(PurchaseOrderModel::REVIEW_STATUS)->label(PurchaseOrderModel::REVIEW_STATUS_COLOR);
             $grid->column('_', '物料明细')->expand(PurchaseOrderItemDetail::class);
             $grid->column('supplier.name', '供应商名称')->emp();
             $grid->column('user.username', '创建用户');
             $grid->column('created_at');
+            $grid->column('other')->emp();
             $grid->tools(BatchOrderPrint::make());
             $grid->disableQuickEditButton();
             $grid->actions(new EditOrder());
