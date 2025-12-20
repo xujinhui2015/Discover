@@ -98,20 +98,20 @@ class TaskController extends AdminController
                 }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
                 $filter->like('order_no')->width(3);
                 $filter->equal('status', '状态')->select(TaskModel::STATUS)->width(3);
-                $filter->group('plan_num', function ($group) {
-                    $group->gt('大于');
-                    $group->lt('小于');
-                    $group->nlt('不小于');
-                    $group->ngt('不大于');
-                    $group->equal('等于');
-                })->width(3);
-                $filter->group('finish_num', function ($group) {
-                    $group->gt('大于');
-                    $group->lt('小于');
-                    $group->nlt('不小于');
-                    $group->ngt('不大于');
-                    $group->equal('等于');
-                })->width(3);
+//                $filter->group('plan_num', function ($group) {
+//                    $group->gt('大于');
+//                    $group->lt('小于');
+//                    $group->nlt('不小于');
+//                    $group->ngt('不大于');
+//                    $group->equal('等于');
+//                })->width(3);
+//                $filter->group('finish_num', function ($group) {
+//                    $group->gt('大于');
+//                    $group->lt('小于');
+//                    $group->nlt('不小于');
+//                    $group->ngt('不大于');
+//                    $group->equal('等于');
+//                })->width(3);
             });
             $grid->disableRowSelector();
         });
