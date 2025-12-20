@@ -58,13 +58,17 @@ class CustomerModel extends BaseModel
     protected $table = 'customer';
 
     const PAY_CASH = 0;
-    const PAY_WECHAT = 1;
-    const PAY_ZFB = 2;
+//    const PAY_WECHAT = 1;
+//    const PAY_ZFB = 2;
+    const PAY_MONTH_SETTLEMENT = 3;
+    const PAY_TRANSFER = 4;
 
     const PAY = [
-        self::PAY_CASH   => '现金',
-        self::PAY_WECHAT => '微信',
-        self::PAY_ZFB    => '支付宝',
+        self::PAY_CASH             => '现金',
+//        self::PAY_WECHAT => '微信',
+//        self::PAY_ZFB    => '支付宝',
+        self::PAY_MONTH_SETTLEMENT => '月结',
+        self::PAY_TRANSFER         => '转账',
     ];
 
     /**
