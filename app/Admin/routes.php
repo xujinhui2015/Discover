@@ -57,6 +57,8 @@ Route::group([
     $router->resource('sale-in-items', 'SaleInItemController');
     $router->resource('sale-out-orders', 'SaleOutOrderController');
     $router->resource('sale-out-items', 'SaleOutItemController');
+    $router->get('customers/import', 'CustomerImportController@index')->name('customers.import');
+    $router->get('customers/import/template', 'CustomerImportController@template')->name('customers.import.template');
     $router->resource('customers', 'CustomerController');
     $router->resource('sale-out-batchs', 'SaleOutBatchController');
     $router->resource('drawees', 'DraweeController');

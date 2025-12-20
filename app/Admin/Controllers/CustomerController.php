@@ -15,10 +15,12 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\Statement;
+use App\Admin\Actions\Grid\ImportCustomer as ImportCustomerTool;
 use App\Admin\Repositories\Customer;
 use App\Models\CustomerModel;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
+use Dcat\Admin\Grid\Tools;
 use Dcat\Admin\Controllers\AdminController;
 
 class CustomerController extends AdminController
@@ -38,6 +40,9 @@ class CustomerController extends AdminController
             $grid->column('pay_method')->using(CustomerModel::PAY);
             $grid->column('phone');
             $grid->column('created_at');
+            $grid->tools(function (Tools $tools) {
+                $tools->append(new ImportCustomerTool());
+            });
             $grid->filter(function (Grid\Filter $filter) {
             });
         });
