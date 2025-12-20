@@ -237,11 +237,26 @@
                 </div>
 
                 <table class="product-table">
+                    @php
+                        $printSlug = request()->input('slug');
+                        $itemFieldForPrint = $itemField;
+                        $showTotalAmount = false;
+
+                        if ($printSlug === 'sale-out-order') {
+                            $itemFieldForPrint = collect($itemField)->reject(function ($label) {
+                                return $label === '分类';
+                            })->toArray();
+                            $showTotalAmount = true;
+                        }
+                    @endphp
                     <thead>
                     <tr>
-                        @foreach($itemField as $field)
+                        @foreach($itemFieldForPrint as $field)
                             <th>{{ $field }}</th>
                         @endforeach
+                        @if($showTotalAmount)
+                            <th>合计金额</th>
+                        @endif
                     </tr>
                     </thead>
                     <tbody>
@@ -252,13 +267,16 @@
                     @endphp
                     @foreach($order->items as $item)
                         <tr>
-                            @foreach($itemField as $key => $field)
+                            @foreach($itemFieldForPrint as $key => $field)
                                 <td>{{
                                     collect(explode(".", $key))->reduce(function ($object, $value) use ($item) {
                                         return $object ? $object->$value : $item->$value;
                                     })
                                 }}</td>
                             @endforeach
+                            @if($showTotalAmount)
+                                <td>{{ bcmul($item->actual_num ?? 0, $item->price ?? 0, 2) }}</td>
+                            @endif
                         </tr>
                     @endforeach
                     </tbody>
