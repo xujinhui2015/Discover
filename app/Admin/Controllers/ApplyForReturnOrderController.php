@@ -49,7 +49,6 @@ class ApplyForReturnOrderController extends OrderController
             $grid->column('apply_for_order.order_no', '物料单号')->emp();
             $grid->column('order_no');
             $grid->column('user.username', '创建用户');
-            $grid->column('other')->emp();
             if ($useNameStyle) {
                 $grid->column('product_names', '物料名称')->display(function () {
                     $productNames = ProductModel::query()
@@ -75,6 +74,7 @@ class ApplyForReturnOrderController extends OrderController
                 ->using($this->oredr_model::REVIEW_STATUS)
                 ->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at');
+             $grid->column('other')->emp();
             $grid->disableQuickEditButton();
             $grid->disableCreateButton();
 
