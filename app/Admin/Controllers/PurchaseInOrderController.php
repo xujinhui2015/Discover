@@ -17,6 +17,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Grid\BatchCreatePurInOrder;
 use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
+use App\Admin\Actions\Grid\PurchaseInOrderUnreview;
 use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Repositories\PurchaseInOrder;
 use App\Models\PositionModel;
@@ -170,5 +171,17 @@ class PurchaseInOrderController extends OrderController
         $grid->column('batch_no', '批次号')->if(function () use ($order,$review_statu_ok) {
             return $order->review_status !== $review_statu_ok;
         })->edit();
+    }
+
+    public function setItemsCommon(Grid &$grid): void
+    {
+        parent::setItemsCommon($grid);
+
+        if ($this->order
+            && $this->order->review_status === $this->oredr_model::REVIEW_STATUS_OK
+            && $this->hasReviewPermission()
+        ) {
+            $grid->tools(PurchaseInOrderUnreview::make());
+        }
     }
 }
