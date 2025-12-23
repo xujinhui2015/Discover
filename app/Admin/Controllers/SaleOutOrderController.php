@@ -18,6 +18,7 @@ use App\Admin\Actions\Grid\BatchCreateSaleInOrderSave;
 use App\Admin\Actions\Grid\BatchCreateSaleOutOrder;
 use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
+use App\Admin\Actions\Grid\SaleOutOrderUnreview;
 use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Extensions\Grid\BatchDeail;
 use App\Admin\Extensions\Grid\SaleOutOrderItemDetail;
@@ -248,6 +249,18 @@ class SaleOutOrderController extends OrderController
 
     protected function creating(Form &$form): void
     {
+    }
+
+    public function setItemsCommon(Grid &$grid): void
+    {
+        parent::setItemsCommon($grid);
+
+        if ($this->order
+            && $this->order->review_status === $this->oredr_model::REVIEW_STATUS_OK
+            && $this->hasUnreviewPermission()
+        ) {
+            $grid->tools(SaleOutOrderUnreview::make());
+        }
     }
 
     private function useMaterialNameStyle(): bool

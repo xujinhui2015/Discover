@@ -17,6 +17,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Grid\BatchCreateSaleInOrder;
 use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
+use App\Admin\Actions\Grid\SaleInOrderUnreview;
 use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Extensions\Grid\BatchDeail;
 use App\Admin\Extensions\Grid\SaleInOrderItemDetail;
@@ -161,6 +162,18 @@ class SaleInOrderController extends OrderController
 
     protected function creating(Form &$form): void
     {
+    }
+
+    public function setItemsCommon(Grid &$grid): void
+    {
+        parent::setItemsCommon($grid);
+
+        if ($this->order
+            && $this->order->review_status === $this->oredr_model::REVIEW_STATUS_OK
+            && $this->hasUnreviewPermission()
+        ) {
+            $grid->tools(SaleInOrderUnreview::make());
+        }
     }
 
     private function useMaterialNameStyle(): bool

@@ -70,4 +70,35 @@ class SaleInItemModel extends BaseModel
     {
         return $this->belongsTo(SaleInOrderModel::class, 'order_id');
     }
+
+    public function setActualNumAttribute($value): void
+    {
+        $this->attributes['actual_num'] = $this->normalizeDecimal($value);
+    }
+
+    public function setReturnNumAttribute($value): void
+    {
+        $this->attributes['return_num'] = $this->normalizeDecimal($value);
+    }
+
+    public function setPriceAttribute($value): void
+    {
+        $this->attributes['price'] = $this->normalizeDecimal($value);
+    }
+
+    private function normalizeDecimal($value): string
+    {
+        if (is_numeric($value)) {
+            return (string) $value;
+        }
+
+        $clean = strip_tags((string) $value);
+        $clean = preg_replace('/[^0-9.\-]/', '', $clean);
+
+        if ($clean === '' || $clean === '-' || $clean === '.' || $clean === '-.') {
+            return '0';
+        }
+
+        return $clean;
+    }
 }
