@@ -46,7 +46,6 @@ class PurchaseOrderController extends OrderController
     {
         return Grid::make(new PurchaseOrder(['user', 'supplier']), function (Grid $grid) {
             $useNameStyle = $this->useMaterialNameStyle();
-            Admin::style('.grid-expand i{color:#222;font-weight:700;}');
             $grid->column('id')->sortable();
 //            $grid->column('check_status')->using(PurchaseOrderModel::CHECK_STATUS);
             $grid->column('order_no');
@@ -69,7 +68,9 @@ class PurchaseOrderController extends OrderController
                     return $displayNames;
                 });
             } else {
-                $grid->column('_', '物料明细')->expand(PurchaseOrderItemDetail::class);
+                $grid->column('_', '物料明细')
+                    ->setAttributes(['class' => 'material-detail-cell'])
+                    ->expand(PurchaseOrderItemDetail::class);
             }
             $grid->column('supplier.name', '供应商名称')->emp();
             $grid->column('user.username', '创建用户');
@@ -102,7 +103,6 @@ class PurchaseOrderController extends OrderController
     {
         return Grid::make(new PurchaseOrder(['user', 'supplier']), function (Grid $grid) {
             $useNameStyle = $this->useMaterialNameStyle();
-            Admin::style('.grid-expand i{color:#222;font-weight:700;}');
             $grid->model()
                 ->whereIn('status', [
                     PurchaseOrderModel::STATUS_WAIT,
@@ -136,7 +136,9 @@ class PurchaseOrderController extends OrderController
                     return $displayNames;
                 });
             } else {
-                $grid->column('_', '物料明细')->expand(PurchaseOrderItemDetail::class);
+                $grid->column('_', '物料明细')
+                    ->setAttributes(['class' => 'material-detail-cell'])
+                    ->expand(PurchaseOrderItemDetail::class);
             }
             $grid->column('supplier.name', '供应商名称')->emp();
             $grid->column('user.username', '创建用户');

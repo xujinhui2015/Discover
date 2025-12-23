@@ -77,7 +77,9 @@ class ApplyForOrderController extends OrderController
                     return $displayNames;
                 });
             } else {
-                $grid->column('_', '物料明细')->expand(ApplyForOrderItemDetail::class);
+                $grid->column('_', '物料明细')
+                    ->setAttributes(['class' => 'material-detail-cell'])
+                    ->expand(ApplyForOrderItemDetail::class);
             }
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at');
@@ -144,7 +146,9 @@ class ApplyForOrderController extends OrderController
                     return $displayNames;
                 });
             } else {
-                $grid->column('_', '物料明细')->expand(ApplyForOrderItemDetail::class);
+                $grid->column('_', '物料明细')
+                    ->setAttributes(['class' => 'material-detail-cell'])
+                    ->expand(ApplyForOrderItemDetail::class);
             }
             $grid->column('review_status', '审核状态')
                 ->using($this->oredr_model::REVIEW_STATUS)

@@ -69,7 +69,9 @@ class SaleOrderController extends OrderController
                     return $displayNames;
                 });
             } else {
-                $grid->column('_', '物料明细')->expand(SaleOrderItemDetail::class);
+                $grid->column('_', '物料明细')
+                    ->setAttributes(['class' => 'material-detail-cell'])
+                    ->expand(SaleOrderItemDetail::class);
             }
             $grid->column('status', '单据状态')->using($this->oredr_model::STATUS)->label($this->oredr_model::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
@@ -129,7 +131,9 @@ class SaleOrderController extends OrderController
                     return $displayNames;
                 });
             } else {
-                $grid->column('_', '物料明细')->expand(SaleOrderItemDetail::class);
+                $grid->column('_', '物料明细')
+                    ->setAttributes(['class' => 'material-detail-cell'])
+                    ->expand(SaleOrderItemDetail::class);
             }
             $grid->column('status', '状态')->using($this->oredr_model::STATUS)->label($this->oredr_model::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);

@@ -71,7 +71,9 @@ class PurchaseInOrderController extends OrderController
                     return $displayNames;
                 });
             } else {
-                $grid->column('_', '物料明细')->expand(PurchaseInOrderItemDetail::class);
+                $grid->column('_', '物料明细')
+                    ->setAttributes(['class' => 'material-detail-cell'])
+                    ->expand(PurchaseInOrderItemDetail::class);
             }
             $grid->column('supplier.name', '供应商名称')->emp();
             $grid->column('user.username', '创建用户');

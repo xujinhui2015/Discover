@@ -138,6 +138,23 @@ Admin::style(<<<'CSS'
 CSS
 );
 
+Admin::style(<<<'CSS'
+.material-detail-cell .grid-expand a {
+    align-items: center;
+    color: #5c6bc6;
+    display: inline-flex;
+    font-weight: 600;
+    gap: 2px;
+}
+.material-detail-cell .grid-expand i {
+    color: #5c6bc6;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+}
+CSS
+);
+
 // 添加基本JavaScript交互
 Admin::script(<<<'JS'
     // 响应式侧边栏切换

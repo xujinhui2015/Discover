@@ -69,7 +69,9 @@ class MakeProductOrderController extends OrderController
                     return $displayNames;
                 });
             } else {
-                $grid->column('_', '物料明细')->expand(MakeProductOrderItemDetail::class);
+                $grid->column('_', '物料明细')
+                    ->setAttributes(['class' => 'material-detail-cell'])
+                    ->expand(MakeProductOrderItemDetail::class);
             }
             $grid->column('other')->emp();
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);

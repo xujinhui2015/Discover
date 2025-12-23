@@ -67,7 +67,9 @@ class ApplyForReturnOrderController extends OrderController
                     return $displayNames;
                 });
             } else {
-                $grid->column('_', '物料明细')->expand(ApplyForReturnOrderItemDetail::class);
+                $grid->column('_', '物料明细')
+                    ->setAttributes(['class' => 'material-detail-cell'])
+                    ->expand(ApplyForReturnOrderItemDetail::class);
             }
             $grid->column('review_status', '审核状态')
                 ->using($this->oredr_model::REVIEW_STATUS)
