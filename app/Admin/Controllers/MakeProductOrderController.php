@@ -19,11 +19,16 @@ use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Actions\Grid\OrderPrint;
 use App\Admin\Actions\Grid\OrderReview;
 use App\Admin\Extensions\Form\Order\OrderController;
+use App\Admin\Extensions\Grid\MakeProductOrderItemDetail;
 use App\Admin\Repositories\MakeProductOrder;
 use App\Models\MakeProductOrderModel;
+use App\Models\MakeProductItemModel;
+use App\Models\PersonalConfigModel;
 use App\Models\PositionModel;
 use App\Models\ProductModel;
+use App\Models\ProductSkuModel;
 use App\Models\TaskModel;
+use Dcat\Admin\Admin;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Models\Administrator;
@@ -31,6 +36,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MakeProductOrderController extends OrderController
 {
+    private const MATERIAL_DETAIL_STYLE_KEY = 'material_detail_style';
+    private const MATERIAL_DETAIL_STYLE_DETAIL = 'detail';
+
     /**
      * Make a grid builder.
      *
@@ -39,10 +47,30 @@ class MakeProductOrderController extends OrderController
     protected function grid()
     {
         return Grid::make(new MakeProductOrder(['with_order', 'user']), function (Grid $grid) {
+            $useNameStyle = $this->useMaterialNameStyle();
             $grid->column('id')->sortable();
             $grid->column('with_order.order_no', '任务单号')->emp();
             $grid->column('order_no');
             $grid->column('user.username', '创建用户');
+            if ($useNameStyle) {
+                $grid->column('product_names', '物料名称')->display(function () {
+                    $productNames = ProductModel::query()
+                        ->whereIn('id', ProductSkuModel::query()
+                            ->whereIn('id', MakeProductItemModel::query()
+                                ->where('order_id', $this->id)
+                                ->select('sku_id'))
+                            ->select('product_id'))
+                        ->pluck('name')
+                        ->toArray();
+                    $displayNames = '';
+                    foreach ($productNames as $productName) {
+                        $displayNames .= '<span class="badge" style="background:#5c6bc6">' . $productName . '</span><br>';
+                    }
+                    return $displayNames;
+                });
+            } else {
+                $grid->column('_', '物料明细')->expand(MakeProductOrderItemDetail::class);
+            }
             $grid->column('other')->emp();
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at');
@@ -176,5 +204,20 @@ class MakeProductOrderController extends OrderController
         $grid->disablePagination();
         $grid->disableCreateButton();
         $grid->disableBatchDelete();
+    }
+
+    private function useMaterialNameStyle(): bool
+    {
+        $userId = (int) optional(Admin::user())->id;
+        if (! $userId) {
+            return true;
+        }
+
+        $style = PersonalConfigModel::query()
+            ->where('user_id', $userId)
+            ->where('config_key', self::MATERIAL_DETAIL_STYLE_KEY)
+            ->value('config_value');
+
+        return $style !== self::MATERIAL_DETAIL_STYLE_DETAIL;
     }
 }

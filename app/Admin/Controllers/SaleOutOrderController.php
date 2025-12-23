@@ -20,10 +20,16 @@ use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Extensions\Grid\BatchDeail;
+use App\Admin\Extensions\Grid\SaleOutOrderItemDetail;
 use App\Admin\Repositories\SaleOutOrder;
+use App\Models\PersonalConfigModel;
 use App\Models\PurchaseOrderModel;
+use App\Models\ProductModel;
+use App\Models\ProductSkuModel;
 use App\Models\SaleOrderModel;
+use App\Models\SaleOutItemModel;
 use App\Models\SaleOutOrderModel;
+use Dcat\Admin\Admin;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,6 +37,9 @@ use Illuminate\Support\Fluent;
 
 class SaleOutOrderController extends OrderController
 {
+    private const MATERIAL_DETAIL_STYLE_KEY = 'material_detail_style';
+    private const MATERIAL_DETAIL_STYLE_DETAIL = 'detail';
+
     /**
      * Make a grid builder.
      *
@@ -39,12 +48,32 @@ class SaleOutOrderController extends OrderController
     protected function grid()
     {
         return Grid::make(new SaleOutOrder(['customer', 'user']), function (Grid $grid) {
+            $useNameStyle = $this->useMaterialNameStyle();
             $grid->column('id')->sortable();
             $grid->column('customer.name', '客户');
 
             $grid->column('order_no');
             $grid->column('other')->emp();
             $grid->column('user.name', '创建用户');
+            if ($useNameStyle) {
+                $grid->column('product_names', '物料名称')->display(function () {
+                    $productNames = ProductModel::query()
+                        ->whereIn('id', ProductSkuModel::query()
+                            ->whereIn('id', SaleOutItemModel::query()
+                                ->where('order_id', $this->id)
+                                ->select('sku_id'))
+                            ->select('product_id'))
+                        ->pluck('name')
+                        ->toArray();
+                    $displayNames = '';
+                    foreach ($productNames as $productName) {
+                        $displayNames .= '<span class="badge" style="background:#5c6bc6">' . $productName . '</span><br>';
+                    }
+                    return $displayNames;
+                });
+            } else {
+                $grid->column('_', '物料明细')->expand(SaleOutOrderItemDetail::class);
+            }
             $grid->column('status', "单据状态")->using($this->oredr_model::STATUS)->label($this->oredr_model::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at');
@@ -76,6 +105,7 @@ class SaleOutOrderController extends OrderController
     public function iFrameGrid()
     {
         return Grid::make(new SaleOutOrder(['customer', 'user']), function (Grid $grid) {
+            $useNameStyle = $this->useMaterialNameStyle();
             $grid->model()->where([
                 'review_status' => SaleOutOrderModel::REVIEW_STATUS_OK
             ])->orderBy('id', 'desc');
@@ -85,6 +115,25 @@ class SaleOutOrderController extends OrderController
             $grid->column('order_no');
             $grid->column('other')->emp();
             $grid->column('user.name', '创建用户');
+            if ($useNameStyle) {
+                $grid->column('product_names', '物料名称')->display(function () {
+                    $productNames = ProductModel::query()
+                        ->whereIn('id', ProductSkuModel::query()
+                            ->whereIn('id', SaleOutItemModel::query()
+                                ->where('order_id', $this->id)
+                                ->select('sku_id'))
+                            ->select('product_id'))
+                        ->pluck('name')
+                        ->toArray();
+                    $displayNames = '';
+                    foreach ($productNames as $productName) {
+                        $displayNames .= '<span class="badge" style="background:#5c6bc6">' . $productName . '</span><br>';
+                    }
+                    return $displayNames;
+                });
+            } else {
+                $grid->column('_', '物料明细')->expand(SaleOutOrderItemDetail::class);
+            }
             $grid->column('status', '状态')->using($this->oredr_model::STATUS)->label($this->oredr_model::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at');
@@ -195,5 +244,20 @@ class SaleOutOrderController extends OrderController
 
     protected function creating(Form &$form): void
     {
+    }
+
+    private function useMaterialNameStyle(): bool
+    {
+        $userId = (int) optional(Admin::user())->id;
+        if (! $userId) {
+            return true;
+        }
+
+        $style = PersonalConfigModel::query()
+            ->where('user_id', $userId)
+            ->where('config_key', self::MATERIAL_DETAIL_STYLE_KEY)
+            ->value('config_value');
+
+        return $style !== self::MATERIAL_DETAIL_STYLE_DETAIL;
     }
 }

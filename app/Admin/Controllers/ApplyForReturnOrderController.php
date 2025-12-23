@@ -17,10 +17,15 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Grid\BatchCreateApplyForOrder;
 use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Extensions\Form\Order\OrderController;
+use App\Admin\Extensions\Grid\ApplyForReturnOrderItemDetail;
 use App\Admin\Repositories\ApplyForReturnOrder;
 use App\Models\ApplyForOrderModel;
+use App\Models\ApplyForReturnItemModel;
 use App\Models\ApplyForReturnOrderModel;
+use App\Models\PersonalConfigModel;
 use App\Models\ProductModel;
+use App\Models\ProductSkuModel;
+use Dcat\Admin\Admin;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Models\Administrator;
@@ -28,6 +33,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ApplyForReturnOrderController extends OrderController
 {
+    private const MATERIAL_DETAIL_STYLE_KEY = 'material_detail_style';
+    private const MATERIAL_DETAIL_STYLE_DETAIL = 'detail';
+
     /**
      * Make a grid builder.
      *
@@ -36,11 +44,31 @@ class ApplyForReturnOrderController extends OrderController
     protected function grid()
     {
         return Grid::make(new ApplyForReturnOrder(['apply_for_order', 'user']), function (Grid $grid) {
+            $useNameStyle = $this->useMaterialNameStyle();
             $grid->column('id')->sortable();
             $grid->column('apply_for_order.order_no', '物料单号')->emp();
             $grid->column('order_no');
             $grid->column('user.username', '创建用户');
             $grid->column('other')->emp();
+            if ($useNameStyle) {
+                $grid->column('product_names', '物料名称')->display(function () {
+                    $productNames = ProductModel::query()
+                        ->whereIn('id', ProductSkuModel::query()
+                            ->whereIn('id', ApplyForReturnItemModel::query()
+                                ->where('order_id', $this->id)
+                                ->select('sku_id'))
+                            ->select('product_id'))
+                        ->pluck('name')
+                        ->toArray();
+                    $displayNames = '';
+                    foreach ($productNames as $productName) {
+                        $displayNames .= '<span class="badge" style="background:#5c6bc6">' . $productName . '</span><br>';
+                    }
+                    return $displayNames;
+                });
+            } else {
+                $grid->column('_', '物料明细')->expand(ApplyForReturnOrderItemDetail::class);
+            }
             $grid->column('review_status', '审核状态')
                 ->using($this->oredr_model::REVIEW_STATUS)
                 ->label($this->oredr_model::REVIEW_STATUS_COLOR);
@@ -147,5 +175,20 @@ class ApplyForReturnOrderController extends OrderController
                     ->value('review_status') == ApplyForReturnOrderModel::REVIEW_STATUS_WAIT;
             })
             ->edit();
+    }
+
+    private function useMaterialNameStyle(): bool
+    {
+        $userId = (int) optional(Admin::user())->id;
+        if (! $userId) {
+            return true;
+        }
+
+        $style = PersonalConfigModel::query()
+            ->where('user_id', $userId)
+            ->where('config_key', self::MATERIAL_DETAIL_STYLE_KEY)
+            ->value('config_value');
+
+        return $style !== self::MATERIAL_DETAIL_STYLE_DETAIL;
     }
 }
