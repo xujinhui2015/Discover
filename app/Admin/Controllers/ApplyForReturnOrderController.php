@@ -75,7 +75,7 @@ class ApplyForReturnOrderController extends OrderController
                 ->using($this->oredr_model::REVIEW_STATUS)
                 ->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at');
-             $grid->column('other')->emp();
+            $grid->column('other')->emp();
             $grid->disableQuickEditButton();
             $grid->disableCreateButton();
 
