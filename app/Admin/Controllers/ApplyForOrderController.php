@@ -15,6 +15,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\AddApplyForOrder;
+use App\Admin\Actions\Grid\ApplyForOrderUnreview;
 use App\Admin\Actions\Grid\BatchCreateApplyForReturnOrderSave;
 use App\Admin\Actions\Grid\BatchCreateProSave;
 use App\Admin\Actions\Grid\BatchCreatePurInOrderSave;
@@ -271,6 +272,18 @@ class ApplyForOrderController extends OrderController
 //                'percent'               => $batchDeail->row->percent,
             ]);
         });
+    }
+
+    public function setItemsCommon(Grid &$grid): void
+    {
+        parent::setItemsCommon($grid);
+
+        if ($this->order
+            && $this->order->review_status === $this->oredr_model::REVIEW_STATUS_OK
+            && $this->hasUnreviewPermission()
+        ) {
+            $grid->tools(ApplyForOrderUnreview::make());
+        }
     }
 
     private function useMaterialNameStyle(): bool
