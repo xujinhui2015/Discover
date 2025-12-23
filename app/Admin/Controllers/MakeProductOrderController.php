@@ -16,6 +16,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
+use App\Admin\Actions\Grid\MakeProductOrderUnreview;
 use App\Admin\Actions\Grid\OrderPrint;
 use App\Admin\Actions\Grid\OrderReview;
 use App\Admin\Extensions\Form\Order\OrderController;
@@ -201,6 +202,12 @@ class MakeProductOrderController extends OrderController
         $grid->tools(OrderPrint::make());
         if ($this->order && $this->order->with_order->status === TaskModel::STATUS_DRAW && $this->shouldShowReviewTool()) {
             $grid->tools(OrderReview::make(show_order_review($this->order->review_status)));
+        }
+        if ($this->order
+            && $this->order->review_status === $this->oredr_model::REVIEW_STATUS_OK
+            && $this->hasUnreviewPermission()
+        ) {
+            $grid->tools(MakeProductOrderUnreview::make());
         }
         $grid->disableActions();
         $grid->disablePagination();
