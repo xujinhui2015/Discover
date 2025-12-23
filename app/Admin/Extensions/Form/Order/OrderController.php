@@ -274,11 +274,23 @@ CSS
         return order_review_permission_slug();
     }
 
+    protected function unreviewPermissionSlug(): string
+    {
+        return order_unreview_permission_slug();
+    }
+
     protected function hasReviewPermission(): bool
     {
         $user = Admin::user();
 
         return $user ? $user->can($this->reviewPermissionSlug()) : false;
+    }
+
+    protected function hasUnreviewPermission(): bool
+    {
+        $user = Admin::user();
+
+        return $user ? $user->can($this->unreviewPermissionSlug()) : false;
     }
 
     protected function shouldShowReviewTool(): bool

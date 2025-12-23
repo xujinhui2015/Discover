@@ -54,7 +54,7 @@ HTML;
     {
         return [
             'id' => request()->route()->parameter($this->getTable()),
-            'permission_slug' => order_review_permission_slug(),
+            'permission_slug' => order_unreview_permission_slug(),
         ];
     }
 
@@ -69,7 +69,7 @@ HTML;
         $table = $request ? $request->input('table') : null;
         $controller = $table ? Str::studly(str_replace(['-', '_'], ' ', $table)) : null;
 
-        return order_review_permission_slug($controller);
+        return order_unreview_permission_slug($controller);
     }
 
     public function confirm(): array

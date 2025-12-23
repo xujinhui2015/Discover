@@ -112,6 +112,22 @@ if (! function_exists('order_review_permission_slug')) {
     }
 }
 
+if (! function_exists('order_unreview_permission_slug')) {
+    /**
+     * 生成单据反审核的权限标识，支持传入控制器名或表名格式。
+     *
+     * @param string|null $controllerName
+     * @return string
+     */
+    function order_unreview_permission_slug(string $controllerName = null): string
+    {
+        $name = $controllerName ?: admin_controller_name();
+        $studlyName = Str::studly(str_replace(['-', '_'], ' ', $name));
+
+        return 'unreview-' . Helper::slug($studlyName);
+    }
+}
+
 if (! file_exists("store_order_img")) {
     /**
      * @param int $status

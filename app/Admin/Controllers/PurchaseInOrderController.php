@@ -179,7 +179,7 @@ class PurchaseInOrderController extends OrderController
 
         if ($this->order
             && $this->order->review_status === $this->oredr_model::REVIEW_STATUS_OK
-            && $this->hasReviewPermission()
+            && $this->hasUnreviewPermission()
         ) {
             $grid->tools(PurchaseInOrderUnreview::make());
         }
