@@ -20,7 +20,10 @@ use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Extensions\Grid\PurchaseOrderItemDetail;
 use App\Admin\Repositories\PurchaseOrder;
+use App\Models\PersonalConfigModel;
 use App\Models\ProductModel;
+use App\Models\ProductSkuModel;
+use App\Models\PurchaseItemModel;
 use App\Models\PurchaseOrderModel;
 use App\Repositories\SupplierRepository;
 use Dcat\Admin\Admin;
@@ -31,6 +34,9 @@ use Illuminate\Support\Fluent;
 
 class PurchaseOrderController extends OrderController
 {
+    private const MATERIAL_DETAIL_STYLE_KEY = 'material_detail_style';
+    private const MATERIAL_DETAIL_STYLE_DETAIL = 'detail';
+
     /**
      * Make a grid builder.
      *
@@ -39,13 +45,32 @@ class PurchaseOrderController extends OrderController
     protected function grid()
     {
         return Grid::make(new PurchaseOrder(['user', 'supplier']), function (Grid $grid) {
+            $useNameStyle = $this->useMaterialNameStyle();
             Admin::style('.grid-expand i{color:#222;font-weight:700;}');
             $grid->column('id')->sortable();
 //            $grid->column('check_status')->using(PurchaseOrderModel::CHECK_STATUS);
             $grid->column('order_no');
             $grid->column('status', '状态')->using(PurchaseOrderModel::STATUS)->label(PurchaseOrderModel::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using(PurchaseOrderModel::REVIEW_STATUS)->label(PurchaseOrderModel::REVIEW_STATUS_COLOR);
-            $grid->column('_', '物料明细')->expand(PurchaseOrderItemDetail::class);
+            if ($useNameStyle) {
+                $grid->column('product_names', '物料名称')->display(function () {
+                    $productNames = ProductModel::query()
+                        ->whereIn('id', ProductSkuModel::query()
+                            ->whereIn('id', PurchaseItemModel::query()
+                                ->where('order_id', $this->id)
+                                ->select('sku_id'))
+                            ->select('product_id'))
+                        ->pluck('name')
+                        ->toArray();
+                    $displayNames = '';
+                    foreach ($productNames as $productName) {
+                        $displayNames .= '<span class="badge" style="background:#5c6bc6">' . $productName . '</span><br>';
+                    }
+                    return $displayNames;
+                });
+            } else {
+                $grid->column('_', '物料明细')->expand(PurchaseOrderItemDetail::class);
+            }
             $grid->column('supplier.name', '供应商名称')->emp();
             $grid->column('user.username', '创建用户');
             $grid->column('created_at');
@@ -76,6 +101,7 @@ class PurchaseOrderController extends OrderController
     public function iFrameGrid()
     {
         return Grid::make(new PurchaseOrder(['user', 'supplier']), function (Grid $grid) {
+            $useNameStyle = $this->useMaterialNameStyle();
             Admin::style('.grid-expand i{color:#222;font-weight:700;}');
             $grid->model()
                 ->whereIn('status', [
@@ -93,7 +119,25 @@ class PurchaseOrderController extends OrderController
             $grid->column('other')->emp();
             $grid->column('status', '状态')->using(PurchaseOrderModel::STATUS)->label(PurchaseOrderModel::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using(PurchaseOrderModel::REVIEW_STATUS)->label(PurchaseOrderModel::REVIEW_STATUS_COLOR);
-            $grid->column('_', '物料明细')->expand(PurchaseOrderItemDetail::class);
+            if ($useNameStyle) {
+                $grid->column('product_names', '物料名称')->display(function () {
+                    $productNames = ProductModel::query()
+                        ->whereIn('id', ProductSkuModel::query()
+                            ->whereIn('id', PurchaseItemModel::query()
+                                ->where('order_id', $this->id)
+                                ->select('sku_id'))
+                            ->select('product_id'))
+                        ->pluck('name')
+                        ->toArray();
+                    $displayNames = '';
+                    foreach ($productNames as $productName) {
+                        $displayNames .= '<span class="badge" style="background:#5c6bc6">' . $productName . '</span><br>';
+                    }
+                    return $displayNames;
+                });
+            } else {
+                $grid->column('_', '物料明细')->expand(PurchaseOrderItemDetail::class);
+            }
             $grid->column('supplier.name', '供应商名称')->emp();
             $grid->column('user.username', '创建用户');
             $grid->column('created_at');
@@ -196,5 +240,20 @@ class PurchaseOrderController extends OrderController
         $grid->column("_", '合计')->display(function () {
             return bcmul($this->should_num, $this->price, 2);
         });
+    }
+
+    private function useMaterialNameStyle(): bool
+    {
+        $userId = (int) optional(Admin::user())->id;
+        if (! $userId) {
+            return true;
+        }
+
+        $style = PersonalConfigModel::query()
+            ->where('user_id', $userId)
+            ->where('config_key', self::MATERIAL_DETAIL_STYLE_KEY)
+            ->value('config_value');
+
+        return $style !== self::MATERIAL_DETAIL_STYLE_DETAIL;
     }
 }
