@@ -16,6 +16,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\BatchCreateApplyForOrder;
 use App\Admin\Actions\Grid\EditOrder;
+use App\Admin\Actions\Grid\ApplyForReturnOrderUnreview;
 use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Extensions\Grid\ApplyForReturnOrderItemDetail;
 use App\Admin\Repositories\ApplyForReturnOrder;
@@ -177,6 +178,18 @@ class ApplyForReturnOrderController extends OrderController
                     ->value('review_status') == ApplyForReturnOrderModel::REVIEW_STATUS_WAIT;
             })
             ->edit();
+    }
+
+    public function setItemsCommon(Grid &$grid): void
+    {
+        parent::setItemsCommon($grid);
+
+        if ($this->order
+            && $this->order->review_status === $this->oredr_model::REVIEW_STATUS_OK
+            && $this->hasUnreviewPermission()
+        ) {
+            $grid->tools(ApplyForReturnOrderUnreview::make());
+        }
     }
 
     private function useMaterialNameStyle(): bool
