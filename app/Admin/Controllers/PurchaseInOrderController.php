@@ -51,7 +51,6 @@ class PurchaseInOrderController extends OrderController
             $grid->column('id')->sortable();
             $grid->column('order_no');
             $grid->column('with_order.order_no', '关联单号')->emp();
-            $grid->column('other')->emp();
             $grid->column('status', "单据状态")->using($this->oredr_model::STATUS)->label($this->oredr_model::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
             if ($useNameStyle) {
@@ -79,6 +78,7 @@ class PurchaseInOrderController extends OrderController
             $grid->column('user.username', '创建用户');
             $grid->column('created_at');
             $grid->column('apply_at', "审核时间")->emp();
+            $grid->column('other')->emp();
             $grid->disableQuickEditButton();
             $grid->disableCreateButton();
             $grid->actions(EditOrder::make());
