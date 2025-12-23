@@ -17,6 +17,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Grid\BatchCreatePurInOrderSave;
 use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
+use App\Admin\Actions\Grid\PurchaseOrderUnreview;
 use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Extensions\Grid\PurchaseOrderItemDetail;
 use App\Admin\Repositories\PurchaseOrder;
@@ -242,6 +243,18 @@ class PurchaseOrderController extends OrderController
         $grid->column("_", '合计')->display(function () {
             return bcmul($this->should_num, $this->price, 2);
         });
+    }
+
+    public function setItemsCommon(Grid &$grid): void
+    {
+        parent::setItemsCommon($grid);
+
+        if ($this->order
+            && $this->order->review_status === $this->oredr_model::REVIEW_STATUS_OK
+            && $this->hasUnreviewPermission()
+        ) {
+            $grid->tools(PurchaseOrderUnreview::make());
+        }
     }
 
     private function useMaterialNameStyle(): bool
