@@ -13,6 +13,9 @@
         <a href="{{ admin_url('auth/setting') }}" class="dropdown-item">
             <i class="feather icon-user"></i> {{ trans('admin.setting') }}
         </a>
+        <a href="{{ admin_url('personal-config') }}" class="dropdown-item">
+            <i class="feather icon-sliders"></i> 个性化配置
+        </a>
 
         <div class="dropdown-divider"></div>
 
