@@ -16,9 +16,15 @@ namespace App\Services;
 
 use App\Models\AttrModel;
 use App\Models\AttrValueModel;
+use App\Models\BaseModel;
 use App\Models\BrandModel;
+use App\Models\PositionModel;
 use App\Models\ProductModel;
+use App\Models\ProductSkuModel;
+use App\Models\SkuStockModel;
+use App\Models\StockHistoryModel;
 use App\Models\UnitModel;
+use Dcat\Admin\Admin;
 use Dcat\EasyExcel\Excel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -41,6 +47,8 @@ class ProductImportService extends BaseService
         '预警库存',
         '属性定义',
         '备注',
+        '现有库存',
+        '存放仓库',
     ];
 
     public const TEMPLATE_SAMPLE = [
@@ -54,6 +62,8 @@ class ProductImportService extends BaseService
             '预警库存' => 0,
             '属性定义' => '香型=花香型,果香型;容量=500ml,1000ml',
             '备注'   => '属性定义按“属性=值1,值2;属性2=...”填写',
+            '现有库存' => 100,
+            '存放仓库' => '一号仓',
         ],
     ];
 
@@ -107,7 +117,8 @@ class ProductImportService extends BaseService
                     try {
                         $payload = $this->buildProductPayload($normalized);
                         [$product, $mode] = $this->storeProduct($payload);
-                        $this->syncProductRelations($product, $payload['product_attr'], $payload['sku_rows']);
+                        $this->syncProductRelations($product, $payload['product_attr'], $payload['sku_rows'], $mode);
+                        $this->importInitialStock($product, $payload);
                         $stats[$mode]++;
                     } finally {
                         ProductModel::$skipDefaultAttrBinding = false;
@@ -170,6 +181,11 @@ class ProductImportService extends BaseService
         $brandId = $this->resolveBrandId(Arr::get($row, '品牌'));
         $unitId = $this->resolveUnitId(Arr::get($row, '单位'));
         $warning = $this->resolveWarningNum(Arr::get($row, '预警库存'));
+        $initialStock = $this->resolveInitialStock(Arr::get($row, '现有库存'));
+        $positionId = $this->resolvePositionId(Arr::get($row, '存放仓库'));
+        if (bccomp($initialStock, '0', 3) > 0 && ! $positionId) {
+            throw new RuntimeException('填写现有库存时必须指定存放仓库');
+        }
 
         $attrRows = $this->parseAttrDefinitions(Arr::get($row, '属性定义'));
         $skuRows = $this->buildSkuRows($attrRows);
@@ -185,6 +201,8 @@ class ProductImportService extends BaseService
             'py_code'      => up_pinyin_abbr($name),
             'product_attr' => $attrRows,
             'sku_rows'     => $skuRows,
+            'initial_stock' => $initialStock,
+            'position_id'   => $positionId,
         ];
     }
 
@@ -396,6 +414,48 @@ class ProductImportService extends BaseService
         })->values()->toArray();
     }
 
+    protected function resolveInitialStock($value): string
+    {
+        if ($value === null || $value === '') {
+            return '0';
+        }
+
+        if (! is_numeric($value)) {
+            throw new RuntimeException('现有库存必须为数字');
+        }
+
+        if ((float) $value < 0) {
+            throw new RuntimeException('现有库存不能为负数');
+        }
+
+        return bcadd((string) $value, '0', 3);
+    }
+
+    protected function resolvePositionId(?string $name): int
+    {
+        $name = $name ? trim($name) : '';
+        if ($name === '') {
+            return 0;
+        }
+
+        /** @var PositionModel|Builder $query */
+        $query = PositionModel::withTrashed()->where('name', $name);
+        $position = $query->first();
+        if (! $position) {
+            $position = PositionModel::create([
+                'name'       => $name,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } else {
+            if ($position->trashed()) {
+                $position->restore();
+            }
+        }
+
+        return $position->id;
+    }
+
     protected function storeProduct(array $payload): array
     {
         /** @var ProductModel|null $product */
@@ -405,9 +465,6 @@ class ProductImportService extends BaseService
         if ($product) {
             $product->fill($payload)->save();
             $mode = 'updated';
-
-            $product->product_attr()->delete();
-            $product->sku()->delete();
         } else {
             $product = ProductModel::create($payload);
         }
@@ -415,8 +472,14 @@ class ProductImportService extends BaseService
         return [$product, $mode];
     }
 
-    protected function syncProductRelations(ProductModel $product, array $productAttr, array $skuRows): void
+    protected function syncProductRelations(ProductModel $product, array $productAttr, array $skuRows, string $mode): void
     {
+        if ($mode === 'updated') {
+            $product->unsetRelation('sku');
+            $product->load('sku');
+            return;
+        }
+
         if ($productAttr) {
             $productAttr = array_map(function ($attr) {
                 $attr['attr_value_ids'] = array_values(array_unique($attr['attr_value_ids']));
@@ -429,5 +492,56 @@ class ProductImportService extends BaseService
         if (! empty($skuRows)) {
             $product->sku()->createMany($skuRows);
         }
+
+        $product->unsetRelation('sku');
+        $product->load('sku');
+    }
+
+    protected function importInitialStock(ProductModel $product, array $payload): void
+    {
+        $initialStock = $payload['initial_stock'] ?? '0';
+        $positionId = $payload['position_id'] ?? 0;
+        if (bccomp($initialStock, '0', 3) <= 0 || ! $positionId) {
+            return;
+        }
+
+        /** @var ProductSkuModel $sku */
+        foreach ($product->sku as $sku) {
+            $existing = SkuStockModel::query()
+                ->where('sku_id', $sku->id)
+                ->first();
+            $standard = (int) ($existing->standard ?? BaseModel::STANDARD_NO_CHOICE);
+            $existingNum = $existing ? bcadd((string) $existing->num, '0', 3) : '0';
+
+            if (bccomp($existingNum, '0', 3) > 0) {
+                continue;
+            }
+
+            $balance = bcadd($existingNum, $initialStock, 3);
+            StockHistoryModel::create([
+                'sku_id'         => $sku->id,
+                'in_position_id' => $positionId,
+                'cost_price'     => 0,
+                'type'           => StockHistoryModel::INIT_TYPE,
+                'flag'           => StockHistoryModel::IN,
+                'with_order_no'  => $this->buildImportOrderNo($product->id),
+                'init_num'       => $existingNum,
+                'in_num'         => $initialStock,
+                'balance_num'    => $balance,
+                'standard'       => $standard,
+                'user_id'        => Admin::user()->id ?? 0,
+                'batch_no'       => $this->buildImportBatchNo($product->id),
+            ]);
+        }
+    }
+
+    protected function buildImportOrderNo(int $productId): string
+    {
+        return sprintf('IMP-%s-%s', date('YmdHis'), $productId);
+    }
+
+    protected function buildImportBatchNo(int $productId): string
+    {
+        return sprintf('IMP%s-%s', date('Ymd'), $productId);
     }
 }
