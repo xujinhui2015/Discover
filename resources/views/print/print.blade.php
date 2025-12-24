@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <title>{{ $orderName }}</title>
@@ -113,7 +114,7 @@
             row-gap: 12px;
         }
 
-        .customer-info > div {
+        .customer-info>div {
             font-size: 14px;
             white-space: normal;
             line-height: 1.5;
@@ -203,105 +204,188 @@
         }
     </style>
 </head>
+
 <body>
-<div class="print-area">
-    <div class="toolbar no-print">
-        <button class="print-btn" id="triggerPrint" type="button">打印票据</button>
-    </div>
+    <div class="print-area">
+        <div class="toolbar no-print">
+            <button class="print-btn" id="triggerPrint" type="button">打印票据</button>
+        </div>
 
-    @foreach($orders as $order)
-        <div class="invoice-wrapper">
-            <div class="invoice">
-                <div class="status-mark">
-                    <img src="{{ store_order_img($order->review_status) }}" alt="order status">
-                </div>
-                <div class="invoice-header">
-                    <div class="company-name">{{ config('app.name') ?? '' }}</div>
-                    <div class="invoice-title">{{ $orderName }}</div>
-                    <div class="contact-info">电话：020-86326688 传真：020-36265293</div>
-                </div>
+        @foreach($orders as $order)
+            <div class="invoice-wrapper">
+                <div class="invoice">
+                    <div class="status-mark">
+                        <img src="{{ store_order_img($order->review_status) }}" alt="order status">
+                    </div>
+                    <div class="invoice-header">
+                        <div class="company-name">{{ config('app.name') ?? '' }}</div>
+                        <div class="invoice-title">{{ $orderName }}</div>
+                        <div class="contact-info">电话：020-86326688 传真：020-36265293</div>
+                    </div>
 
-                <div class="customer-info">
-                    @foreach($orderField as $field)
-                        @foreach($field as $key => $value)
-                            <div>
-                                <label>{{ $value }}：</label>
-                                <span>{{
-                                    collect(explode(".", $key))->reduce(function ($object, $field) use ($order) {
-                                        return $object ? $object->$field : $order->$field;
-                                    })
-                                }}</span>
-                            </div>
-                        @endforeach
-                    @endforeach
-                </div>
-
-                <table class="product-table">
-                    @php
-                        $printSlug = request()->input('slug');
-                        $itemFieldForPrint = $itemField;
-                        $showTotalAmount = false;
-
-                        if ($printSlug === 'sale-out-order') {
-                            $itemFieldForPrint = collect($itemField)->reject(function ($label) {
-                                return $label === '分类';
-                            })->toArray();
-                            $showTotalAmount = true;
-                        }
-                    @endphp
-                    <thead>
-                    <tr>
-                        @foreach($itemFieldForPrint as $field)
-                            <th>{{ $field }}</th>
-                        @endforeach
-                        @if($showTotalAmount)
-                            <th>合计金额</th>
-                        @endif
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @php
-                        if(! $order->items instanceof Illuminate\Database\Eloquent\Collection) {
-                            $order->items = [$order->items];
-                        }
-                    @endphp
-                    @foreach($order->items as $item)
-                        <tr>
-                            @foreach($itemFieldForPrint as $key => $field)
-                                <td>{{
-                                    collect(explode(".", $key))->reduce(function ($object, $value) use ($item) {
-                                        return $object ? $object->$value : $item->$value;
-                                    })
-                                }}</td>
+                    <div class="customer-info">
+                        @foreach($orderField as $field)
+                            @foreach($field as $key => $value)
+                                    <div>
+                                        <label>{{ $value }}：</label>
+                                        <span>{{
+                                collect(explode(".", $key))->reduce(function ($object, $field) use ($order) {
+                                    return $object ? $object->$field : $order->$field;
+                                })
+                                                                                                                                                                                }}</span>
+                                    </div>
                             @endforeach
-                            @if($showTotalAmount)
-                                <td>{{ bcmul($item->actual_num ?? 0, $item->price ?? 0, 2) }}</td>
-                            @endif
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
+                        @endforeach
+                    </div>
 
-                <div class="page-info">
-                    第<span>{{ $loop->iteration }}</span>单 · 共<span>{{ count($orders) }}</span>单
+                    <table class="product-table">
+                        @php
+                            $printSlug = request()->input('slug');
+                            $itemFieldForPrint = $itemField;
+                            $showTotalAmount = false;
+
+                            if ($printSlug === 'sale-out-order') {
+                                $itemFieldForPrint = collect($itemField)->reject(function ($label) {
+                                    return $label === '分类';
+                                })->toArray();
+                                $showTotalAmount = true;
+                            }
+
+                            // 确保 items 可遍历
+                            if (!$order->items instanceof Illuminate\Database\Eloquent\Collection) {
+                                $order->items = [$order->items];
+                            }
+
+                            // 构建列信息数组，识别需要合计的列
+                            $columns = [];
+                            foreach ($itemFieldForPrint as $key => $label) {
+                                // 列标题包含"数量"、"价格"或"金额"的列需要合计
+                                $isSummable = (strpos($label, '数量') !== false || strpos($label, '价格') !== false || strpos($label, '金额') !== false);
+                                $columns[] = [
+                                    'key' => $key,
+                                    'label' => $label,
+                                    'is_summable' => $isSummable,
+                                    'total' => 0
+                                ];
+                            }
+                            // 如果有额外的"金额"列（sale-out-order）
+                            if ($showTotalAmount) {
+                                $columns[] = [
+                                    'key' => '__calc_amount__',
+                                    'label' => '金额',
+                                    'is_summable' => true,
+                                    'is_calc' => true,
+                                    'total' => 0
+                                ];
+                            }
+
+                            // 遍历明细计算合计
+                            foreach ($order->items as $item) {
+                                foreach ($columns as &$col) {
+                                    if (!$col['is_summable'])
+                                        continue;
+
+                                    // 数量列使用3位小数精度，其他使用2位
+                                    $precision = (strpos($col['label'], '数量') !== false) ? 3 : 2;
+
+                                    if (isset($col['is_calc']) && $col['is_calc']) {
+                                        // 计算列：数量 * 单价
+                                        $val = bcmul($item->actual_num ?? 0, $item->price ?? 0, $precision);
+                                    } else {
+                                        // 动态列：从明细中获取值
+                                        $rawVal = collect(explode(".", $col['key']))->reduce(function ($o, $v) use ($item) {
+                                            return $o ? $o->$v : $item->$v;
+                                        });
+                                        $val = is_numeric($rawVal) ? $rawVal : 0;
+                                    }
+                                    $col['total'] = bcadd((string) $col['total'], (string) $val, $precision);
+                                }
+                            }
+                            unset($col);
+
+                            // 找到第一个需要合计的列的索引，用于确定"合计"标签的colspan
+                            $firstSummableIdx = -1;
+                            foreach ($columns as $idx => $col) {
+                                if ($col['is_summable']) {
+                                    $firstSummableIdx = $idx;
+                                    break;
+                                }
+                            }
+                            // 如果没有找到可合计的列，默认占所有列
+                            if ($firstSummableIdx === -1) {
+                                $firstSummableIdx = count($columns);
+                            }
+                            // 检查是否有任何可合计的列
+                            $hasSummableColumns = ($firstSummableIdx < count($columns));
+                        @endphp
+                        <thead>
+                            <tr>
+                                @foreach($columns as $col)
+                                    <th>{{ $col['label'] }}</th>
+                                @endforeach
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($order->items as $item)
+                                <tr>
+                                    @foreach($columns as $col)
+                                        <td>
+                                            @if(isset($col['is_calc']) && $col['is_calc'])
+                                                {{ bcmul($item->actual_num ?? 0, $item->price ?? 0, 2) }}
+                                            @else
+                                                                {{ collect(explode(".", $col['key']))->reduce(function ($o, $v) use ($item) {
+                                                    return $o ? $o->$v : $item->$v;
+                                                }) }}
+                                            @endif
+                                        </td>
+                                    @endforeach
+                                </tr>
+                            @endforeach
+                            {{-- 合计行 - 只在有可合计列时显示 --}}
+                            @if($hasSummableColumns)
+                                <tr style="font-weight: bold;">
+                                    @if($firstSummableIdx > 0)
+                                        <td colspan="{{ $firstSummableIdx }}">合 &nbsp; 计</td>
+                                    @else
+                                        <td>合 &nbsp; 计</td>
+                                    @endif
+                                    @for($i = ($firstSummableIdx > 0 ? $firstSummableIdx : 1); $i < count($columns); $i++)
+                                        <td>
+                                            @if($columns[$i]['is_summable'])
+                                                @php
+                                                    // 数量列保留3位小数，价格/金额列保留2位小数
+                                                    $decimals = (strpos($columns[$i]['label'], '数量') !== false) ? 3 : 2;
+                                                @endphp
+                                                {{ number_format((float) $columns[$i]['total'], $decimals, '.', '') }}
+                                            @endif
+                                        </td>
+                                    @endfor
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+
+                    <div class="page-info">
+                        第<span>{{ $loop->iteration }}</span>单 · 共<span>{{ count($orders) }}</span>单
+                    </div>
                 </div>
             </div>
-        </div>
-    @endforeach
-</div>
+        @endforeach
+    </div>
 
-<script>
-    (function () {
-        const button = document.getElementById('triggerPrint');
-        if (button) {
-            button.addEventListener('click', () => window.print());
-        }
+    <script>
+        (function () {
+            const button = document.getElementById('triggerPrint');
+            if (button) {
+                button.addEventListener('click', () => window.print());
+            }
 
-        // 保持原有打开即打印的体验
-        window.addEventListener('load', () => {
-            setTimeout(() => window.print(), 300);
-        });
-    })();
-</script>
+            // 保持原有打开即打印的体验
+            window.addEventListener('load', () => {
+                setTimeout(() => window.print(), 300);
+            });
+        })();
+    </script>
 </body>
+
 </html>
