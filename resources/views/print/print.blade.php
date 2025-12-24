@@ -106,7 +106,7 @@
 
         .customer-info {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             margin-bottom: 14px;
             padding: 8px 0;
             column-gap: 18px;
