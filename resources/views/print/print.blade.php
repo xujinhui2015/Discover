@@ -11,8 +11,8 @@
         }
 
         body {
-            color: #222;
-            background: #f8f9fa;
+            color: #000;
+            background: #fff;
             padding: 24px;
             font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
         }
@@ -30,20 +30,21 @@
 
         .print-btn {
             padding: 10px 22px;
-            background: #2c7be5;
-            color: #fff;
-            border: none;
+            background: transparent;
+            color: #000;
+            border: 1px solid #000;
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
             letter-spacing: 0.5px;
-            box-shadow: 0 2px 10px rgba(44, 123, 229, 0.28);
+            box-shadow: none;
             transition: all 0.2s ease;
         }
 
         .print-btn:hover {
-            background: #1967d2;
-            box-shadow: 0 4px 14px rgba(25, 103, 210, 0.35);
+            background: transparent;
+            color: #000;
+            box-shadow: none;
         }
 
         .invoice-wrapper {
@@ -52,13 +53,13 @@
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 24px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: none;
         }
 
         .invoice {
             padding: 18px 22px 32px 22px;
             font-family: "Courier New", Courier, monospace;
-            font-size: 12px;
+            font-size: 14px;
             line-height: 1.4;
             width: 100%;
             position: relative;
@@ -95,13 +96,13 @@
         .invoice-title {
             font-size: 15px;
             font-weight: 600;
-            color: #222;
+            color: #000;
             margin-bottom: 6px;
         }
 
         .contact-info {
             font-size: 11px;
-            color: #666;
+            color: #000;
         }
 
         .customer-info {
@@ -114,7 +115,7 @@
         }
 
         .customer-info > div {
-            font-size: 12px;
+            font-size: 14px;
             white-space: normal;
             line-height: 1.5;
             word-break: break-all;
@@ -122,7 +123,7 @@
 
         .customer-info label {
             font-weight: bold;
-            color: #333;
+            color: #000;
             margin-right: 4px;
         }
 
@@ -130,35 +131,35 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 18px;
-            border: 1px solid #ddd;
+            border: 1.2px solid #000;
         }
 
         .product-table th {
-            background: #f5f5f5;
+            background: #fff;
             font-weight: bold;
-            border: 1px solid #ccc;
+            border: 1.2px solid #000;
             padding: 6px 5px;
             text-align: center;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         .product-table td {
-            border: 1px solid #ccc;
+            border: 1.2px solid #000;
             padding: 6px 5px;
             text-align: center;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         @media screen {
             .product-table tbody tr:nth-child(even) td {
-                background: #fafafa;
+                background: transparent;
             }
         }
 
         .page-info {
             text-align: center;
-            font-size: 12px;
-            color: #333;
+            font-size: 14px;
+            color: #000;
             margin-top: 8px;
             font-family: "Courier New", Courier, monospace;
         }
@@ -172,7 +173,7 @@
             body {
                 margin: 0 !important;
                 padding: 0 !important;
-                font-size: 12px;
+                font-size: 14px;
                 line-height: 1.4;
             }
 
@@ -192,7 +193,7 @@
             }
 
             .product-table th {
-                background: #f5f5f5 !important;
+                background: #fff !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }

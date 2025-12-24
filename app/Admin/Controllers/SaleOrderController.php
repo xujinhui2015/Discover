@@ -77,7 +77,7 @@ class SaleOrderController extends OrderController
             $grid->column('status', '单据状态')->using($this->oredr_model::STATUS)->label($this->oredr_model::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at');
-            $grid->column('finished_at', "完成日期")->emp();
+//            $grid->column('finished_at', "完成日期")->emp();
             $grid->column('other', '备注')->emp();
 
             $grid->disableQuickEditButton();
