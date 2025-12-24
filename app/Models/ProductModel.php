@@ -30,6 +30,7 @@ use Illuminate\Support\Collection;
  * @property string $py_code 拼音码
  * @property string $item_no 物料编号
  * @property string $barcode 专属编码
+ * @property string $other 备注
  * @property int $unit_id 单位
  * @property mixed $test 测试
  * @property \Illuminate\Support\Carbon|null $deleted_at

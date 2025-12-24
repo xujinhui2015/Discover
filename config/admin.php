@@ -193,6 +193,8 @@ return [
             'auth/login',
             'auth/logout',
             'auth/setting',
+            'personal-config',
+            'order-prints',
             'api/*',
             'apply-for-batchs*',
             // 供弹窗/子表单使用的资源路由放行，避免非超管权限拦截

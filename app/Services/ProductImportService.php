@@ -47,8 +47,6 @@ class ProductImportService extends BaseService
         '预警库存',
         '属性定义',
         '备注',
-        '现有库存',
-        '存放仓库',
     ];
 
     public const TEMPLATE_SAMPLE = [
@@ -62,8 +60,6 @@ class ProductImportService extends BaseService
             '预警库存' => 0,
             '属性定义' => '香型=花香型,果香型;容量=500ml,1000ml',
             '备注'   => '属性定义按“属性=值1,值2;属性2=...”填写',
-            '现有库存' => 100,
-            '存放仓库' => '一号仓',
         ],
     ];
 
@@ -189,8 +185,10 @@ class ProductImportService extends BaseService
 
         $attrRows = $this->parseAttrDefinitions(Arr::get($row, '属性定义'));
         $skuRows = $this->buildSkuRows($attrRows);
+        $hasRemark = array_key_exists('备注', $row);
+        $other = $hasRemark ? trim((string) Arr::get($row, '备注', '')) : null;
 
-        return [
+        $payload = [
             'item_no'      => $itemNo,
             'barcode'      => $barcode ?: '',
             'name'         => $name,
@@ -204,6 +202,12 @@ class ProductImportService extends BaseService
             'initial_stock' => $initialStock,
             'position_id'   => $positionId,
         ];
+
+        if ($hasRemark) {
+            $payload['other'] = $other;
+        }
+
+        return $payload;
     }
 
     protected function generateItemNo(): string
