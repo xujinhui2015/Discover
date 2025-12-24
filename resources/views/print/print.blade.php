@@ -86,21 +86,21 @@
         }
 
         .company-name {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             letter-spacing: 1px;
             margin-bottom: 6px;
         }
 
         .invoice-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
             color: #000;
             margin-bottom: 6px;
         }
 
         .contact-info {
-            font-size: 14px;
+            font-size: 16px;
             color: #000;
         }
 
