@@ -36,7 +36,7 @@ class InventoryController extends AdminController
             $grid->column('order_no');
             $grid->column('start_at');
             $grid->column('end_at');
-            $grid->column('status', '状态')->using(InventoryModel::STATUS)->label(InventoryModel::STATUS_COLOR);
+            $grid->column('status', '单据状态')->using(InventoryModel::STATUS)->label(InventoryModel::STATUS_COLOR);
             $grid->column('user.name', "创建人");
             $grid->column('other');
             $grid->disableQuickEditButton();

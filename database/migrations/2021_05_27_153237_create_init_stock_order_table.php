@@ -31,7 +31,7 @@ class CreateInitStockOrderTable extends Migration
             $table->unsignedInteger('user_id')->default('0')->comment('创建人');
             $table->unsignedInteger('apply_id')->default('0')->comment('审核人');
             $table->text('other')->nullable()->comment('备注');
-            $table->unsignedTinyInteger('review_status')->default('0')->comment('状态');
+            $table->unsignedTinyInteger('review_status')->default('0')->comment('单据状态');
             $table->timestamps();
             $table->softDeletes();
         });

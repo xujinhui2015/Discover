@@ -50,7 +50,7 @@ class PurchaseOrderController extends OrderController
             $grid->column('id')->sortable();
 //            $grid->column('check_status')->using(PurchaseOrderModel::CHECK_STATUS);
             $grid->column('order_no');
-            $grid->column('status', '状态')->using(PurchaseOrderModel::STATUS)->label(PurchaseOrderModel::STATUS_COLOR);
+            $grid->column('status', '单据状态')->using(PurchaseOrderModel::STATUS)->label(PurchaseOrderModel::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using(PurchaseOrderModel::REVIEW_STATUS)->label(PurchaseOrderModel::REVIEW_STATUS_COLOR);
             if ($useNameStyle) {
                 $grid->column('product_names', '物料名称')->display(function () {
@@ -118,7 +118,7 @@ class PurchaseOrderController extends OrderController
 
             $grid->column('order_no');
             $grid->column('other')->emp();
-            $grid->column('status', '状态')->using(PurchaseOrderModel::STATUS)->label(PurchaseOrderModel::STATUS_COLOR);
+            $grid->column('status', '单据状态')->using(PurchaseOrderModel::STATUS)->label(PurchaseOrderModel::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using(PurchaseOrderModel::REVIEW_STATUS)->label(PurchaseOrderModel::REVIEW_STATUS_COLOR);
             if ($useNameStyle) {
                 $grid->column('product_names', '物料名称')->display(function () {

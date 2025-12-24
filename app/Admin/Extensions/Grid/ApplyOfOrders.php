@@ -40,7 +40,7 @@ class ApplyOfOrders extends LazyRenderable
         $titles = [
             '序号',
             '单号',
-            '状态',
+            '单据状态',
             '创建时间',
         ];
         return Table::make($titles, $applyForOrders->toArray());

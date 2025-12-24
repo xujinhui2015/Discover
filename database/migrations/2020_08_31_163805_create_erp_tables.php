@@ -76,7 +76,7 @@ class CreateErpTables extends Migration
             $table->integerIncrements('id');
             $table->string('order_no')->default('')->unique()->comment('订单单号');
             $table->unsignedInteger('supplier_id')->default(0)->comment('供应商id');
-            $table->unsignedTinyInteger('status')->default(0)->comment('状态');
+            $table->unsignedTinyInteger('status')->default(0)->comment('单据状态');
             $table->string('other')->default('')->comment('备注');
             $table->unsignedTinyInteger('check_status')->default(0)->comment('检测状态');
             $table->unsignedInteger('user_id')->default(0)->comment('创建订单用户');
@@ -115,7 +115,7 @@ class CreateErpTables extends Migration
             $table->integerIncrements('id');
             $table->string('order_no')->default('')->unique()->comment('订单单号');
             $table->unsignedInteger('supplier_id')->default(0)->comment('供应商id');
-            $table->unsignedTinyInteger('status')->default(0)->comment('状态');
+            $table->unsignedTinyInteger('status')->default(0)->comment('单据状态');
             $table->string('other')->default('')->comment('备注');
             $table->unsignedInteger('user_id')->default(0)->comment('创建订单用户');
             $table->timestamp('finished_at')->nullable()->comment('订单完成时间');
@@ -164,7 +164,7 @@ class CreateErpTables extends Migration
         Schema::create('customer_address', function (Blueprint $table) {
             $table->integerIncrements('id');
             $table->unsignedInteger('customer_id')->default(0)->comment('客户档案id');
-            $table->string('address')->default('')->comment('地址');
+            $table->string('address')->default('')->comment('客户地址');
             $table->string('other')->default('')->comment('备注');
             $table->softDeletes();
             $table->timestamps();
@@ -186,7 +186,7 @@ class CreateErpTables extends Migration
             $table->integerIncrements('id');
             $table->string('order_no')->default('')->unique()->comment('订单单号');
             $table->unsignedInteger('customer_id')->default(0)->comment('客户档案');
-            $table->unsignedTinyInteger('status')->default(0)->comment('状态');
+            $table->unsignedTinyInteger('status')->default(0)->comment('单据状态');
             $table->string('other')->default('')->comment('备注');
             $table->unsignedInteger('user_id')->default(0)->comment('创建订单用户');
             $table->timestamp('finished_at')->nullable()->comment('订单完成时间');
@@ -210,7 +210,7 @@ class CreateErpTables extends Migration
             $table->integerIncrements('id');
             $table->string('order_no')->default('')->unique()->comment('订单单号');
             $table->unsignedInteger('customer_id')->default(0)->comment('客户档案');
-            $table->unsignedTinyInteger('status')->default(0)->comment('状态');
+            $table->unsignedTinyInteger('status')->default(0)->comment('单据状态');
             $table->string('other')->default('')->comment('备注');
             $table->unsignedInteger('user_id')->default(0)->comment('创建订单用户');
             $table->timestamp('finished_at')->nullable()->comment('订单完成时间');
@@ -234,7 +234,7 @@ class CreateErpTables extends Migration
             $table->integerIncrements('id');
             $table->string('order_no')->default('')->unique()->comment('订单单号');
             $table->unsignedInteger('customer_id')->default(0)->comment('客户档案');
-            $table->unsignedTinyInteger('status')->default(0)->comment('状态');
+            $table->unsignedTinyInteger('status')->default(0)->comment('单据状态');
             $table->string('other')->default('')->comment('备注');
             $table->unsignedInteger('user_id')->default(0)->comment('创建订单用户');
             $table->timestamp('finished_at')->nullable()->comment('订单完成时间');

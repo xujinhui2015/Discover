@@ -29,7 +29,7 @@ class CreateDemandTable extends Migration
             $table->integerIncrements('id');
             $table->text('content')->nullable()->comment('需求描述');
             $table->unsignedTinyInteger('type')->default(0)->comment('需求类型');
-            $table->unsignedTinyInteger('status')->default(0)->comment('状态');
+            $table->unsignedTinyInteger('status')->default(0)->comment('单据状态');
             $table->text('reply')->nullable()->comment('开发回复');
             $table->timestamps();
         });

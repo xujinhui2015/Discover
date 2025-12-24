@@ -20,7 +20,7 @@ return [
         'order_no' => '任务单号',
         'plan_num' => '计划数量',
         'finish_num' => '完成数量',
-        'status' => '状态',
+        'status' => '单据状态',
         'user_id' => '任务创建人',
         'operator' => '生产人员',
         'craft_id' => '生产工艺',

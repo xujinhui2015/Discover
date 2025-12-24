@@ -52,7 +52,7 @@ class SaleOutOrderController extends OrderController
         return Grid::make(new SaleOutOrder(['customer', 'user']), function (Grid $grid) {
             $useNameStyle = $this->useMaterialNameStyle();
             $grid->column('id')->sortable();
-            $grid->column('customer.name', '客户');
+            $grid->column('customer.name', '客户名称');
 
             $grid->column('order_no');
             $grid->column('user.name', '创建用户');
@@ -118,7 +118,7 @@ class SaleOutOrderController extends OrderController
             ])->orderBy('id', 'desc');
 
             $grid->column('id')->sortable();
-            $grid->column('customer.name', '客户');
+            $grid->column('customer.name', '客户名称');
             $grid->column('order_no');
             $grid->column('user.name', '创建用户');
             if ($useNameStyle) {
@@ -142,7 +142,7 @@ class SaleOutOrderController extends OrderController
                     ->setAttributes(['class' => 'material-detail-cell'])
                     ->expand(SaleOutOrderItemDetail::class);
             }
-            $grid->column('status', '状态')->using($this->oredr_model::STATUS)->label($this->oredr_model::STATUS_COLOR);
+            $grid->column('status', '单据状态')->using($this->oredr_model::STATUS)->label($this->oredr_model::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at');
             $grid->column('apply_at', "审核时间")->emp();
@@ -192,15 +192,15 @@ class SaleOutOrderController extends OrderController
         });
         $customer = $form->repository()->customer();
         $form->row(function (Form\Row $row) use ($customer) {
-            $row->width(6)->select('customer_id', '客户')->options($customer)->loads(
+            $row->width(6)->select('customer_id', '客户名称')->options($customer)->loads(
                 ['address_id', 'drawee_id'],
                 [route('api.customer.address.find'), route('api.customer.drawee.find')]
             )->required();
-            $row->width(6)->select('address_id', '地址')->required();
+            $row->width(6)->select('address_id', '客户地址')->required();
         });
 
         $form->row(function (Form\Row $row) {
-            $row->width(6)->select('drawee_id', '付款人')->required();
+            $row->width(6)->select('drawee_id', '付款信息')->required();
             $row->width(6)->text('other', '备注')->saveAsString();
         });
     }

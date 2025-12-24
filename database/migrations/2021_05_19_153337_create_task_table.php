@@ -34,7 +34,7 @@ class CreateTaskTable extends Migration
             $table->unsignedDecimal('plan_num')->default(0)->comment('计划数量');
             $table->unsignedDecimal('finish_num')->default(0)->comment('完成数量');
             $table->unsignedInteger('craft_id')->default(0)->comment('生产工艺');
-            $table->unsignedTinyInteger('status')->default(0)->comment('状态');
+            $table->unsignedTinyInteger('status')->default(0)->comment('单据状态');
             $table->text('other')->nullable()->comment('备注');
             $table->unsignedInteger('user_id')->default(0)->comment('任务创建人');
             $table->unsignedInteger('operator')->default(0)->comment('操作人员');

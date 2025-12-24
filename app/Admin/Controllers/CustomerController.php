@@ -80,11 +80,11 @@ class CustomerController extends AdminController
                 ->required()
                 ->rules(['required', 'max:32', 'regex:/^[0-9-]+$/'])
                 ->help('支持手机号或座机，例如 0731-88280232');
-            $form->multipleSelect('drawee', '付款人')->options($form->repository()->drawee())->customFormat(function (array $v) {
+            $form->multipleSelect('drawee', '付款信息')->options($form->repository()->drawee())->customFormat(function (array $v) {
                 return array_column($v, 'id');
             });
             $form->hasMany('address', '客户地址', function (Form\NestedForm $form) {
-                $form->text('address', '地址')->required();
+                $form->text('address', '客户地址')->required();
 //                $form->text('other')->default('')->saveAsString();
             })->useTable();
         });

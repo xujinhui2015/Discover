@@ -40,7 +40,7 @@ class SaleOutReportController extends Controller
             $grid->column('actual_amount', '结算金额');
             $grid->column(
                 'status',
-                '状态'
+                '单据状态'
             )->using(SaleOrderAmountModel::STATUS)->label(SaleOrderAmountModel::STATUS_COLOR);
             $grid->column('created_at');
             $grid->filter(function (Grid\Filter $filter) {
@@ -52,7 +52,7 @@ class SaleOutReportController extends Controller
                     'name',
                     'id'
                 ));
-                $filter->equal('status', '状态')->width(4)->radio(SaleOrderAmountModel::STATUS);
+                $filter->equal('status', '单据状态')->width(4)->radio(SaleOrderAmountModel::STATUS);
             });
             $grid->disableCreateButton();
             $grid->export()->rows(function (array $rows) {
@@ -62,7 +62,7 @@ class SaleOutReportController extends Controller
                         '客户名称' => $row['customer']['name'],
                         '费用金额' => $row['should_amount'],
                         '结算金额' => $row['actual_amount'],
-                        '状态' => SaleOrderAmountModel::STATUS[$row['status']],
+                        '单据状态' => SaleOrderAmountModel::STATUS[$row['status']],
                         '创建时间' => $row['created_at'],
                     ];
                 }, $rows);
@@ -85,7 +85,7 @@ class SaleOutReportController extends Controller
                 $builder->where('review_status', SaleOutOrderModel::REVIEW_STATUS_OK);
             })->orderByDesc('order_id');
             $grid->column('order.order_no', '订单号');
-            $grid->column('order.customer.name', '客户');
+            $grid->column('order.customer.name', '客户名称');
             $grid->column('sku.product.name', '物料名称');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '分类');
@@ -139,7 +139,7 @@ class SaleOutReportController extends Controller
                 return array_map(function ($row) {
                     return [
                         '订单号' => $row['order']['order_no'],
-                        '客户' => $row['order']['customer']['name'],
+                        '客户名称' => $row['order']['customer']['name'],
                         '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
                         '分类' => $row['sku']['product']['type_str'],
@@ -230,7 +230,7 @@ class SaleOutReportController extends Controller
             $grid->export()->rows(function (array $rows) {
                 return array_map(function ($row) {
                     return [
-                        '客户' => CustomerModel::query()->where('id', $row['customer_id'])->value('name'),
+                        '客户名称' => CustomerModel::query()->where('id', $row['customer_id'])->value('name'),
                         '物料名称' => $row['sku']['product']['name'],
                         '单位' => $row['sku']['product']['unit']['name'],
                         '分类' => $row['sku']['product']['type_str'],

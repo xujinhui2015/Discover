@@ -17,7 +17,7 @@ return [
         'CustomerAddress' => 'CustomerAddress',
     ],
     'fields' => [
-        'address' => '地址',
+        'address' => '客户地址',
         'customer_id' => '客户档案id',
         'other' => '备注',
     ],

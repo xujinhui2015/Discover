@@ -36,7 +36,7 @@ class AttrController extends AdminController
             $grid->column('value', '属性值')
                 ->display('查看')
                 ->expand(AttrValue::class);
-            $grid->status('状态')->switch();
+            $grid->status('单据状态')->switch();
             $grid->column('created_at');
 
             $grid->showBatchDelete();

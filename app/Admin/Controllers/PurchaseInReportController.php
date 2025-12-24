@@ -35,7 +35,7 @@ class PurchaseInReportController extends Controller
             $grid->column('supplier.name', "供应商名称");
             $grid->column('should_amount', '费用金额');
             $grid->column('actual_amount', '结算金额');
-            $grid->column('status', '状态')->using(PurchaseOrderAmountModel::STATUS)->label(PurchaseOrderAmountModel::STATUS_COLOR);
+            $grid->column('status', '单据状态')->using(PurchaseOrderAmountModel::STATUS)->label(PurchaseOrderAmountModel::STATUS_COLOR);
             $grid->column('created_at');
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->between('created_at', "时间")->datetime()->width(6)->default([
@@ -43,7 +43,7 @@ class PurchaseInReportController extends Controller
                     'end' => now()
                 ]);
                 $filter->in('supplier_id', "供应商名称")->width(3)->multipleSelect(SupplierModel::query()->pluck('name', 'id'));
-                $filter->equal('status', '状态')->width(3)->radio(PurchaseOrderAmountModel::STATUS);
+                $filter->equal('status', '单据状态')->width(3)->radio(PurchaseOrderAmountModel::STATUS);
             });
             $grid->disableCreateButton();
             $grid->export()->rows(function (array $rows) {
@@ -53,7 +53,7 @@ class PurchaseInReportController extends Controller
                         '供应商名称' => $row['supplier']['name'],
                         '费用金额' => $row['should_amount'],
                         '结算金额' => $row['actual_amount'],
-                        '状态' => PurchaseOrderAmountModel::STATUS[$row['status']],
+                        '单据状态' => PurchaseOrderAmountModel::STATUS[$row['status']],
                         '创建时间' => $row['created_at'],
                     ];
                 }, $rows);

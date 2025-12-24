@@ -34,7 +34,7 @@ class TransferOrderController extends OrderController
             $grid->column('in_position.name', '调入仓库');
             $grid->column('user.name', '创建用户');
             $grid->column('other', '备注')->emp();
-            $grid->column('review_status', '状态')->using(TransferOrderModel::REVIEW_STATUS)->label(TransferOrderModel::REVIEW_STATUS_COLOR);
+            $grid->column('review_status', '单据状态')->using(TransferOrderModel::REVIEW_STATUS)->label(TransferOrderModel::REVIEW_STATUS_COLOR);
             $grid->column('created_at', '创建时间');
             $grid->disableQuickEditButton();
             $grid->actions(function (Grid\Displayers\Actions $actions) {

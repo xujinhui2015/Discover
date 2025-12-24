@@ -37,7 +37,7 @@ class PurchaseOrderAmountController extends AdminController
             $grid->column('supplier.name', "供应商名称");
             $grid->column('should_amount');
             $grid->column('actual_amount');
-            $grid->column('status', '状态')->using(PurchaseOrderAmountModel::STATUS)->label(PurchaseOrderAmountModel::STATUS_COLOR);
+            $grid->column('status', '单据状态')->using(PurchaseOrderAmountModel::STATUS)->label(PurchaseOrderAmountModel::STATUS_COLOR);
             $grid->column('created_at');
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->in('supplier_id', "供应商名称")->width(4)->multipleSelect(SupplierModel::query()->pluck('name', 'id'));
@@ -50,7 +50,7 @@ class PurchaseOrderAmountController extends AdminController
                         '供应商名称' => $row['supplier']['name'],
                         '费用金额' => $row['should_amount'],
                         '结算金额' => $row['actual_amount'],
-                        '状态' => PurchaseOrderAmountModel::STATUS[$row['status']]
+                        '单据状态' => PurchaseOrderAmountModel::STATUS[$row['status']]
                     ];
                 }, $rows);
             })->extension("xlsx");

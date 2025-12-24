@@ -26,7 +26,7 @@ class AddStatusIntoInventoryTable extends Migration
     public function up()
     {
         Schema::table('inventory', function (Blueprint $table) {
-            $table->unsignedTinyInteger('status')->default(0)->comment('状态');
+            $table->unsignedTinyInteger('status')->default(0)->comment('单据状态');
         });
     }
 

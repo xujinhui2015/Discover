@@ -32,7 +32,7 @@ class CustomerImportService extends BaseService
         '联系人',
         '手机号码',
         '付款方式',
-        '付款人',
+        '付款信息',
         '客户地址',
         '备注',
     ];
@@ -43,7 +43,7 @@ class CustomerImportService extends BaseService
             '联系人'   => '张三',
             '手机号码' => '13800001111',
             '付款方式' => '月结',
-            '付款人'   => '示例付款人A,示例付款人B',
+            '付款信息'   => '示例付款人A,示例付款人B',
             '客户地址' => '示例地址1；示例地址2',
             '备注'     => '付款人、地址支持多值',
         ],
@@ -152,7 +152,7 @@ class CustomerImportService extends BaseService
         $phone = $this->normalizePhone(Arr::get($row, '手机号码'));
         $other = trim((string) Arr::get($row, '备注', ''));
 
-        $draweeValue = Arr::get($row, '付款人');
+        $draweeValue = Arr::get($row, '付款信息');
         $addressValue = Arr::get($row, '客户地址');
 
         return [

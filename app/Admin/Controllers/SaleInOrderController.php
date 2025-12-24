@@ -46,7 +46,7 @@ class SaleInOrderController extends OrderController
         return Grid::make(new SaleInOrder(['customer', 'user']), function (Grid $grid) {
             $useNameStyle = $this->useMaterialNameStyle();
             $grid->column('id')->sortable();
-            $grid->column('customer.name', '客户');
+            $grid->column('customer.name', '客户名称');
             $grid->column('order_no');
             $grid->column('user.name', '创建用户');
             if ($useNameStyle) {
@@ -125,11 +125,11 @@ class SaleInOrderController extends OrderController
                 ['address_id', 'drawee_id'],
                 [route('api.customer.address.find'), route('api.customer.drawee.find')]
             )->required();
-            $row->width(6)->select('address_id', '地址')->required();
+            $row->width(6)->select('address_id', '客户地址')->required();
         });
 
         $form->row(function (Form\Row $row) {
-            $row->width(6)->select('drawee_id', '付款人')->required();
+            $row->width(6)->select('drawee_id', '付款信息')->required();
             $row->width(6)->text('other', '备注')->saveAsString();
         });
     }
