@@ -22,6 +22,7 @@ use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Extensions\Grid\BatchDeail;
 use App\Admin\Extensions\Grid\SaleInOrderItemDetail;
 use App\Admin\Repositories\SaleInOrder;
+use App\Models\CustomerModel;
 use App\Models\PersonalConfigModel;
 use App\Models\PurchaseOrderModel;
 use App\Models\ProductModel;
@@ -47,7 +48,6 @@ class SaleInOrderController extends OrderController
             $grid->column('id')->sortable();
             $grid->column('customer.name', '客户');
             $grid->column('order_no');
-            $grid->column('other')->emp();
             $grid->column('user.name', '创建用户');
             if ($useNameStyle) {
                 $grid->column('product_names', '物料名称')->display(function () {
@@ -74,6 +74,7 @@ class SaleInOrderController extends OrderController
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at');
             $grid->column('apply_at', "审核时间")->emp();
+            $grid->column('other', '备注')->emp();
             $grid->disableQuickEditButton();
             $grid->disableCreateButton();
             $grid->actions(EditOrder::make());
@@ -81,6 +82,9 @@ class SaleInOrderController extends OrderController
             $grid->tools(BatchCreateSaleInOrder::make());
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->equal('customer_id', '客户名称')
+                    ->select(CustomerModel::query()->latest()->pluck('name', 'id'))
+                    ->width(3);
                 $filter->where('product_keyword', function (Builder $query) {
                     $keyword = $this->getValue();
                     $query->whereHasIn('items', function (Builder $query) use ($keyword) {
