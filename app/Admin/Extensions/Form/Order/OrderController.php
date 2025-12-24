@@ -288,9 +288,11 @@ CSS
 
     protected function hasUnreviewPermission(): bool
     {
-        $user = Admin::user();
-
-        return $user ? $user->can($this->unreviewPermissionSlug()) : false;
+        // todo 临时隐藏 反审核
+        return false;
+//        $user = Admin::user();
+//
+//        return $user ? $user->can($this->unreviewPermissionSlug()) : false;
     }
 
     protected function shouldShowReviewTool(): bool
