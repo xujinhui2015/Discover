@@ -93,14 +93,14 @@
         }
 
         .invoice-title {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
             color: #000;
             margin-bottom: 6px;
         }
 
         .contact-info {
-            font-size: 11px;
+            font-size: 14px;
             color: #000;
         }
 

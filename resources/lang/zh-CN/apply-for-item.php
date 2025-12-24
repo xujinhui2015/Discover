@@ -26,7 +26,7 @@ return [
         'cost_price' => '成本总价',
         'should_num' => '申领数量',
         'actual_num' => '实领数量',
-        'sku_stock_num' => '库存参考',
+        'sku_stock_num' => '库存',
     ],
     'options' => [
     ],
