@@ -224,7 +224,7 @@ class SaleOutOrderController extends OrderController
         })->display(function () {
             return PurchaseOrderModel::STANDARD[$this->standard];
         })->else()->selectplus(SaleOutOrderModel::STANDARD);
-        $grid->column('sku_stock_num', "库存参考数量")->display(function ($val) {
+        $grid->column('sku_stock_num', "库存")->display(function ($val) {
             return $val;
         });
 

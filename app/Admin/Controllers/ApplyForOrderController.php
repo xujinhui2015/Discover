@@ -260,7 +260,7 @@ class ApplyForOrderController extends OrderController
         $grid->column('cost_price', "成本总价");
         $grid->column('should_num', '申领数量');
         $grid->column('actual_num', '实领数量');
-        $grid->column('sku_stock_num', "库存参考数量")->display(function ($val) {
+        $grid->column('sku_stock_num', "库存")->display(function ($val) {
             return $val;
         });
         $grid->column('pcxq', '批次详情')->batch_detail(function (BatchDeail $batchDeail) {

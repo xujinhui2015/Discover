@@ -53,7 +53,7 @@ class ApplyForOrderItemDetail extends LazyRenderable
             '成本总价',
             '申领数量',
             '实领数量',
-            '库存参考数量',
+            '库存',
         ];
 
         return Table::make($titles, $items->toArray());

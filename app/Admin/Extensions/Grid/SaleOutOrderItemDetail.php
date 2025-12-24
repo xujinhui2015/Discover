@@ -51,7 +51,7 @@ class SaleOutOrderItemDetail extends LazyRenderable
             '品牌',
             '属性',
             '通用标准',
-            '库存参考数量',
+            '库存',
             '要货数量',
             '销售数量',
             '销售价格',
