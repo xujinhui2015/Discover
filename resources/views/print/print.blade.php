@@ -30,21 +30,20 @@
 
         .print-btn {
             padding: 10px 22px;
-            background: transparent;
-            color: #000;
-            border: 1px solid #000;
+            background: #2c7be5;
+            color: #fff;
+            border: none;
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
             letter-spacing: 0.5px;
-            box-shadow: none;
+            box-shadow: 0 2px 10px rgba(44, 123, 229, 0.28);
             transition: all 0.2s ease;
         }
 
         .print-btn:hover {
-            background: transparent;
-            color: #000;
-            box-shadow: none;
+            background: #1967d2;
+            box-shadow: 0 4px 14px rgba(25, 103, 210, 0.35);
         }
 
         .invoice-wrapper {
