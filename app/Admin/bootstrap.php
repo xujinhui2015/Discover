@@ -199,5 +199,4 @@ Admin::css('/static/css/custom-select2.css');
 Admin::css('/static/css/custom-sidebar.css');
 Admin::css('/static/css/modern-navbar.css');
 Admin::css('/static/css/custom-filter.css?v=' . uniqid()); // 添加唯一ID避免缓存问题，确保加载最新的14px字体样式
-Admin::css('/static/css/grid-table-center.css?v=' . uniqid()); // 表格内容居中对齐
 
