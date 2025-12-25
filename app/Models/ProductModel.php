@@ -33,6 +33,8 @@ use Illuminate\Support\Collection;
  * @property string $other 备注
  * @property int $unit_id 单位
  * @property mixed $test 测试
+ * @property float|null $sale_price 销售价
+ * @property float|null $purchase_price 采购价
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at

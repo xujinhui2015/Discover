@@ -176,12 +176,24 @@ class ProductController extends AdminController
             });
 
             $form->row(function (Form\Row $row) use ($form) {
-
-
                 $row->width(6)->text('warning_num')
                     ->default(0)
                     ->help('填0则不预警')
                     ->required();
+            });
+
+            $form->row(function (Form\Row $row) use ($form) {
+                $row->width(6)->text('sale_price', '销售价')
+                    ->attribute('type', 'number')
+                    ->attribute('step', '0.01')
+                    ->attribute('min', '0')
+                    ->help('非必填,用于客户要货单预填价格');
+
+                $row->width(6)->text('purchase_price', '采购价')
+                    ->attribute('type', 'number')
+                    ->attribute('step', '0.01')
+                    ->attribute('min', '0')
+                    ->help('非必填,用于采购订购单预填价格');
             });
 
 //            $form->row(function (Form\Row $row) use ($form) {

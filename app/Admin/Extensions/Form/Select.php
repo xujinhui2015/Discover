@@ -90,6 +90,7 @@ JS;
             $skuIdClass = static::FIELD_CLASS_PREFIX . 'sku_id';
             $typeClass  = static::FIELD_CLASS_PREFIX . 'type';
             $brandClass  = static::FIELD_CLASS_PREFIX . 'brand';
+            $priceClass  = static::FIELD_CLASS_PREFIX . 'price';
 
             $script = <<<JS
 $(document).off('change', "{$this->getElementClassSelector()}");
@@ -98,6 +99,7 @@ $(document).on('change', "{$this->getElementClassSelector()}", function () {
      var sku_id = $(this).closest('.fields-group').find(".$skuIdClass");
      var type = $(this).closest('.fields-group').find(".$typeClass");
      var brand = $(this).closest('.fields-group').find(".$brandClass");
+     var price = $(this).closest('.fields-group').find(".$priceClass");
 
 
     if (String(this.value) !== '0' && ! this.value) {
@@ -109,6 +111,26 @@ $(document).on('change', "{$this->getElementClassSelector()}", function () {
         type.val(data.data.type_str);
         brand.val(data.data.brand_str);
         sku_id.find("option").remove();
+
+        // 预填价格：根据当前页面判断是采购价还是销售价
+        if (price.length > 0) {
+            var currentUrl = window.location.href;
+            console.log('当前URL:', currentUrl);
+            console.log('价格字段:', price);
+            console.log('返回数据:', data.data);
+
+            // 只在字段为空或为默认值0.00时才预填
+            var currentPrice = price.val();
+            if (!currentPrice || currentPrice === '' || currentPrice === '0' || currentPrice === '0.00') {
+                if (currentUrl.indexOf('purchase-orders') > -1 && data.data.purchase_price) {
+                    console.log('预填采购价:', data.data.purchase_price);
+                    price.val(data.data.purchase_price);
+                } else if ((currentUrl.indexOf('sale-item') > -1 || currentUrl.indexOf('sale-order') > -1) && data.data.sale_price) {
+                    console.log('预填销售价:', data.data.sale_price);
+                    price.val(data.data.sale_price);
+                }
+            }
+        }
 
         // $(sku_id).select2({
         //     data: $.map(data.data.product_attr, function (d) {
