@@ -132,7 +132,13 @@ class TaskController extends AdminController
                 $row->width(4)->text('order_no', '订单号')->default(build_order_no('SCRW'))->readOnly();
                 $row->width(4)
                     ->select('product_id', '物料名称')
-                    ->options(ProductModel::pluck('name', 'id'))
+                    ->ajax(route('api.product.search'))
+                    ->options(function ($id) {
+                        if ($id) {
+                            return ProductModel::where('id', $id)->pluck('name', 'id');
+                        }
+                        return ProductModel::orderBy('id', 'desc')->limit(10)->pluck('name', 'id');
+                    })
                     ->loadpku(route('api.product.find'))
                     ->required();
 
