@@ -33,7 +33,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $actual_num 实领数量
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ApplyForBatchModel[] $batchs
  * @property-read int|null $batchs_count
- * @property-read int $sku_stock_num
+ * @property-read float $sku_stock_num
  * @property-read mixed $standard_str
  * @property-read \App\Models\ApplyForOrderModel $order
  * @property-read \App\Models\ProductSkuModel $sku
@@ -67,7 +67,7 @@ class ApplyForItemModel extends BaseModel
         return $this->belongsTo(ProductSkuModel::class, 'sku_id');
     }
 
-    public function getSkuStockNumAttribute(): int
+    public function getSkuStockNumAttribute(): float
     {
         return $this->sku_stock()->value('num') ?? 0;
     }

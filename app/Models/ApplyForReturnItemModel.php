@@ -37,7 +37,7 @@ class ApplyForReturnItemModel extends BaseModel
         return $this->belongsTo(ProductSkuModel::class, 'sku_id');
     }
 
-    public function getSkuStockNumAttribute(): int
+    public function getSkuStockNumAttribute(): float
     {
         return $this->sku_stock()->value('num') ?? 0;
     }

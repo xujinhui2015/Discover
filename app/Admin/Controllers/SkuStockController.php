@@ -17,6 +17,8 @@ namespace App\Admin\Controllers;
 use App\Admin\Renderables\SkuStockBatchTable;
 use App\Admin\Repositories\SkuStock;
 use App\Models\AttrModel;
+use App\Models\BrandModel;
+use App\Models\ProductModel;
 use App\Models\SkuStockBatchModel;
 use App\Models\SkuStockModel;
 use Dcat\Admin\Grid;
@@ -105,13 +107,29 @@ class SkuStockController extends AdminController
                     ->width(3);
                 $attrValueFilter->select([])->placeholder('请选择属性值');
 
-                $filter->group('num', function ($group) {
-                    $group->gt('大于');
-                    $group->lt('小于');
-                    $group->nlt('不小于');
-                    $group->ngt('不大于');
-                    $group->equal('等于');
-                })->width(3);
+                $filter->where('type', function (Builder $query) {
+                    $query->whereHasIn('sku.product', function (Builder $query) {
+                        $query->where('type', $this->getValue());
+                    });
+                }, '分类')
+                    ->select(ProductModel::TYPE)
+                    ->width(3);
+
+                $filter->where('brand_id', function (Builder $query) {
+                    $query->whereHasIn('sku.product', function (Builder $query) {
+                        $query->where('brand_id', $this->getValue());
+                    });
+                }, '品牌')
+                    ->select(BrandModel::query()->pluck('name', 'id'))
+                    ->width(3);
+
+//                $filter->group('num', function ($group) {
+//                    $group->gt('大于');
+//                    $group->lt('小于');
+//                    $group->nlt('不小于');
+//                    $group->ngt('不大于');
+//                    $group->equal('等于');
+//                })->width(3);
 //                $filter->like('percent', "含绒量")->decimal()->width(3);
                 $filter->equal('standard', "通用标准")->select(SkuStockBatchModel::STANDARD)->width(3);
 
