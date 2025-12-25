@@ -63,6 +63,7 @@
             line-height: 1.4;
             width: 100%;
             position: relative;
+            font-weight: bold;
         }
 
         .status-mark {
@@ -336,7 +337,7 @@
                             @foreach($order->items as $item)
                                 <tr>
                                     @foreach($columns as $col)
-                                        <td>
+                                        <td @if($col['label'] === '物料名称') style="text-align: left;" @endif>
                                             @if(isset($col['is_calc']) && $col['is_calc'])
                                                 {{ bcmul($item->actual_num ?? 0, $item->price ?? 0, 2) }}
                                             @else
