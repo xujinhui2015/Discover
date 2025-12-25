@@ -67,7 +67,7 @@ class ApplyForItemModel extends BaseModel
         return $this->belongsTo(ProductSkuModel::class, 'sku_id');
     }
 
-    public function getSkuStockNumAttribute(): float
+    public function getSkuStockNumAttribute()
     {
         return $this->sku_stock()->value('num') ?? 0;
     }

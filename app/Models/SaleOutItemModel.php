@@ -84,7 +84,7 @@ class SaleOutItemModel extends BaseModel
         return $this->belongsTo(SaleOutOrderModel::class, 'order_id');
     }
 
-    public function getSkuStockNumAttribute(): float
+    public function getSkuStockNumAttribute()
     {
         return $this->sku_stock()->value('num') ?? 0;
     }
