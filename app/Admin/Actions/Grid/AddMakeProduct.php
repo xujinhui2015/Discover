@@ -46,7 +46,7 @@ HTML;
             var option = {
                 title:'生产入库单',
                 type: 2,
-                area: ['65%', '80%'], //宽高
+                area: ['85%', '90%'], //宽高
                 content:[action],
                 scrollbar:false,
                 // maxmin:true,

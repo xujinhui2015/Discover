@@ -50,7 +50,7 @@ Grid::resolving(function (Grid $grid) {
         $actions->disableDelete();
         $actions->disableEdit();
     });
-    $grid->option("dialog_form_area", ["70%", "80%"]);
+    $grid->option("dialog_form_area", ["85%", "90%"]);
 });
 
 Form\Field::macro('enableHorizontal', function () {

@@ -196,6 +196,7 @@ class PurchaseOrderController extends OrderController
                 // 使用异步加载物料，默认显示最近10条
                 $table->select('product_id', '物料名称')
                     ->ajax(route('api.product.search'))
+                    ->config('ajax.delay', 100) // 添加 100ms 防抖延迟
                     ->options(function ($id) {
                         if ($id) {
                             return ProductModel::where('id', $id)->pluck('name', 'id');

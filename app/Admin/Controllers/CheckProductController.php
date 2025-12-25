@@ -111,6 +111,7 @@ class CheckProductController extends AdminController
                 $row->width(3)->text('check_no')->default(build_order_no('JY'))->readOnly();
                 $row->width(3)->select('product_id', '物料')
                     ->ajax(route('api.product.search'))
+                    ->config('ajax.delay', 100)
                     ->options(function ($id) {
                         if ($id) {
                             return ProductModel::where('id', $id)->pluck('name', 'id');

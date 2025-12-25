@@ -49,7 +49,7 @@ HTML;
             var option = {
                 title:'{$title}',
                 type: 2,
-                area: ['65%', '80%'], //宽高
+                area: ['85%', '90%'], //宽高
                 content:[action],
                 scrollbar:false,
                 end: function(){

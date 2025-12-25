@@ -156,6 +156,7 @@ class ApplyForReturnOrderController extends OrderController
             $row->hasMany('items', '', function (Form\NestedForm $table) {
                 $table->select('product_id', '物料名称')
                     ->ajax(route('api.product.search'))
+                    ->config('ajax.delay', 100)
                     ->options(function ($id) {
                         if ($id) {
                             return ProductModel::where('id', $id)->pluck('name', 'id');

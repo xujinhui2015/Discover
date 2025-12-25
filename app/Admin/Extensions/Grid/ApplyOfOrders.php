@@ -55,7 +55,7 @@ class ApplyOfOrders extends LazyRenderable
             var option = {
                 title:'物料申请单',
                 type: 2,
-                area: ['65%', '80%'], //宽高
+                area: ['85%', '90%'], //宽高
                 content:[action],
                 scrollbar:false,
                 // maxmin:true,
