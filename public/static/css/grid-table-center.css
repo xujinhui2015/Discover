@@ -1,0 +1,48 @@
+/* Grid 表格内容居中对齐样式 */
+
+/* 表格单元格内容居中对齐 */
+.grid-table tbody td,
+.table tbody td {
+    text-align: center !important;
+}
+
+/* 表格头部也居中对齐 */
+.grid-table thead th,
+.table thead th {
+    text-align: center !important;
+}
+
+/* 操作列内容居中 */
+.grid-actions,
+td.column-__actions__ {
+    text-align: center !important;
+}
+
+/* 确保表格中的按钮/图标也居中 */
+.grid-table tbody td .btn,
+.grid-table tbody td a,
+.grid-table tbody td i {
+    text-align: center !important;
+}
+
+/* 复选框列居中 */
+.grid-table .grid-row-checkbox,
+.grid-table tbody td:first-child {
+    text-align: center !important;
+}
+
+/* ID列居中 */
+.grid-table .column-id {
+    text-align: center !important;
+}
+
+/* 确保所有列内容都居中显示 */
+.grid-table tbody tr td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.grid-table thead tr th {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
