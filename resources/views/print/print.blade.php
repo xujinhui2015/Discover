@@ -245,7 +245,14 @@
                             $showTotalAmount = false;
 
                             if ($printSlug === 'sale-out-order') {
-                                $itemFieldForPrint = collect($itemField)->reject(function ($label) {
+                                $itemFieldForPrint = collect($itemField)->reject(function ($label, $key) {
+                                    return $label === '分类' || $key === 'sku_stock_num';
+                                })->toArray();
+                                $showTotalAmount = true;
+                            }
+
+                            if ($printSlug === 'sale-in-order') {
+                                $itemFieldForPrint = collect($itemField)->reject(function ($label, $key) {
                                     return $label === '分类';
                                 })->toArray();
                                 $showTotalAmount = true;

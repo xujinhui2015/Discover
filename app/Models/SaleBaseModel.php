@@ -42,4 +42,9 @@ class SaleBaseModel extends BaseModel
         self::STATUS_SIGN     => 'yellow',
         self::STATUS_RETURNED => 'success',
     ];
+
+    public function getStatusStrAttribute(): string
+    {
+        return self::STATUS[$this->status] ?? '';
+    }
 }

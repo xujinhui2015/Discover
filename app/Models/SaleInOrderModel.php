@@ -64,6 +64,8 @@ class SaleInOrderModel extends SaleBaseModel
 
     protected $table = 'sale_in_order';
 
+    protected $appends = ['status_str'];
+
     public function with_order(): BelongsTo
     {
         return $this->belongsTo(SaleOutOrderModel::class, 'with_id');

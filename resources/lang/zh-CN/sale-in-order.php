@@ -17,11 +17,11 @@ return [
         'SaleInOrder' => '客户退货单',
     ],
     'fields' => [
-        'customer_id' => '客户档案',
-        'finished_at' => '订单完成时间',
+        'customer.name' => '客户档案',
+        'created_at' => '业务时间',
         'order_no' => '订单单号',
-        'status' => '单据状态',
-        'user_id' => '创建订单用户',
+        'status_str' => '单据状态',
+        'user.name' => '操作人',
         'other' => '备注',
     ],
     'options' => [
