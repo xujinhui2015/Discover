@@ -15,8 +15,12 @@
 namespace App\Admin\Actions\Grid;
 
 use App\Models\BaseModel;
+use App\Models\MakeProductItemModel;
 use App\Models\MakeProductOrderModel;
+use App\Models\TaskModel;
+use Dcat\Admin\Admin;
 use Dcat\Admin\Grid\RowAction;
+use Illuminate\Support\Facades\DB;
 
 class AddMakeProduct extends RowAction
 {
@@ -27,13 +31,60 @@ class AddMakeProduct extends RowAction
 
     public function html()
     {
-        $makeProductOrder = MakeProductOrderModel::query()->where('with_id', $this->getKey())->firstOrFail();
+        $makeProductOrder = MakeProductOrderModel::query()->where('with_id', $this->getKey())->first();
+
+        if (!$makeProductOrder) {
+            $makeProductOrder = $this->createMakeProductOrder($this->getKey());
+        }
+
         $url = route('make-product-orders.edit', $makeProductOrder->id);
         $showBtn = $makeProductOrder->review_status === BaseModel::REVIEW_STATUS_OK ? 'no' : 'yes';
+
         $style = 'display:block; padding:6px 10px; margin:4px 0; border-radius:4px; text-align:center; cursor:pointer; transition:all 0.2s ease; width:100%; box-sizing:border-box; white-space:nowrap;';
         return <<<HTML
 <a style="{$style}" class="{$this->getElementClass()} btn btn-sm btn-success grid-actions-btn" data-show-btn="{$showBtn}" href="javascript:void(0)" data-action="$url">{$this->title()}</a>
 HTML;
+    }
+
+    /**
+     * 自动创建生产入库单
+     *
+     * @param int $taskId
+     * @return MakeProductOrderModel
+     */
+    protected function createMakeProductOrder(int $taskId): MakeProductOrderModel
+    {
+        return DB::transaction(function () use ($taskId) {
+            $task = TaskModel::query()->with('sku')->findOrFail($taskId);
+
+            $userId = Admin::user()?->id ?? 1;
+
+            // 创建生产入库单主表
+            $makeProductOrder = new MakeProductOrderModel();
+            $makeProductOrder->with_id = $task->id;
+            $makeProductOrder->order_no = build_order_no('SCRK');
+            $makeProductOrder->user_id = $userId;
+            $makeProductOrder->apply_id = $userId;
+            $makeProductOrder->other = '';
+            $makeProductOrder->review_status = BaseModel::REVIEW_STATUS_WAIT;
+            $makeProductOrder->created_at = now();
+            $makeProductOrder->save();
+
+            // 创建物料明细
+            $item = new MakeProductItemModel();
+            $item->order_id = $makeProductOrder->id;
+            $item->sku_id = $task->sku_id;
+            $item->standard = $task->standard;
+            $item->should_num = $task->plan_num;
+            $item->actual_num = 0;
+            $item->cost_price = 0;
+            $item->position_id = 0;
+            $item->batch_no = 'PC' . date('Ymd');
+            $item->percent = $task->percent ?? 0;
+            $item->save();
+
+            return $makeProductOrder;
+        });
     }
 
     public function script()

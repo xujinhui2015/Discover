@@ -51,7 +51,7 @@ class TaskController extends AdminController
 //                return $this->sku['product']['name']."|".$this->sku['attr_value_ids_str']."|".$this->percent."%|".$this->standard_str;
                 return $this->sku['product']['name']."|".$this->sku['attr_value_ids_str']."|".$this->standard_str;
             });
-            $grid->column('sum_cost_price', "领料总成本");
+//            $grid->column('sum_cost_price', "领料总成本");
 //            $grid->column('craft.name', '生产工艺');
             $grid->column('plan_num');
             $grid->column('finish_num');
