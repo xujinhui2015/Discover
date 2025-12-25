@@ -7,7 +7,8 @@
       "Bash(php artisan:*)",
       "Bash(dir:*)",
       "Bash(php -r:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []

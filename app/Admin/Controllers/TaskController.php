@@ -161,8 +161,8 @@ class TaskController extends AdminController
             $form->row(function (Form\Row $row) {
                 $craft = CraftModel::query()->latest()->pluck('name', 'id');
                 $row->width(4)->select('craft_id')->options($craft)->default(head($craft->keys()->toArray()))->required();
-                $row->width(4)->decimal('plan_num')->default(0)->required();
-                $row->width(4)->decimal('finish_num')->default(0)->required();
+                $row->width(4)->decimal('plan_num', '计划数量')->default(0)->attribute('step', '0.01')->required();
+                $row->width(4)->decimal('finish_num', '完成数量')->default(0)->attribute('step', '0.01')->required();
             });
             $form->row(function (Form\Row $row) {
                 $users = Administrator::query()->latest()->pluck('name', 'id');
