@@ -39,7 +39,7 @@ class BatchDeail extends AbstractDisplayer
                 var url = $(this).attr('data-url');
                 layer.open({
                     type: 2,
-                    area: ['80%', '90%'], //宽高
+                    area: ['90%', '90%'], //宽高
                     content:url,
                     end: function(){
                         Dcat.reload();

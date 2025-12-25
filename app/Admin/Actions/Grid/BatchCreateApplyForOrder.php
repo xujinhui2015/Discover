@@ -42,7 +42,7 @@ HTML;
             var url = "{$url}";
             layer.open({
                 type: 2,
-                area: ['80%', '90%'], //宽高
+                area: ['90%', '90%'], //宽高
                 content:[url,'no'],
                 end: function(){
                     Dcat.reload();
