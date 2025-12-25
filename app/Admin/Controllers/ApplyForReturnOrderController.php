@@ -15,6 +15,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\BatchCreateApplyForOrder;
+use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Actions\Grid\ApplyForReturnOrderUnreview;
 use App\Admin\Extensions\Form\Order\OrderController;
@@ -79,10 +80,13 @@ class ApplyForReturnOrderController extends OrderController
             $grid->disableQuickEditButton();
             $grid->disableCreateButton();
 
+            $grid->actions(EditOrder::make());
+
+            // 批量打印
+            $grid->tools(BatchOrderPrint::make());
+
             // 选择单据入库
             $grid->tools(BatchCreateApplyForOrder::make());
-
-            $grid->actions(EditOrder::make());
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->where('product_keyword', function (Builder $query) {

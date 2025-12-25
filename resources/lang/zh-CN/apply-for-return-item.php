@@ -21,8 +21,7 @@ return [
         'sku.product.unit.name' => '单位',
         'sku.product.type_str' => '分类',
         'sku.attr_value_ids_str' => '属性',
-        'actual_num' => '返仓数量',
-        'sku_stock_num' => '库存',
+        'should_num' => '返仓数量',
     ],
     'options' => [
     ],
