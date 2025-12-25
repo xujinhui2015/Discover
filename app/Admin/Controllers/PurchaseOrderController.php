@@ -193,8 +193,16 @@ class PurchaseOrderController extends OrderController
     {
         $form->row(function (Form\Row $row) {
             $row->hasMany('items', '', function (Form\NestedForm $table) {
+                // 使用异步加载物料，默认显示最近10条
                 $table->select('product_id', '物料名称')
-                    ->options(ProductModel::pluck('name', 'id'))
+                    ->ajax(route('api.product.search'))
+                    ->options(function ($id) {
+                        if ($id) {
+                            return ProductModel::where('id', $id)->pluck('name', 'id');
+                        }
+                        // 默认显示最近10条物料
+                        return ProductModel::orderBy('id', 'desc')->limit(10)->pluck('name', 'id');
+                    })
                     ->loadpku(route('api.product.find'))
                     ->required();
 
