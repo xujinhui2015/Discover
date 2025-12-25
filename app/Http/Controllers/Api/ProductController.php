@@ -18,7 +18,7 @@ class ProductController extends Controller
     {
         $keyword = $request->input('q', '');
         $page = (int) $request->input('page', 1);
-        $perPage = 10;
+        $perPage = 50;
 
         $query = ProductModel::query();
 

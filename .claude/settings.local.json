@@ -5,7 +5,9 @@
       "Bash(cat:*)",
       "Bash(php artisan migrate:*)",
       "Bash(php artisan:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(php -r:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []
