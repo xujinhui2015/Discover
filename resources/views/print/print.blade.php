@@ -267,8 +267,12 @@
                             // 构建列信息数组，识别需要合计的列
                             $columns = [];
                             foreach ($itemFieldForPrint as $key => $label) {
-                                // 列标题包含"数量"、"价格"或"金额"的列需要合计
-                                $isSummable = (strpos($label, '数量') !== false || strpos($label, '价格') !== false || strpos($label, '金额') !== false);
+                                // 列标题包含"数量"、"价格"、"金额"或以"数"、"价"结尾的列需要合计
+                                $isSummable = (strpos($label, '数量') !== false ||
+                                               strpos($label, '价格') !== false ||
+                                               strpos($label, '金额') !== false ||
+                                               mb_substr($label, -1) === '数' ||
+                                               mb_substr($label, -1) === '价');
                                 $columns[] = [
                                     'key' => $key,
                                     'label' => $label,
@@ -287,14 +291,13 @@
                                 ];
                             }
 
-                            // 遍历明细计算合计
+                            // 遍历明细计算合计（统一使用2位小数精度）
                             foreach ($order->items as $item) {
                                 foreach ($columns as &$col) {
                                     if (!$col['is_summable'])
                                         continue;
 
-                                    // 数量列使用3位小数精度，其他使用2位
-                                    $precision = (strpos($col['label'], '数量') !== false) ? 3 : 2;
+                                    $precision = 2;
 
                                     if (isset($col['is_calc']) && $col['is_calc']) {
                                         // 计算列：数量 * 单价
@@ -360,11 +363,7 @@
                                     @for($i = ($firstSummableIdx > 0 ? $firstSummableIdx : 1); $i < count($columns); $i++)
                                         <td>
                                             @if($columns[$i]['is_summable'])
-                                                @php
-                                                    // 数量列保留3位小数，价格/金额列保留2位小数
-                                                    $decimals = (strpos($columns[$i]['label'], '数量') !== false) ? 3 : 2;
-                                                @endphp
-                                                {{ number_format((float) $columns[$i]['total'], $decimals, '.', '') }}
+                                                {{ number_format((float) $columns[$i]['total'], 2, '.', '') }}
                                             @endif
                                         </td>
                                     @endfor
