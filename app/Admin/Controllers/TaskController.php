@@ -79,8 +79,6 @@ class TaskController extends AdminController
             $grid->actions(function (\Dcat\Admin\Grid\Displayers\Actions $actions) {
                 if ($this->status !== TaskModel::STATUS_FINISH) {
                     $actions->append(new AddApplyForOrder());
-                } else {
-                    $actions->disableQuickEdit();
                 }
                 $actions->append(new AddMakeProduct());
             });
@@ -125,12 +123,24 @@ class TaskController extends AdminController
     protected function form()
     {
         return Form::make(new Task(), function (Form $form) {
+            // 检查当前任务状态，如果是编辑模式且任务已完成，则设置为只读
+            $isFinished = false;
+            if ($form->isEditing()) {
+                $task = TaskModel::find($form->getKey());
+                $isFinished = $task && $task->status === TaskModel::STATUS_FINISH;
+                if ($isFinished) {
+                    $form->disableEditingCheck();
+                    $form->disableCreatingCheck();
+                    $form->disableViewCheck();
+                }
+            }
+
             $form->row(function (Form\Row $row) {
                 $row->width(12)->html('<h1 align="center">生产任务单</h1>');
             });
-            $form->row(function (Form\Row $row) {
+            $form->row(function (Form\Row $row) use ($isFinished) {
                 $row->width(4)->text('order_no', '订单号')->default(build_order_no('SCRW'))->readOnly();
-                $row->width(4)
+                $productField = $row->width(4)
                     ->select('product_id', '物料名称')
                     ->ajax(route('api.product.search'))
                     ->config('ajax.delay', 100)
@@ -142,6 +152,9 @@ class TaskController extends AdminController
                     })
                     ->loadpku(route('api.product.find'))
                     ->required();
+                if ($isFinished) {
+                    $productField->disable();
+                }
 
 //                $row->selectTable('product_id', '物料')
 //                    ->title('物料列表')
@@ -152,23 +165,50 @@ class TaskController extends AdminController
 
                 $row->width(4)->text('unit', '单位')->default('-')->disable();
             });
-            $form->row(function (Form\Row $row) {
-                $row->width(4)->select('sku_id', '属性选择')->options()->required();
-                $row->width(4)->select('standard', '通用标准')->options(SkuStockBatchModel::STANDARD)->required();
+            $form->row(function (Form\Row $row) use ($isFinished) {
+                $skuField = $row->width(4)->select('sku_id', '属性选择')->options()->required();
+                if ($isFinished) {
+                    $skuField->disable();
+                }
+                $standardField = $row->width(4)->select('standard', '通用标准')->options(SkuStockBatchModel::STANDARD)->required();
+                if ($isFinished) {
+                    $standardField->disable();
+                }
 //                $row->width(4)->rate('percent', '含绒百分比')->default(0)->required();
             });
 
-            $form->row(function (Form\Row $row) {
+            $form->row(function (Form\Row $row) use ($isFinished) {
                 $craft = CraftModel::query()->latest()->pluck('name', 'id');
-                $row->width(4)->select('craft_id')->options($craft)->default(head($craft->keys()->toArray()))->required();
-                $row->width(4)->decimal('plan_num', '计划数量')->default(0)->attribute('step', '0.01')->required();
-                $row->width(4)->decimal('finish_num', '完成数量')->default(0)->attribute('step', '0.01')->required();
+                $craftField = $row->width(4)->select('craft_id')->options($craft)->default(head($craft->keys()->toArray()))->required();
+                if ($isFinished) {
+                    $craftField->disable();
+                }
+                $planNumField = $row->width(4)->decimal('plan_num', '计划数量')->default(0)->attribute('step', '0.01')->required();
+                if ($isFinished) {
+                    $planNumField->disable();
+                }
+                $finishNumField = $row->width(4)->decimal('finish_num', '完成数量')->default(0)->attribute('step', '0.01')->required();
+                if ($isFinished) {
+                    $finishNumField->disable();
+                }
             });
-            $form->row(function (Form\Row $row) {
+            $form->row(function (Form\Row $row) use ($isFinished) {
                 $users = Administrator::query()->latest()->pluck('name', 'id');
-                $row->width(4)->select('operator')->options($users)->default(head($users->keys()->toArray()))->required();
-                $row->width(4)->text('other')->saveAsString();
+                $operatorField = $row->width(4)->select('operator')->options($users)->default(head($users->keys()->toArray()))->required();
+                if ($isFinished) {
+                    $operatorField->disable();
+                }
+                $otherField = $row->width(4)->text('other')->saveAsString();
+                if ($isFinished) {
+                    $otherField->disable();
+                }
             });
+
+            // 如果是已完成任务，隐藏提交和重置按钮
+            if ($isFinished) {
+                $form->disableSubmitButton();
+                $form->disableResetButton();
+            }
         });
     }
 
