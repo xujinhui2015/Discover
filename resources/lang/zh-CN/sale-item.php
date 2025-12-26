@@ -23,8 +23,8 @@ return [
         'sku.attr_value_ids_str' => '属性',
 //        'percent' => '含绒量',
         'standard_str' => '通用标准',
-        'should_num' => '要货数量',
-        'price' => '要货价格',
+        'should_num' => '需数',
+        'price' => '需价',
     ],
     'options' => [
     ],

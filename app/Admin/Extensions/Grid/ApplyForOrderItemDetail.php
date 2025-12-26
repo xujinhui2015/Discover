@@ -51,7 +51,7 @@ class ApplyForOrderItemDetail extends LazyRenderable
             '属性',
             '通用标准',
             '成本总价',
-            '申领数量',
+            '需数',
             '实领数量',
             '库存',
         ];

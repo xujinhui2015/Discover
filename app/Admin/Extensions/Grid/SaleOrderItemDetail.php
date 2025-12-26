@@ -49,8 +49,8 @@ class SaleOrderItemDetail extends LazyRenderable
             '品牌',
             '属性',
             '通用标准',
-            '要货数量',
-            '要货价格',
+            '需数',
+            '需价',
             '合计',
         ];
 

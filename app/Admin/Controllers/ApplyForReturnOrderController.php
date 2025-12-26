@@ -167,7 +167,7 @@ class ApplyForReturnOrderController extends OrderController
                     ->required();
                 $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
                 $table->select('sku_id', '属性选择')->options()->required();
-                $table->num('should_num', '申领数量')->required();
+                $table->num('should_num', '退数')->required();
             })->useTable()->width(12)->enableHorizontal();
         });
     }
@@ -185,7 +185,7 @@ class ApplyForReturnOrderController extends OrderController
             return $this->sku['attr_value_ids_str'] ?? '';
         });
 
-        $grid->column('should_num', '返仓数量')
+        $grid->column('should_num', '退数')
             ->if(function () {
                 return ApplyForReturnOrderModel::query()
                     ->where('id', $this->order_id)

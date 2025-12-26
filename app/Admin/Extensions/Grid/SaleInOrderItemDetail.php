@@ -51,10 +51,10 @@ class SaleInOrderItemDetail extends LazyRenderable
             '品牌',
             '属性',
             '通用标准',
-            '销售数量',
-            '退货数量',
-            '退回数量',
-            '退货价格',
+            '销数',
+            '退数',
+            '退数',
+            '退价',
             '合计',
         ];
 

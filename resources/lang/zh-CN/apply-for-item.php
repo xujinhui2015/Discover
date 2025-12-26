@@ -24,7 +24,7 @@ return [
 //        'percent' => '含绒量',
         'standard_str' => '通用标准',
         'cost_price' => '成本总价',
-        'should_num' => '申领数量',
+        'should_num' => '需数',
         'actual_num' => '实领数量',
         'sku_stock_num' => '库存',
     ],

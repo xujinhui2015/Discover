@@ -24,9 +24,9 @@ return [
 //        'percent' => '含绒量',
         'standard_str' => '通用标准',
         'sku_stock_num' => '库存',
-        'should_num' => '要货数量',
-        'actual_num' => '销售数量',
-        'price' => '销售价格',
+        'should_num' => '需数',
+        'actual_num' => '销数',
+        'price' => '销价',
     ],
     'options' => [
     ],

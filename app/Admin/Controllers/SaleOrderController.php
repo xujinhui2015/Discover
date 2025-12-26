@@ -197,10 +197,10 @@ class SaleOrderController extends OrderController
             return PurchaseOrderModel::STANDARD[$this->standard];
         })->else()->select(SaleOrderModel::STANDARD);
 
-        $grid->column('should_num', '要货数量')->if(function () use ($order) {
+        $grid->column('should_num', '需数')->if(function () use ($order) {
             return $order->review_status !== SaleOrderModel::REVIEW_STATUS_OK;
         })->edit();
-        $grid->column('price', '要货价格')->if(function () use ($order) {
+        $grid->column('price', '需价')->if(function () use ($order) {
             return $order->review_status !== SaleOrderModel::REVIEW_STATUS_OK;
         })->edit();
         $grid->column("_", '合计')->display(function () {
@@ -276,8 +276,8 @@ class SaleOrderController extends OrderController
                 $table->select('sku_id', '属性选择')->options()->required();
 //                $table->tableDecimal('percent', '含绒百分比')->default(0);
                 $table->select('standard', '通用标准')->options(PurchaseOrderModel::STANDARD)->default(0);
-                $table->num('should_num', '要货数量')->required();
-                $table->tableDecimal('price', '要货价格')->default(0.00)->required();
+                $table->num('should_num', '需数')->required();
+                $table->tableDecimal('price', '需价')->default(0.00)->required();
             })->useTable()->width(12)->enableHorizontal();
         });
     }

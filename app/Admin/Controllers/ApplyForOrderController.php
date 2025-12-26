@@ -239,7 +239,7 @@ class ApplyForOrderController extends OrderController
                 $table->select('sku_id', '属性选择')->options()->required();
 //                $table->tableDecimal('percent', '含绒百分比')->default(0);
                 $table->select('standard', '通用标准')->options(PurchaseOrderModel::STANDARD)->default(0);
-                $table->num('should_num', '申领数量')->required();
+                $table->num('should_num', '需数')->required();
             })->useTable()->width(12)->enableHorizontal();
         });
     }
@@ -268,7 +268,7 @@ class ApplyForOrderController extends OrderController
             return ApplyForOrderModel::STANDARD[$this->standard];
         })->else()->selectplus(ApplyForOrderModel::STANDARD);
         $grid->column('cost_price', "成本总价");
-        $grid->column('should_num', '申领数量');
+        $grid->column('should_num', '需数');
         $grid->column('actual_num', '实领数量');
         $grid->column('sku_stock_num', "库存")->display(function ($val) {
             return $val;

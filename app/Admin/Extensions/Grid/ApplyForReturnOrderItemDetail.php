@@ -47,7 +47,7 @@ class ApplyForReturnOrderItemDetail extends LazyRenderable
             '分类',
             '品牌',
             '属性',
-            '返仓数量',
+            '退数',
         ];
 
         return Table::make($titles, $items->toArray());

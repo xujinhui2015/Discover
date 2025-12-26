@@ -149,14 +149,14 @@ class SaleInOrderController extends OrderController
             return PurchaseOrderModel::STANDARD[$this->standard] ?? '';
         });
 
-        $grid->column('should_num', '销售数量');
-        $grid->column('actual_num', '退货数量')->if(function () use ($order) {
+        $grid->column('should_num', '销数');
+        $grid->column('actual_num', '退数')->if(function () use ($order) {
             return $order->review_status !== SaleInOrderModel::REVIEW_STATUS_OK;
         })->edit();
-        $grid->column('return_num', '退回数量')->if(function () use ($order) {
+        $grid->column('return_num', '退数')->if(function () use ($order) {
             return $order->review_status !== SaleInOrderModel::REVIEW_STATUS_OK;
         })->edit();
-        $grid->column('price', '退货价格')->if(function () use ($order) {
+        $grid->column('price', '退价')->if(function () use ($order) {
             return $order->review_status !== SaleInOrderModel::REVIEW_STATUS_OK;
         })->edit();
         $grid->column("_", '合计')->display(function () {
