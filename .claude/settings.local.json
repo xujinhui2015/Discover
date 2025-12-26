@@ -9,7 +9,13 @@
       "Bash(php -r:*)",
       "Bash(curl:*)",
       "Bash(findstr:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(where:*)",
+      "Bash(npx:*)",
+      "Bash(node --version:*)",
+      "Bash(npm --version:*)",
+      "Bash(echo:*)",
+      "Bash(intelephense:*)"
     ],
     "deny": [],
     "ask": []
