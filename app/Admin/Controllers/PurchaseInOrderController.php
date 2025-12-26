@@ -98,6 +98,7 @@ class PurchaseInOrderController extends OrderController
                         });
                     });
                 }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
+                $filter->equal('review_status', '审核状态')->select($this->oredr_model::REVIEW_STATUS)->width(3);
             });
         });
     }
