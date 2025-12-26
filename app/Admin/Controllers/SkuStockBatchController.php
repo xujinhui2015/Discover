@@ -120,10 +120,10 @@ class SkuStockBatchController extends AdminController
                     $value = $this->getValue();
                     $query->whereHasIn('sku.product', function (Builder $query) use ($value) {
                         $query->where(function (Builder $query) use ($value) {
-                            $query->orWhere('name', 'like', $value . '%');
-                            $query->orWhere('item_no', 'like', $value . '%');
+                            $query->orWhere('name', 'like', "%" . $value . '%');
+                            $query->orWhere('item_no', 'like', "%" . $value . '%');
                         });
-                    })->orWhere('batch_no', 'like', $value . '%');
+                    })->orWhere('batch_no', 'like', "%" . $value . '%');
                 }, '搜索')->placeholder('物料名称/编号/批次号')->width(4);
             });
             $grid->tools(BatchStockSelectSave::make());
