@@ -1,0 +1,29 @@
+{
+  "servers": [
+    {
+      "extensions": [
+        "js",
+        "ts",
+        "jsx",
+        "tsx"
+      ],
+      "command": [
+        "npx",
+        "--",
+        "typescript-language-server",
+        "--stdio"
+      ],
+      "rootDir": "."
+    },
+    {
+      "extensions": [
+        "php"
+      ],
+      "command": [
+        "intelephense",
+        "--stdio"
+      ],
+      "rootDir": "."
+    }
+  ]
+}

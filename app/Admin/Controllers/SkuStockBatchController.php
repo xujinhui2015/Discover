@@ -18,7 +18,10 @@ use App\Admin\Actions\Grid\BatchStockSelectSave;
 use App\Admin\Actions\Grid\ProductCheck;
 use App\Admin\Extensions\Grid\ProductCheckDetails;
 use App\Admin\Repositories\SkuStockBatch;
+use App\Models\AttrModel;
+use App\Models\BrandModel;
 use App\Models\PositionModel;
+use App\Models\ProductModel;
 use App\Models\SkuStockBatchModel;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Controllers\AdminController;
@@ -124,7 +127,54 @@ class SkuStockBatchController extends AdminController
                             $query->orWhere('item_no', 'like', "%" . $value . '%');
                         });
                     })->orWhere('batch_no', 'like', "%" . $value . '%');
-                }, '搜索')->placeholder('物料名称/编号/批次号')->width(4);
+                }, '搜索')->placeholder('物料名称/编号/批次号')->width(3);
+
+                $attrIdFilter = $filter->where('attr_id', function (Builder $query) {
+                    $attrId = (string) $this->getValue();
+                    if ($attrId === '') {
+                        return;
+                    }
+
+                    $query->whereHasIn('sku', function (Builder $query) use ($attrId) {
+                        $query->whereExists(function ($query) use ($attrId) {
+                            $query->selectRaw('1')
+                                ->from('attr_value')
+                                ->where('attr_id', $attrId)
+                                ->whereRaw('FIND_IN_SET(attr_value.id, product_sku.attr_value_ids)');
+                        });
+                    });
+                }, '属性')->width(3);
+                $attrIdFilter->select(AttrModel::query()->pluck('name', 'id'))
+                    ->load('attr_value_id', 'api/get-attr-value');
+
+                $attrValueFilter = $filter->where('attr_value_id', function (Builder $query) {
+                    $attrValueId = (string) $this->getValue();
+                    if ($attrValueId === '') {
+                        return;
+                    }
+
+                    $query->whereHasIn('sku', function (Builder $query) use ($attrValueId) {
+                        $query->whereRaw("CONCAT(',', IFNULL(attr_value_ids, ''), ',') LIKE ?", ["%,{$attrValueId},%"]);
+                    });
+                }, '属性值')
+                    ->width(3);
+                $attrValueFilter->select([])->placeholder('请选择属性值');
+
+                $filter->where('type', function (Builder $query) {
+                    $query->whereHasIn('sku.product', function (Builder $query) {
+                        $query->where('type', $this->getValue());
+                    });
+                }, '分类')
+                    ->select(ProductModel::TYPE)
+                    ->width(3);
+
+                $filter->where('brand_id', function (Builder $query) {
+                    $query->whereHasIn('sku.product', function (Builder $query) {
+                        $query->where('brand_id', $this->getValue());
+                    });
+                }, '品牌')
+                    ->select(BrandModel::query()->pluck('name', 'id'))
+                    ->width(3);
             });
             $grid->tools(BatchStockSelectSave::make());
             $grid->disableActions();

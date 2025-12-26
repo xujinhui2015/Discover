@@ -89,7 +89,7 @@ class InitStockOrderController extends OrderController
                 $table->select('standard', '通用标准')->options(InitStockOrderModel::STANDARD)->default(0);
                 $table->tableDecimal('actual_num', '期初库存')->default(0.00)->required();
                 $table->tableDecimal('cost_price', '成本单价')->default(0.00)->required();
-                $table->select('position_id', '入库位置')->options(PositionModel::orderBy('id', 'desc')->pluck('name', 'id'));
+                $table->select('position_id', '入库位置')->options(PositionModel::orderBy('id', 'desc')->pluck('name', 'id'))->required();
                 $table->ipt('batch_no', '批次号')->rem(8)->default("PC".date('Ymd'))->required();
             })->useTable()->width(12)->enableHorizontal();
         });
