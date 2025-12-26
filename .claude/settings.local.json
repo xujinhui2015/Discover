@@ -8,7 +8,8 @@
       "Bash(dir:*)",
       "Bash(php -r:*)",
       "Bash(curl:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
