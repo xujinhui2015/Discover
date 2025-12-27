@@ -70,7 +70,7 @@ class TaskObserver
 //                'percent' => $taskModel->percent,
                 'standard' => $taskModel->standard,
                 'sku_id' => $taskModel->sku_id,
-                'position_id' => PositionModel::query()->value('id') ?? 0,
+                'position_id' => PositionModel::firstOrCreate(['name' => '成品仓'])->id,
             ]
         );
     }

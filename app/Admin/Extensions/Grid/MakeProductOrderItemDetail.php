@@ -25,17 +25,17 @@ class MakeProductOrderItemDetail extends LazyRenderable
             ->get()
             ->map(function (MakeProductItemModel $itemModel) {
                 $product = data_get($itemModel, 'sku.product');
-                $unitName = data_get($product, 'unit.name', '');
-                $brandName = data_get($product, 'brand.name', '');
-                $typeStr = data_get($product, 'type_str', '');
-                $positionName = data_get($itemModel, 'position.name', '');
+                $unitName = data_get($product, 'unit.name', '-');
+                $brandName = data_get($product, 'brand.name', '-');
+                $typeStr = data_get($product, 'type_str', '-');
+                $positionName = data_get($itemModel, 'position.name', '-');
 
                 return [
-                    data_get($product, 'name', ''),
+                    data_get($product, 'name', '-'),
                     $unitName,
                     $typeStr,
                     $brandName,
-                    data_get($itemModel, 'sku.attr_value_ids_str', ''),
+                    data_get($itemModel, 'sku.attr_value_ids_str', '-'),
                     $itemModel->standard_str,
                     $itemModel->cost_price,
                     $itemModel->should_num,
