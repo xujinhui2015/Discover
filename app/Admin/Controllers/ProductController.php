@@ -118,7 +118,15 @@ class ProductController extends AdminController
                     });
                 }, '搜索')
                     ->placeholder('名称/拼音码/物料编号')
-                    ->width(6);
+                    ->width(4);
+
+                $filter->equal('type', '分类')
+                    ->select(ProductModel::TYPE)
+                    ->width(4);
+
+                $filter->equal('brand_id', '品牌')
+                    ->select(BrandModel::query()->pluck('name', 'id'))
+                    ->width(4);
 
                 $filter->expand(false);
             });

@@ -35,6 +35,12 @@
 - Grid/Form 仅可做展示层调整（标签、显示回调、宽度等）；不得增删字段或改 `$grid->model()` 查询。
 - 复杂流程放在 Service/Model；遇到晦涩流程可添加简短注释以便维护。
 
+### 批量新增功能说明
+- **批量新增的正确实现方式**：批量新增通常是通过 iframe 跳转到列表页面（如 `admin/products?_grid_iframe_=1&order_model=XXX&order_id=xx`）来选择数据。
+- **修改位置**：需要修改对应 Controller 的 `iFrameGrid()` 方法中的 `$grid->filter()`，而不是 `creating()` 或 `form()` 方法。
+- **筛选器添加**：在 `iFrameGrid()` 的 filter 中添加筛选条件，参考普通 `grid()` 方法中的 filter 实现。
+- **示例**：如在申请单批量新增物料时，需要添加品牌/分类筛选，应修改 `ProductController::iFrameGrid()` 的 filter，而非 `ApplyForOrderController::creating()`。
+
 ## Context7 MCP规则
 
 - 只要用户的问题与 **代码示例、配置步骤、或第三方库/框架的用法** 有关，
