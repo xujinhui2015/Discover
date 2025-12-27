@@ -44,6 +44,7 @@ class CustomerController extends AdminController
 //                $tools->append(new ImportCustomerTool());
 //            });
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->like('name', '客户名称')->width(4);
             });
         });
     }

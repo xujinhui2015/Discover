@@ -41,6 +41,7 @@ class SupplierController extends AdminController
             $grid->column('created_at');
 
             $grid->filter(function (Grid\Filter $filter) {
+                $filter->like('name', '供应商名称')->width(4);
             });
         });
     }
