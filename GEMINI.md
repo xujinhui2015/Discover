@@ -57,3 +57,28 @@
 - 回复尽量以中文回复
 - 如果没有显性需求，尽量不要写兼容代码
 
+## 一次性脚本开发偏好（2025-12-27 学习）
+
+### 用户偏好
+- **直接硬编码数据**：对于一次性数据导入/更新脚本，用户偏好将数据直接硬编码在命令文件中，而不是动态读取外部文件
+- **最终方案优先**：不需要展示中间尝试步骤或临时文件，直接给出最终可用的方案
+- **清理临时文件**：完成任务后需要删除所有中间产生的临时文件和命令
+- **使用 Laravel Model**：批量更新数据库时优先使用 Model 方式而非原生 SQL，便于维护
+
+### 项目技术栈细节
+- **Excel 处理库**：项目使用 `Dcat\EasyExcel\Excel`，不需要安装 PhpOffice\PhpSpreadsheet
+  - 读取方式：`Excel::import($filePath)->headingRow(1)->first()`
+  - 获取表头：`$sheet->getOriginalHeadings()`
+  - 获取数据：`$sheet->toArray()`
+- **产品模型字段**：
+  - 表名：`product`
+  - 模型：`App\Models\ProductModel`
+  - 物料编号字段：`item_no`
+  - 销售价字段：`sale_price`
+
+### Artisan 命令开发规范
+- 命令文件存放位置：`app/Console/Commands/`
+- 自动加载：`Kernel.php` 中已有 `$this->load(__DIR__.'/Commands')`，新命令会自动注册
+- 模拟模式：建议添加 `--dry-run` 选项，支持模拟运行
+- 使用事务：批量更新时使用 `DB::beginTransaction()` 和 `DB::commit()` 确保数据一致性
+
