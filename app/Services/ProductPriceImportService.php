@@ -89,7 +89,7 @@ class ProductPriceImportService
                         $stats['skipped']++;
                         continue;
                     }
-                    $updateData['cost_price'] = $purchasePrice;
+                    $updateData['purchase_price'] = $purchasePrice;
                 }
 
                 // 如果有需要更新的数据，执行更新

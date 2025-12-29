@@ -17,6 +17,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Grid\BatchCreateProSave;
 use App\Admin\Actions\Grid\BatchDeleteProduct;
 use App\Admin\Actions\Grid\ImportProduct as ImportProductTool;
+use App\Admin\Actions\Grid\ImportProductPrice;
 use App\Admin\Repositories\Product;
 use App\Models\AttrModel;
 use App\Models\BrandModel;
@@ -54,6 +55,8 @@ class ProductController extends AdminController
             $grid->column('brand.name', '品牌')->emp();
             $grid->column('unit.name', '单位')->emp();
             $grid->column('warning_num')->emp();
+            $grid->column('sale_price')->emp();
+            $grid->column('purchase_price')->emp();
 //            $grid->column('created_at');
 //            $grid->column('updated_at')->sortable();
 
@@ -63,6 +66,7 @@ class ProductController extends AdminController
 
             $grid->tools(function (Grid\Tools $tools) {
                 $tools->append(new ImportProductTool());
+                $tools->append(new ImportProductPrice());
             });
 
             $grid->filter(function (Grid\Filter $filter) {

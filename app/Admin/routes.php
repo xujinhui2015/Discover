@@ -39,6 +39,8 @@ Route::group([
     $router->resource('attrs', 'AttrController');
     $router->get('products/import', 'ProductImportController@index')->name('products.import');
     $router->get('products/import/template', 'ProductImportController@template')->name('products.import.template');
+    $router->get('products/price/import', 'ProductPriceImportController@index')->name('products.price.import');
+    $router->get('products/price/import/template', 'ProductPriceImportController@template')->name('products.price.import.template');
     $router->resource('products', 'ProductController');
     $router->resource('product-category', 'ProductCategoryController');
     $router->resource('units', 'UnitController');

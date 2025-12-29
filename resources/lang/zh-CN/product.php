@@ -22,6 +22,8 @@ return [
         'py_code' => '拼音码',
         'unit_id' => '单位',
         'warning_num' => '预警库存',
+        'sale_price' => '销售价',
+        'purchase_price' => '采购价',
     ],
     'options' => [
     ],
