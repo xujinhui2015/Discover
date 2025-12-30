@@ -77,3 +77,21 @@
 
 {{--<hr style="margin-top: 0px;">--}}
 
+<script>
+$(function() {
+    // 监听 hasMany 表格删除按钮点击，禁用被删除行的所有输入字段
+    // 这样浏览器的 HTML5 表单验证就会跳过这些字段
+    $(document).on('click', '.table-has-many .remove', function() {
+        var $row = $(this).closest('tr');
+        // 延迟执行，确保在原有的 hide() 操作之后
+        setTimeout(function() {
+            $row.find('input, select, textarea').each(function() {
+                // 不禁用 _remove_ 标志字段，它需要提交给后端
+                if (!$(this).hasClass('_remove_')) {
+                    $(this).prop('disabled', true);
+                }
+            });
+        }, 10);
+    });
+});
+</script>
