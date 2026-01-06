@@ -96,7 +96,31 @@ abstract class OrderController extends AdminController
             padding-left: 0.7rem;
             padding-right: 0.7rem;
         }
+        .grid-table tr.material-row-selected > td {
+            background-color: #e5ebff;
+        }
 CSS
+        );
+
+        Admin::script(
+            <<<'JS'
+        (function () {
+            const toggleMaterialHighlight = function ($checkbox) {
+                const $row = $checkbox.closest('tr');
+                $row.toggleClass('material-row-selected', $checkbox.prop('checked'));
+            };
+
+            $(document).on('change', '.grid-table input.grid-row-checkbox', function () {
+                toggleMaterialHighlight($(this));
+            });
+
+            $(function () {
+                $('.grid-table input.grid-row-checkbox').each(function () {
+                    toggleMaterialHighlight($(this));
+                });
+            });
+        })();
+JS
         );
     }
 
