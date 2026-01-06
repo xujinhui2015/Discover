@@ -45,6 +45,7 @@ Grid::resolving(function (Grid $grid) {
     $grid->showQuickEditButton();
     $grid->enableDialogCreate();
     $grid->disableBatchDelete();
+    $grid->rowSelector()->background(Admin::color()->dark50());
     $grid->actions(function (\Dcat\Admin\Grid\Displayers\Actions $actions) {
         $actions->disableView();
         $actions->disableDelete();
