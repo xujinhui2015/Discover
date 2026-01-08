@@ -16,6 +16,7 @@ namespace App\Admin\Actions\Grid;
 
 use App\Models\ApplyForBatchModel;
 use App\Models\InventoryItemModel;
+use App\Models\ScrapBatchModel;
 use App\Models\SaleOutBatchModel;
 use App\Models\SkuStockBatchModel;
 use Dcat\Admin\Actions\Response;
@@ -105,6 +106,18 @@ class BatchStockSelectSave extends BatchAction
                 'item_id' => $this->item_id,
                 'standard' => $this->standard,
 //                'percent'        => $this->percent,
+            ]);
+        }
+    }
+
+    public function saveToScrapBatch(): void
+    {
+        foreach ($this->getKey() as $stock_batch_id) {
+            ScrapBatchModel::create([
+                'stock_batch_id' => $stock_batch_id,
+                'sku_id' => $this->sku_id,
+                'item_id' => $this->item_id,
+                'standard' => $this->standard,
             ]);
         }
     }

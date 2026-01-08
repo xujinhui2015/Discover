@@ -122,6 +122,15 @@ HTML;
         }));
     }
 
+    public function saveScrapOrderModel(): void
+    {
+        $this->order->items()->createMany($this->products->map(function (ProductModel $productModel) {
+            return [
+                'sku_id' => $productModel->sku_pluck->keys()->first(),
+            ];
+        }));
+    }
+
     public function saveInitStockOrderModel(): void
     {
         $this->order->items()->createMany($this->products->map(function (ProductModel $productModel) {

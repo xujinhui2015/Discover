@@ -79,6 +79,9 @@ Route::group([
     $router->resource('init-stock-orders', 'InitStockOrderController');
     $router->resource('transfer-orders', 'TransferOrderController');
     $router->resource('transfer-items', 'TransferItemController');
+    $router->resource('scrap-orders', 'ScrapOrderController');
+    $router->resource('scrap-items', 'ScrapItemController');
+    $router->resource('scrap-batchs', 'ScrapBatchController');
     $router->resource('init-stock-items', 'InitStockItemController');
     $router->get('order-prints', 'PrintController@print')->name('order.print');
     $router->resource('accountant-dates', "AccountantDateController");

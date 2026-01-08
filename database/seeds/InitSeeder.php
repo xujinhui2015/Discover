@@ -302,6 +302,14 @@ class InitSeeder extends Seeder
                 'created_at'    => $createdAt,
             ],
             [
+                'parent_id'     => 16,
+                'order'         => 22,
+                'title'         => '物料报废单',
+                'icon'          => '',
+                'uri'           => 'scrap-orders',
+                'created_at'    => $createdAt,
+            ],
+            [
                 'parent_id'     => 0,
                 'order'         => 22,
                 'title'         => '销售管理',
@@ -500,6 +508,7 @@ class InitSeeder extends Seeder
             'MakeProductOrder',
             'PurchaseInOrder',
             'PurchaseOrder',
+            'ScrapOrder',
             'SaleInOrder',
             'SaleOrder',
             'SaleOutOrder',

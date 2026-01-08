@@ -37,6 +37,9 @@ use App\Models\SaleOrderModel;
 use App\Models\SaleOutBatchModel;
 use App\Models\SaleOutItemModel;
 use App\Models\SaleOutOrderModel;
+use App\Models\ScrapBatchModel;
+use App\Models\ScrapItemModel;
+use App\Models\ScrapOrderModel;
 use App\Models\SkuStockBatchModel;
 use App\Models\SkuStockModel;
 use App\Models\StatementItemModel;
@@ -68,6 +71,9 @@ use App\Observers\SaleOrderObserver;
 use App\Observers\SaleOutBatchObserver;
 use App\Observers\SaleOutItemObserver;
 use App\Observers\SaleOutOrderObserver;
+use App\Observers\ScrapBatchObserver;
+use App\Observers\ScrapItemObserver;
+use App\Observers\ScrapOrderObserver;
 use App\Observers\SkuStockBatchObserver;
 use App\Observers\SkuStockObserver;
 use App\Observers\StatementItemObserver;
@@ -131,5 +137,8 @@ class AppServiceProvider extends ServiceProvider
         ApplyForReturnOrderModel::observe([ApplyForReturnOrderObserver::class, OrderNoCreatedObserver::class]);
         SaleInOrderModel::observe([SaleInOrderObserver::class]);
         TransferOrderModel::observe([TransferOrderObserver::class, OrderNoCreatedObserver::class]);
+        ScrapOrderModel::observe([ScrapOrderObserver::class, OrderNoCreatedObserver::class]);
+        ScrapItemModel::observe(ScrapItemObserver::class);
+        ScrapBatchModel::observe(ScrapBatchObserver::class);
     }
 }

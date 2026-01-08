@@ -58,6 +58,7 @@ class StockHistoryObserver
             case StockHistoryModel::CHECK_OUT_TYPE:
             case StockHistoryModel::COLLECTION_TYPE:
             case StockHistoryModel::STORE_OUT_TYPE:
+            case StockHistoryModel::SCRAP_TYPE:
                 SkuStockBatchModel::updateOrCreate([
                     'position_id' => $stockHistoryModel->out_position_id,
                     'batch_no'    => $stockHistoryModel->batch_no,
