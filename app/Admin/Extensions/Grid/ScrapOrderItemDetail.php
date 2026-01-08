@@ -41,9 +41,7 @@ class ScrapOrderItemDetail extends LazyRenderable
                     $brandName,
                     data_get($itemModel, 'sku.attr_value_ids_str', ''),
                     $itemModel->standard_str,
-                    $itemModel->should_num,
                     $itemModel->actual_num,
-                    $itemModel->sku_stock_num,
                 ];
             })
             ->map(function (array $row) use ($scrapTypeStr) {
@@ -59,8 +57,6 @@ class ScrapOrderItemDetail extends LazyRenderable
             '属性',
             '通用标准',
             '报废数量',
-            '实报数量',
-            '库存',
             '报废类型',
         ];
 

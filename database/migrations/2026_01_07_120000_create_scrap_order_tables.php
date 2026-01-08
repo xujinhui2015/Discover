@@ -31,7 +31,7 @@ class CreateScrapOrderTables extends Migration
             $table->unsignedTinyInteger('standard')->default(0)->comment('通用标准');
             $table->unsignedTinyInteger('scrap_type')->default(1)->comment('报废类型');
             $table->unsignedDecimal('should_num', 10, 2)->default(0)->comment('报废数量');
-            $table->unsignedDecimal('actual_num', 10, 2)->default(0)->comment('实报数量');
+            $table->unsignedDecimal('actual_num', 10, 2)->default(0)->comment('报废数量');
             $table->timestamps();
         });
 

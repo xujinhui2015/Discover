@@ -33,7 +33,6 @@ class ScrapItemController extends AdminController
             $grid->column('order_id');
             $grid->column('sku_id');
             $grid->column('standard');
-            $grid->column('should_num');
             $grid->column('actual_num');
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
@@ -54,7 +53,6 @@ class ScrapItemController extends AdminController
             $form->text('order_id');
             $form->text('sku_id');
             $form->text('standard');
-            $form->text('should_num');
             $form->text('actual_num');
             $form->display('created_at');
             $form->display('updated_at');

@@ -22,9 +22,7 @@ return [
         'sku.product.type_str' => '分类',
         'sku.attr_value_ids_str' => '属性',
         'standard_str' => '通用标准',
-        'should_num' => '报废数量',
-        'actual_num' => '实报数量',
-        'sku_stock_num' => '库存',
+        'actual_num' => '报废数量',
     ],
     'options' => [
     ],

@@ -98,10 +98,8 @@ class ScrapOrderController extends OrderController
                         });
                     });
                 }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
-                $filter->like('order_no')->width(3);
                 $filter->equal('scrap_type', '报废类型')->select(ScrapOrderModel::SCRAP_TYPE)->width(3);
                 $filter->equal('review_status', '审核状态')->select($this->oredr_model::REVIEW_STATUS)->width(3);
-                $filter->between('created_at', '业务日期')->datetime()->width(3);
             });
         });
     }
@@ -149,7 +147,6 @@ class ScrapOrderController extends OrderController
                 $table->ipt('unit', '单位')->rem(3)->default('-')->disable();
                 $table->select('sku_id', '属性选择')->options()->required();
                 $table->select('standard', '通用标准')->options(ScrapItemModel::STANDARD)->default(0);
-                $table->num('should_num', '报废数量')->required();
             })->useTable()->width(12)->enableHorizontal();
         });
     }
@@ -175,10 +172,7 @@ class ScrapOrderController extends OrderController
             return ScrapItemModel::STANDARD[$this->standard];
         })->else()->selectplus(ScrapItemModel::STANDARD);
 
-        $grid->column('should_num', '报废数量')->if(function () use ($order) {
-            return $order->review_status !== ScrapOrderModel::REVIEW_STATUS_OK;
-        })->edit();
-        $grid->column('actual_num', '实报数量');
+        $grid->column('actual_num', '报废数量');
         $grid->column('sku_stock_num', '库存')->display(function ($val) {
             return $val;
         });

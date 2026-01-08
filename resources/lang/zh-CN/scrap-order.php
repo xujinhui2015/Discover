@@ -19,7 +19,7 @@ return [
     'fields' => [
         'order_no' => '订单单号',
         'created_at' => '业务日期',
-        'scrap_type' => '报废类型',
+        'scrap_type_str' => '报废类型',
         'apply_user.name' => '审批人',
         'other' => '备注',
     ],

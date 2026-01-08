@@ -14,7 +14,7 @@ class AddScrapOrderMenu extends Migration
         $data = [
             'parent_id' => 16,
             'order' => 22,
-            'title' => '物料报废单',
+            'title' => '物料报废',
             'icon' => '',
             'uri' => 'scrap-orders',
             'created_at' => $createdAt,
