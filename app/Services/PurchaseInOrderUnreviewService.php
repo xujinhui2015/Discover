@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\BaseModel;
 use App\Models\PurchaseInOrderModel;
 use App\Models\PurchaseOrderModel;
+use App\Models\PurchaseOutOrderModel;
 use App\Models\SkuStockBatchModel;
 use App\Models\StockHistoryModel;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,10 @@ class PurchaseInOrderUnreviewService
 
         if ((int) $order->review_status !== PurchaseInOrderModel::REVIEW_STATUS_OK) {
             throw new RuntimeException('单据不是已审核状态，无法反审核');
+        }
+
+        if (PurchaseOutOrderModel::query()->where('with_id', $order->id)->exists()) {
+            throw new RuntimeException('存在采购退货单，无法反审核');
         }
 
         if (! $order->with_order) {
