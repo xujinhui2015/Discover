@@ -258,6 +258,7 @@
                                 })->toArray();
                                 $showTotalAmount = true;
                             }
+                            $showLineTotal = $printSlug === 'purchase-out-order';
 
                             // 确保 items 可遍历
                             if (!$order->items instanceof Illuminate\Database\Eloquent\Collection) {
@@ -282,9 +283,19 @@
                             }
                             // 如果有额外的"金额"列（sale-out-order）
                             if ($showTotalAmount) {
+                                $totalAmountLabel = $printSlug === 'sale-in-order' ? '合计' : '金额';
                                 $columns[] = [
                                     'key' => '__calc_amount__',
-                                    'label' => '金额',
+                                    'label' => $totalAmountLabel,
+                                    'is_summable' => true,
+                                    'is_calc' => true,
+                                    'total' => 0
+                                ];
+                            }
+                            if ($showLineTotal) {
+                                $columns[] = [
+                                    'key' => '__calc_line_total__',
+                                    'label' => '合计',
                                     'is_summable' => true,
                                     'is_calc' => true,
                                     'total' => 0

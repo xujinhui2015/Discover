@@ -24,10 +24,10 @@ return [
 //        'percent' => '含绒量',
         'standard_str' => '通用标准',
         'position.name' => '出库位置',
-        'should_num' => '入库数量',
-        'actual_num' => '退货数量',
-        'price' => '退货价格',
         'batch_no' => '批次号',
+        'should_num' => '入库数量',
+        'actual_num' => '退货数',
+        'price' => '退货价',
     ],
     'options' => [
     ],

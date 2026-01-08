@@ -153,10 +153,10 @@ class PurchaseOutOrderController extends OrderController
         });
 
         $grid->column('should_num', '入库数量');
-        $grid->column('actual_num', '退货数量')->if(function () use ($order, $review_statu_ok) {
+        $grid->column('actual_num', '退货数')->if(function () use ($order, $review_statu_ok) {
             return $order->review_status !== $review_statu_ok;
         })->edit();
-        $grid->column('price', '退货价格')->if(function () use ($order, $review_statu_ok) {
+        $grid->column('price', '退货价')->if(function () use ($order, $review_statu_ok) {
             return $order->review_status !== $review_statu_ok;
         })->edit();
         $grid->column('_', '合计')->display(function () {

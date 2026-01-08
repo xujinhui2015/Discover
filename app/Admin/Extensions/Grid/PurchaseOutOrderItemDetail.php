@@ -58,8 +58,8 @@ class PurchaseOutOrderItemDetail extends LazyRenderable
             '出库位置',
             '批次号',
             '入库数量',
-            '退货数量',
-            '退货价格',
+            '退货数',
+            '退货价',
             '合计',
         ];
 
