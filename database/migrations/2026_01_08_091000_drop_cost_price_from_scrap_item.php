@@ -13,9 +13,11 @@ class DropCostPriceFromScrapItem extends Migration
      */
     public function up()
     {
-        Schema::table('scrap_item', function (Blueprint $table) {
-            $table->dropColumn('cost_price');
-        });
+        if (Schema::hasColumn('scrap_item', 'cost_price')) {
+            Schema::table('scrap_item', function (Blueprint $table) {
+                $table->dropColumn('cost_price');
+            });
+        }
     }
 
     /**
@@ -25,11 +27,13 @@ class DropCostPriceFromScrapItem extends Migration
      */
     public function down()
     {
-        Schema::table('scrap_item', function (Blueprint $table) {
-            $table->unsignedDecimal('cost_price', 10, 2)
-                ->default(0)
-                ->comment('成本总价')
-                ->after('actual_num');
-        });
+        if (!Schema::hasColumn('scrap_item', 'cost_price')) {
+            Schema::table('scrap_item', function (Blueprint $table) {
+                $table->unsignedDecimal('cost_price', 10, 2)
+                    ->default(0)
+                    ->comment('成本总价')
+                    ->after('actual_num');
+            });
+        }
     }
 }

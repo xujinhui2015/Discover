@@ -24,8 +24,8 @@ return [
         'sku.attr_value_ids_str' => '属性',
         'standard_str' => '通用标准',
         'should_num' => '销数',
-        'actual_num' => '退数',
-        'return_num' => '退数',
+        'actual_num' => '应退数',
+        'return_num' => '实退数',
         'price' => '退价',
     ],
     'options' => [

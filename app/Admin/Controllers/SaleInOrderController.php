@@ -150,10 +150,10 @@ class SaleInOrderController extends OrderController
         });
 
         $grid->column('should_num', '销数');
-        $grid->column('actual_num', '退数')->if(function () use ($order) {
+        $grid->column('actual_num', '应退数')->if(function () use ($order) {
             return $order->review_status !== SaleInOrderModel::REVIEW_STATUS_OK;
         })->edit();
-        $grid->column('return_num', '退数')->if(function () use ($order) {
+        $grid->column('return_num', '实退数')->if(function () use ($order) {
             return $order->review_status !== SaleInOrderModel::REVIEW_STATUS_OK;
         })->edit();
         $grid->column('price', '退价')->if(function () use ($order) {
