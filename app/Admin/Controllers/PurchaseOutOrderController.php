@@ -51,7 +51,6 @@ class PurchaseOutOrderController extends OrderController
             $grid->column('id')->sortable();
             $grid->column('order_no');
             $grid->column('with_order.order_no', '关联单号')->emp();
-            $grid->column('status', '单据状态')->using($this->oredr_model::STATUS)->label($this->oredr_model::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
             if ($useNameStyle) {
                 $grid->column('product_names', '物料名称')->display(function () {
@@ -117,16 +116,14 @@ class PurchaseOutOrderController extends OrderController
             $order = $this->order;
             $review_statu_ok = $this->oredr_model::REVIEW_STATUS_OK;
             if ($order && $order->review_status === $review_statu_ok) {
-                $row->width(6)->select('status', '单据状态')->options(PurchaseOutOrderModel::STATUS)->default($this->oredr_model::STATUS_RETURNING)->required();
                 $row->width(6)->select('with_id', '相关单据')->options(PurchaseInOrderModel::query()->pluck('order_no', 'id'))->disable();
             } else {
-                $row->width(6)->select('status', '单据状态')->options([$this->oredr_model::STATUS_RETURNING => '退回中'])->default($this->oredr_model::STATUS_RETURNING)->required();
                 $row->width(6)->select('with_id', '相关入库单据')->options($with_order)->default(0)->required()->with_order();
             }
-        });
-        $form->row(function (Form\Row $row) {
             $supplier = SupplierRepository::pluck();
             $row->width(6)->select('supplier_id', '供应商')->options($supplier)->default(head($supplier->keys()->toArray()))->required();
+        });
+        $form->row(function (Form\Row $row) {
             $row->width(6)->text('other', '备注')->saveAsString();
         });
     }
