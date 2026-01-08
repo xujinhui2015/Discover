@@ -19,7 +19,6 @@ use App\Admin\Repositories\SkuStock;
 use App\Models\AttrModel;
 use App\Models\BrandModel;
 use App\Models\ProductModel;
-use App\Models\SkuStockBatchModel;
 use App\Models\SkuStockModel;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Controllers\AdminController;
@@ -75,6 +74,16 @@ class SkuStockController extends AdminController
                         });
                     });
                 }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
+                $filter->where('item_no', function (Builder $query) {
+                    $value = trim((string) $this->getValue());
+                    if ($value === '') {
+                        return;
+                    }
+
+                    $query->whereHasIn('sku.product', function (Builder $query) use ($value) {
+                        $query->where('item_no', 'like', '%' . $value . '%');
+                    });
+                }, '物料编号')->width(3);
 
                 $attrIdFilter = $filter->where('attr_id', function (Builder $query) {
                     $attrId = (string) $this->getValue();
@@ -131,8 +140,6 @@ class SkuStockController extends AdminController
 //                    $group->equal('等于');
 //                })->width(3);
 //                $filter->like('percent', "含绒量")->decimal()->width(3);
-                $filter->equal('standard', "通用标准")->select(SkuStockBatchModel::STANDARD)->width(3);
-
                 $filter
                     ->where('warning_status', function (Builder $query) {
                         $query->warningStatus($this->input);
