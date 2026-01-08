@@ -55,6 +55,7 @@ class StockHistoryObserver
                 $skuStockBatch->saveOrFail();
                 break;
             // 销售出库单
+            case StockHistoryModel::OUT_STOCK_PUCHASE:
             case StockHistoryModel::CHECK_OUT_TYPE:
             case StockHistoryModel::COLLECTION_TYPE:
             case StockHistoryModel::STORE_OUT_TYPE:

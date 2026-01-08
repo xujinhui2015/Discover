@@ -1,6 +1,8 @@
 激活：promptx
 使用这个角色行事：.promptx\resource\roles\discover-dev-engineer\discover-dev-engineer.role.md
 
+需要往库存管理菜单下，增加"物料报废单"的功能，报废类型设定：过期报废、包材更新
+
 ----------------------------------
 订单未审核状态的都可以删除
 低于安全库存 有状态提醒，参考豆包设计

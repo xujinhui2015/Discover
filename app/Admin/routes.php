@@ -50,6 +50,8 @@ Route::group([
     $router->resource('suppliers', 'SupplierController');
     $router->resource('purchase-in-orders', 'PurchaseInOrderController');
     $router->resource('purchase-in-items', 'PurchaseInItemController');
+    $router->resource('purchase-out-orders', 'PurchaseOutOrderController');
+    $router->resource('purchase-out-items', 'PurchaseOutItemController');
     $router->resource('positions', 'PositionController');
     $router->resource('sku-stocks', 'SkuStockController');
     $router->resource('sku-stock-batchs', 'SkuStockBatchController');

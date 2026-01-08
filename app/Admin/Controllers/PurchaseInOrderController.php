@@ -15,6 +15,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\BatchCreatePurInOrder;
+use App\Admin\Actions\Grid\BatchCreatePurOutOrderSave;
 use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Actions\Grid\PurchaseInOrderUnreview;
@@ -26,6 +27,7 @@ use App\Models\PositionModel;
 use App\Models\ProductModel;
 use App\Models\ProductSkuModel;
 use App\Models\PurchaseInItemModel;
+use App\Models\PurchaseInOrderModel;
 use App\Models\PurchaseOrderModel;
 use App\Repositories\SupplierRepository;
 use Dcat\Admin\Admin;
@@ -84,6 +86,68 @@ class PurchaseInOrderController extends OrderController
             $grid->actions(EditOrder::make());
             $grid->tools(BatchOrderPrint::make());
             $grid->tools(BatchCreatePurInOrder::make());
+
+            $grid->filter(function (Grid\Filter $filter) {
+                $filter->where('product_keyword', function (Builder $query) {
+                    $keyword = $this->getValue();
+                    $query->whereHasIn('items', function (Builder $query) use ($keyword) {
+                        $query->whereHasIn('sku.product', function (Builder $query) use ($keyword) {
+                            $query->where(function (Builder $query) use ($keyword) {
+                                $query->orWhere('name', 'like', '%' . $keyword . '%');
+                                $query->orWhere('py_code', 'like', '%' . $keyword . '%');
+                                $query->orWhere('item_no', 'like', '%' . $keyword . '%');
+                            });
+                        });
+                    });
+                }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
+                $filter->equal('review_status', '审核状态')->select($this->oredr_model::REVIEW_STATUS)->width(3);
+            });
+        });
+    }
+
+    public function iFrameGrid()
+    {
+        return Grid::make(new PurchaseInOrder(['user', 'supplier', 'with_order']), function (Grid $grid) {
+            $useNameStyle = $this->useMaterialNameStyle();
+            $grid->model()
+                ->where('review_status', PurchaseInOrderModel::REVIEW_STATUS_OK)
+                ->orderBy('id', 'desc');
+
+            $grid->column('id')->sortable();
+            $grid->column('order_no');
+            $grid->column('with_order.order_no', '关联单号')->emp();
+            $grid->column('status', '单据状态')->using($this->oredr_model::STATUS)->label($this->oredr_model::STATUS_COLOR);
+            $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
+            if ($useNameStyle) {
+                $grid->column('product_names', '物料名称')->display(function () {
+                    $productNames = ProductModel::query()
+                        ->whereIn('id', ProductSkuModel::query()
+                            ->whereIn('id', PurchaseInItemModel::query()
+                                ->where('order_id', $this->id)
+                                ->select('sku_id'))
+                            ->select('product_id'))
+                        ->pluck('name')
+                        ->toArray();
+                    $displayNames = '';
+                    foreach ($productNames as $productName) {
+                        $displayNames .= '<span class="badge" style="background:#5c6bc6">' . $productName . '</span><br>';
+                    }
+                    return $displayNames;
+                });
+            } else {
+                $grid->column('_', '物料明细')
+                    ->setAttributes(['class' => 'material-detail-cell'])
+                    ->expand(PurchaseInOrderItemDetail::class);
+            }
+            $grid->column('supplier.name', '供应商名称')->emp();
+            $grid->column('user.username', '创建用户');
+            $grid->column('created_at');
+            $grid->column('apply_at', '审核时间')->emp();
+            $grid->column('other')->emp();
+            $grid->disableQuickEditButton();
+            $grid->disableActions();
+            $grid->disableCreateButton();
+            $grid->tools(BatchCreatePurOutOrderSave::make());
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->where('product_keyword', function (Builder $query) {

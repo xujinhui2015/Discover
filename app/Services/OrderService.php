@@ -19,6 +19,7 @@ use App\Models\PurchaseInItemModel;
 use App\Models\PurchaseInOrderModel;
 use App\Models\PurchaseItemModel;
 use App\Models\PurchaseOrderModel;
+use App\Models\PurchaseOutOrderModel;
 use App\Models\SaleItemModel;
 use App\Models\SaleOrderModel;
 use App\Models\SaleOutOrderModel;
@@ -72,6 +73,35 @@ class OrderService extends BaseService
 
         $purchase_in_order->with_id = $with_order_id;
         $purchase_in_order->save();
+    }
+
+    /**
+     * @param string $order_no
+     * @param int $with_order_id
+     */
+    public function syncToPurchaseOutOrder(string $order_no, int $with_order_id): void
+    {
+        $purchase_in_order = PurchaseInOrderModel::findOrFail($with_order_id);
+        $purchase_out_order = PurchaseOutOrderModel::where('order_no', $order_no)->first();
+
+        $items = $purchase_in_order->items->map(function (PurchaseInItemModel $purchaseInItemModel) {
+            return [
+                'sku_id' => $purchaseInItemModel->sku_id,
+                'should_num' => $purchaseInItemModel->actual_num,
+                'actual_num' => 0,
+                'price' => $purchaseInItemModel->price,
+                'standard' => $purchaseInItemModel->standard,
+                'batch_no' => $purchaseInItemModel->batch_no,
+                'position_id' => $purchaseInItemModel->position_id,
+            ];
+        });
+
+        $purchase_out_order->items()->delete();
+        $purchase_out_order->items()->createMany($items);
+
+        $purchase_out_order->with_id = $with_order_id;
+        $purchase_out_order->supplier_id = $purchase_in_order->supplier_id;
+        $purchase_out_order->save();
     }
 
     /**
