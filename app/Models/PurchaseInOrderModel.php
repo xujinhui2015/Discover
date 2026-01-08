@@ -87,6 +87,11 @@ class PurchaseInOrderModel extends PurchaseBaseModel
         return $this->hasMany(PurchaseInItemModel::class, 'order_id');
     }
 
+    public function purchase_out_orders(): HasMany
+    {
+        return $this->hasMany(PurchaseOutOrderModel::class, 'with_id');
+    }
+
     /**
      * @return BelongsTo
      */

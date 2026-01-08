@@ -28,6 +28,7 @@ use App\Models\ProductModel;
 use App\Models\ProductSkuModel;
 use App\Models\PurchaseInItemModel;
 use App\Models\PurchaseInOrderModel;
+use App\Models\PurchaseOutOrderModel;
 use App\Models\PurchaseOrderModel;
 use App\Repositories\SupplierRepository;
 use Dcat\Admin\Admin;
@@ -110,6 +111,9 @@ class PurchaseInOrderController extends OrderController
         return Grid::make(new PurchaseInOrder(['user', 'supplier', 'with_order']), function (Grid $grid) {
             $useNameStyle = $this->useMaterialNameStyle();
             $grid->model()
+                ->whereDoesntHave('purchase_out_orders', function (Builder $builder) {
+                    $builder->where('review_status', PurchaseOutOrderModel::REVIEW_STATUS_WAIT);
+                })
                 ->where('review_status', PurchaseInOrderModel::REVIEW_STATUS_OK)
                 ->orderBy('id', 'desc');
 
