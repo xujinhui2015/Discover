@@ -112,54 +112,54 @@ class ProductObserver
         }
 
         // 若商品无规格,自动绑定一个基础规格
-        if ($productModel->id && ProductAttrModel::query()
-                ->where('product_id', $productModel->id)
-                ->doesntExist()) {
-
-            $attr = AttrModel::withoutGlobalScope('status')
-                ->withTrashed()
-                ->where('name', '通用')
-                ->first();
-
-            if (! $attr) {
-                $attr = AttrModel::create(['name' => '通用', 'status' => 1]);
-            } else {
-                if ($attr->trashed()) {
-                    $attr->restore();
-                }
-
-                if ((int) ($attr->status ?? 1) !== 1) {
-                    $attr->status = 1;
-                    $attr->save();
-                }
-            }
-
-            $attrValues = AttrValueModel::withTrashed()
-                ->where('attr_id', $attr->id)
-                ->where('name', '基础')
-                ->get();
-            if ($attrValues->isEmpty()) {
-                $attrValues = collect([
-                    AttrValueModel::create([
-                        'attr_id'    => $attr->id,
-                        'name'       => '基础',
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]),
-                ]);
-            } else {
-                $attrValues->each(function (AttrValueModel $value) {
-                    if ($value->trashed()) {
-                        $value->restore();
-                    }
-                });
-            }
-
-            $productModel->product_attr()->create([
-                'attr_id'        => $attr->id,
-                'attr_value_ids' => $attrValues->pluck('id')->values()->toArray(),
-            ]);
-        }
+//        if ($productModel->id && ProductAttrModel::query()
+//                ->where('product_id', $productModel->id)
+//                ->doesntExist()) {
+//
+//            $attr = AttrModel::withoutGlobalScope('status')
+//                ->withTrashed()
+//                ->where('name', '通用')
+//                ->first();
+//
+//            if (! $attr) {
+//                $attr = AttrModel::create(['name' => '通用', 'status' => 1]);
+//            } else {
+//                if ($attr->trashed()) {
+//                    $attr->restore();
+//                }
+//
+//                if ((int) ($attr->status ?? 1) !== 1) {
+//                    $attr->status = 1;
+//                    $attr->save();
+//                }
+//            }
+//
+//            $attrValues = AttrValueModel::withTrashed()
+//                ->where('attr_id', $attr->id)
+//                ->where('name', '基础')
+//                ->get();
+//            if ($attrValues->isEmpty()) {
+//                $attrValues = collect([
+//                    AttrValueModel::create([
+//                        'attr_id'    => $attr->id,
+//                        'name'       => '基础',
+//                        'created_at' => now(),
+//                        'updated_at' => now(),
+//                    ]),
+//                ]);
+//            } else {
+//                $attrValues->each(function (AttrValueModel $value) {
+//                    if ($value->trashed()) {
+//                        $value->restore();
+//                    }
+//                });
+//            }
+//
+//            $productModel->product_attr()->create([
+//                'attr_id'        => $attr->id,
+//                'attr_value_ids' => $attrValues->pluck('id')->values()->toArray(),
+//            ]);
+//        }
     }
 
     /**
