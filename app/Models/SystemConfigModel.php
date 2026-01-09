@@ -37,6 +37,10 @@ class SystemConfigModel extends BaseModel
     // ERP配置
     public const KEY_PRODUCTION_WAREHOUSE = 'production_warehouse';
     public const DEFAULT_PRODUCTION_WAREHOUSE = '成品仓';
+    public const KEY_DEFAULT_ATTR_NAME = 'default_attr_name';
+    public const DEFAULT_ATTR_NAME = '通用';
+    public const KEY_DEFAULT_ATTR_VALUE_NAME = 'default_attr_value_name';
+    public const DEFAULT_ATTR_VALUE_NAME = '基础';
 
     protected $table = 'system_config';
 

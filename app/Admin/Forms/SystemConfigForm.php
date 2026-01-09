@@ -32,15 +32,29 @@ class SystemConfigForm extends Form
         $warehouse = trim((string) ($input[SystemConfigModel::KEY_PRODUCTION_WAREHOUSE] ?? ''));
         $this->saveValue(SystemConfigModel::KEY_PRODUCTION_WAREHOUSE, $warehouse);
 
+        $attrName = trim((string) ($input[SystemConfigModel::KEY_DEFAULT_ATTR_NAME] ?? ''));
+        $this->saveValue(SystemConfigModel::KEY_DEFAULT_ATTR_NAME, $attrName);
+
+        $attrValueName = trim((string) ($input[SystemConfigModel::KEY_DEFAULT_ATTR_VALUE_NAME] ?? ''));
+        $this->saveValue(SystemConfigModel::KEY_DEFAULT_ATTR_VALUE_NAME, $attrValueName);
+
         return $this->success('保存成功');
     }
 
     public function form()
     {
         $this->tab('ERP设置', function () {
-            $this->text(SystemConfigModel::KEY_PRODUCTION_WAREHOUSE, '生产默认仓')
+            $this->text(SystemConfigModel::KEY_PRODUCTION_WAREHOUSE, '默认生产仓')
                 ->required()
                 ->help('用于生产入库时的默认仓库名称');
+
+            $this->text(SystemConfigModel::KEY_DEFAULT_ATTR_NAME, '默认属性名')
+                ->required()
+                ->help('商品无规格时自动绑定的默认属性名称');
+
+            $this->text(SystemConfigModel::KEY_DEFAULT_ATTR_VALUE_NAME, '默认属性值名')
+                ->required()
+                ->help('商品无规格时自动绑定的默认属性值名称');
         });
 
         $this->tab('打印设置', function () {
@@ -65,6 +79,14 @@ class SystemConfigForm extends Form
             SystemConfigModel::KEY_PRODUCTION_WAREHOUSE => SystemConfigModel::getValue(
                 SystemConfigModel::KEY_PRODUCTION_WAREHOUSE,
                 SystemConfigModel::DEFAULT_PRODUCTION_WAREHOUSE
+            ),
+            SystemConfigModel::KEY_DEFAULT_ATTR_NAME => SystemConfigModel::getValue(
+                SystemConfigModel::KEY_DEFAULT_ATTR_NAME,
+                SystemConfigModel::DEFAULT_ATTR_NAME
+            ),
+            SystemConfigModel::KEY_DEFAULT_ATTR_VALUE_NAME => SystemConfigModel::getValue(
+                SystemConfigModel::KEY_DEFAULT_ATTR_VALUE_NAME,
+                SystemConfigModel::DEFAULT_ATTR_VALUE_NAME
             ),
         ];
     }
