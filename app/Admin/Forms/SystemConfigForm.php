@@ -15,6 +15,7 @@
 namespace App\Admin\Forms;
 
 use App\Models\SystemConfigModel;
+use Dcat\Admin\Admin;
 use Dcat\Admin\Widgets\Form;
 
 class SystemConfigForm extends Form
@@ -43,6 +44,14 @@ class SystemConfigForm extends Form
 
     public function form()
     {
+        Admin::style(<<<'CSS'
+.system-config-form {
+    background: #fff;
+}
+CSS
+        );
+        $this->appendHtmlAttribute('class', 'system-config-form');
+
         $this->tab('ERP设置', function () {
             $this->text(SystemConfigModel::KEY_PRODUCTION_WAREHOUSE, '默认生产仓')
                 ->required()
