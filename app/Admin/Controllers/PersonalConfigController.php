@@ -67,6 +67,7 @@ CSS
             $form->disableCreatingCheck();
             $form->disableEditingCheck();
             $form->disableViewCheck();
+            $form->disableHeader();
 
             $form->tools(function (Form\Tools $tools) {
                 $tools->disableView();
