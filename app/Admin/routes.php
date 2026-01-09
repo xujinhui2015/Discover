@@ -25,6 +25,7 @@ Route::group([
 ], function (Router $router) {
     $router->get('/', 'HomeController@index');
     $router->get('personal-config', 'PersonalConfigController@index')->name('personal-config');
+    $router->put('personal-config/user', 'PersonalConfigController@updateUser')->name('personal-config.user.update');
     $router->get('system-config', 'SystemConfigController@index')->name('system-config');
     $router->get('api/get-attr-value', 'ApiController@getAttrValue')->name('api.attrvalue.find');
     $router->get('api/get-product-unit', 'ApiController@getUnitByProductId')->name('api.productunit.find');

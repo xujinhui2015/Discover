@@ -10,11 +10,8 @@
         </div>
     </a>
     <div class="dropdown-menu dropdown-menu-right">
-        <a href="{{ admin_url('auth/setting') }}" class="dropdown-item">
-            <i class="feather icon-user"></i> {{ trans('admin.setting') }}
-        </a>
         <a href="{{ admin_url('personal-config') }}" class="dropdown-item">
-            <i class="feather icon-sliders"></i> 个性化配置
+            <i class="feather icon-user"></i> 个人设置
         </a>
         @if($user->isAdministrator())
             <a href="{{ admin_url('system-config') }}" class="dropdown-item">

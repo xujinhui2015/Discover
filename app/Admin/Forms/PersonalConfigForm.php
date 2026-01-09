@@ -58,12 +58,11 @@ CSS
         );
         $this->appendHtmlAttribute('class', 'personal-config-form');
 
-        $this->tab('单据相关', function () {
-            $this->radio(self::MATERIAL_DETAIL_STYLE, '物料明细样式')
-                ->options($this->styleOptions())
-                ->default($this->currentStyle())
-                ->required();
-        });
+        $this->radio(self::MATERIAL_DETAIL_STYLE, '明细样式')
+            ->options($this->styleOptions())
+            ->default($this->currentStyle())
+            ->help('设置单据中物料明细的显示方式')
+            ->required();
 
         $this->disableResetButton();
     }
