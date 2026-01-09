@@ -44,7 +44,7 @@ CSS
         $tab->add('个人信息', $userForm->edit(Admin::user()->getKey()), true);
 
         // 单据相关 tab（原个性化配置）
-        $tab->add('单据相关', new PersonalConfigForm());
+        $tab->add('个性皮肤', new PersonalConfigForm());
 
         $tab->appendHtmlAttribute('class', 'personal-settings-container');
 
