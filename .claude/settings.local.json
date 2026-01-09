@@ -15,7 +15,10 @@
       "Bash(node --version:*)",
       "Bash(npm --version:*)",
       "Bash(echo:*)",
-      "Bash(intelephense:*)"
+      "Bash(intelephense:*)",
+      "Bash(mysql:*)",
+      "Bash(/dev/null <<'EOF'\nSELECT id, name, slug, http_path, parent_id, `order` \nFROM admin_permissions \nWHERE parent_id = 0 OR parent_id IN \\(SELECT id FROM admin_permissions WHERE parent_id = 0\\)\nORDER BY parent_id, `order`\nLIMIT 50;\nEOF)",
+      "Bash(php:*)"
     ],
     "deny": [],
     "ask": []
