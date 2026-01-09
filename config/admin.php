@@ -20,7 +20,7 @@ return [
     | login page.
     |
     */
-    'name' => '时尚星约 ERP',
+    'name' => env('APP_NAME'),
 
     /*
     |--------------------------------------------------------------------------
@@ -31,7 +31,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<img src="/logo.png" width="35"> &nbsp;时尚星约 ERP',
+    'logo' => '<img src="/logo.png" width="35"> &nbsp;' . env('APP_NAME'),
 
     /*
     |--------------------------------------------------------------------------
@@ -93,7 +93,7 @@ return [
     | Html title for all pages.
     |
     */
-    'title' => '时尚星约 ERP',
+    'title' => env('APP_NAME'),
 
     /*
     |--------------------------------------------------------------------------

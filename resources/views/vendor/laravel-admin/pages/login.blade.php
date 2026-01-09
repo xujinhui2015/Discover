@@ -416,7 +416,7 @@
     <div class="login-container">
         <!-- 左侧介绍区域 -->
         <div class="introduction-section">
-            <h1 class="system-name-large">时尚星约 ERP</h1>
+            <h1 class="system-name-large">{{ config('admin.name') }}</h1>
             <p class="system-slogan">核心价值，为企业经营赋能，实现降本增效，帮助企业从销售、库存、采购再到资金收付全链路管理</p>
 
             <div class="features-container">
@@ -441,7 +441,7 @@
         <div class="login-card">
             <!-- 品牌头部 -->
             <div class="login-header">
-                <div class="login-logo">时尚星约 ERP</div>
+                <div class="login-logo">{{ config('admin.name') }}</div>
                 <div class="login-subtitle">企业数据管理解决方案</div>
             </div>
 
