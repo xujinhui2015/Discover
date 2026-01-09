@@ -16,6 +16,11 @@
         <a href="{{ admin_url('personal-config') }}" class="dropdown-item">
             <i class="feather icon-sliders"></i> 个性化配置
         </a>
+        @if($user->isAdministrator())
+            <a href="{{ admin_url('system-config') }}" class="dropdown-item">
+                <i class="feather icon-settings"></i> 系统设置
+            </a>
+        @endif
 
         <div class="dropdown-divider"></div>
 

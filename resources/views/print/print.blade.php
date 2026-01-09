@@ -221,7 +221,7 @@
                     <div class="invoice-header">
                         <div class="company-name">{{ config('app.name') ?? '' }}</div>
                         <div class="invoice-title">{{ $orderName }}</div>
-                        <div class="contact-info">电话：020-86326688 传真：020-36265293</div>
+                        <div class="contact-info">电话：{{ $printPhone }} 传真：{{ $printFax }}</div>
                     </div>
 
                     <div class="customer-info">

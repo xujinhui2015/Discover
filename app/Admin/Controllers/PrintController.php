@@ -15,6 +15,7 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\SystemConfigModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -34,6 +35,22 @@ class PrintController extends Controller
         $itemSlug = Str::replaceFirst("order", "item", $orderSlug);
         $itemField = admin_trans($itemSlug.".fields");
         $orderName = head(admin_trans($orderSlug . ".labels"));
-        return view('print.print', compact("orders", 'orderField', 'itemField', 'orderName'));
+        $printPhone = SystemConfigModel::getValue(
+            SystemConfigModel::KEY_PRINT_PHONE,
+            SystemConfigModel::DEFAULT_PRINT_PHONE
+        );
+        $printFax = SystemConfigModel::getValue(
+            SystemConfigModel::KEY_PRINT_FAX,
+            SystemConfigModel::DEFAULT_PRINT_FAX
+        );
+
+        return view('print.print', compact(
+            "orders",
+            'orderField',
+            'itemField',
+            'orderName',
+            'printPhone',
+            'printFax'
+        ));
     }
 }
