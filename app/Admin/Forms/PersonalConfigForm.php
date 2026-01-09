@@ -58,10 +58,12 @@ CSS
         );
         $this->appendHtmlAttribute('class', 'personal-config-form');
 
-        $this->radio(self::MATERIAL_DETAIL_STYLE, '物料明细样式')
-            ->options($this->styleOptions())
-            ->default($this->currentStyle())
-            ->required();
+        $this->tab('单据相关', function () {
+            $this->radio(self::MATERIAL_DETAIL_STYLE, '物料明细样式')
+                ->options($this->styleOptions())
+                ->default($this->currentStyle())
+                ->required();
+        });
 
         $this->disableResetButton();
     }
