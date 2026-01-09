@@ -17,6 +17,7 @@ namespace App\Observers;
 use App\Models\MakeProductItemModel;
 use App\Models\MakeProductOrderModel;
 use App\Models\PositionModel;
+use App\Models\SystemConfigModel;
 use App\Models\TaskModel;
 use Dcat\Admin\Admin;
 
@@ -59,6 +60,10 @@ class TaskObserver
                 'other' => '',
             ]
         );
+        $warehouseName = SystemConfigModel::getValue(
+            SystemConfigModel::KEY_PRODUCTION_WAREHOUSE,
+            SystemConfigModel::DEFAULT_PRODUCTION_WAREHOUSE
+        );
         MakeProductItemModel::query()->firstOrCreate(
             [
                 'order_id' => $makeProductOrder->id,
@@ -70,7 +75,7 @@ class TaskObserver
 //                'percent' => $taskModel->percent,
                 'standard' => $taskModel->standard,
                 'sku_id' => $taskModel->sku_id,
-                'position_id' => PositionModel::firstOrCreate(['name' => '成品仓'])->id,
+                'position_id' => PositionModel::firstOrCreate(['name' => $warehouseName])->id,
             ]
         );
     }

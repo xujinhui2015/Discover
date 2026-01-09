@@ -18,6 +18,7 @@ use App\Models\BaseModel;
 use App\Models\MakeProductItemModel;
 use App\Models\MakeProductOrderModel;
 use App\Models\PositionModel;
+use App\Models\SystemConfigModel;
 use App\Models\TaskModel;
 use Dcat\Admin\Admin;
 use Dcat\Admin\Grid\RowAction;
@@ -79,7 +80,11 @@ HTML;
             $item->should_num = $task->plan_num;
             $item->actual_num = 0;
             $item->cost_price = 0;
-            $item->position_id = PositionModel::firstOrCreate(['name' => '成品仓'])->id;
+            $warehouseName = SystemConfigModel::getValue(
+                SystemConfigModel::KEY_PRODUCTION_WAREHOUSE,
+                SystemConfigModel::DEFAULT_PRODUCTION_WAREHOUSE
+            );
+            $item->position_id = PositionModel::firstOrCreate(['name' => $warehouseName])->id;
             $item->batch_no = 'PC' . date('Ymd');
             $item->percent = $task->percent ?? 0;
             $item->save();

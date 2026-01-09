@@ -21,19 +21,32 @@ class SystemConfigForm extends Form
 {
     public function handle(array $input)
     {
+        // 保存打印配置
         $phone = trim((string) ($input[SystemConfigModel::KEY_PRINT_PHONE] ?? ''));
         $fax = trim((string) ($input[SystemConfigModel::KEY_PRINT_FAX] ?? ''));
 
         $this->saveValue(SystemConfigModel::KEY_PRINT_PHONE, $phone);
         $this->saveValue(SystemConfigModel::KEY_PRINT_FAX, $fax);
 
+        // 保存ERP配置
+        $warehouse = trim((string) ($input[SystemConfigModel::KEY_PRODUCTION_WAREHOUSE] ?? ''));
+        $this->saveValue(SystemConfigModel::KEY_PRODUCTION_WAREHOUSE, $warehouse);
+
         return $this->success('保存成功');
     }
 
     public function form()
     {
-        $this->text(SystemConfigModel::KEY_PRINT_PHONE, '打印电话');
-        $this->text(SystemConfigModel::KEY_PRINT_FAX, '打印传真');
+        $this->tab('ERP设置', function () {
+            $this->text(SystemConfigModel::KEY_PRODUCTION_WAREHOUSE, '生产默认仓')
+                ->required()
+                ->help('用于生产入库时的默认仓库名称');
+        });
+
+        $this->tab('打印设置', function () {
+            $this->text(SystemConfigModel::KEY_PRINT_PHONE, '打印电话');
+            $this->text(SystemConfigModel::KEY_PRINT_FAX, '打印传真');
+        });
 
         $this->disableResetButton();
     }
@@ -48,6 +61,10 @@ class SystemConfigForm extends Form
             SystemConfigModel::KEY_PRINT_FAX => SystemConfigModel::getValue(
                 SystemConfigModel::KEY_PRINT_FAX,
                 SystemConfigModel::DEFAULT_PRINT_FAX
+            ),
+            SystemConfigModel::KEY_PRODUCTION_WAREHOUSE => SystemConfigModel::getValue(
+                SystemConfigModel::KEY_PRODUCTION_WAREHOUSE,
+                SystemConfigModel::DEFAULT_PRODUCTION_WAREHOUSE
             ),
         ];
     }

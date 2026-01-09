@@ -28,10 +28,15 @@ namespace App\Models;
  */
 class SystemConfigModel extends BaseModel
 {
+    // 打印配置
     public const KEY_PRINT_PHONE = 'print_phone';
     public const KEY_PRINT_FAX = 'print_fax';
     public const DEFAULT_PRINT_PHONE = '020-86326688';
     public const DEFAULT_PRINT_FAX = '020-36265293';
+
+    // ERP配置
+    public const KEY_PRODUCTION_WAREHOUSE = 'production_warehouse';
+    public const DEFAULT_PRODUCTION_WAREHOUSE = '成品仓';
 
     protected $table = 'system_config';
 

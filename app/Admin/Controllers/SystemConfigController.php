@@ -28,8 +28,8 @@ class SystemConfigController extends AdminController
         }
 
         return $content
-            ->title('打印配置')
-            ->description('维护打印电话和传真')
+            ->title('系统配置')
+            ->description('ERP设置和打印配置')
             ->body(new SystemConfigForm());
     }
 }
