@@ -17,17 +17,26 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Extensions\Form\Order\OrderController;
+use App\Admin\Extensions\Grid\InitStockOrderItemDetail;
 use App\Admin\Repositories\InitStockOrder;
+use App\Models\InitStockItemModel;
 use App\Models\InitStockOrderModel;
+use App\Models\PersonalConfigModel;
 use App\Models\PositionModel;
 use App\Models\ProductModel;
+use App\Models\ProductSkuModel;
+use Dcat\Admin\Admin;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Models\Administrator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Fluent;
 
 class InitStockOrderController extends OrderController
 {
+    private const MATERIAL_DETAIL_STYLE_KEY = 'material_detail_style';
+    private const MATERIAL_DETAIL_STYLE_DETAIL = 'detail';
+
     /**
      * Make a grid builder.
      *
@@ -36,15 +45,51 @@ class InitStockOrderController extends OrderController
     protected function grid()
     {
         return Grid::make(new InitStockOrder(['user']), function (Grid $grid) {
+            $useNameStyle = $this->useMaterialNameStyle();
             $grid->column('id')->sortable();
             $grid->column('order_no');
             $grid->column('user.username', '创建用户');
+            if ($useNameStyle) {
+                $grid->column('product_names', '物料名称')->display(function () {
+                    $productNames = ProductModel::query()
+                        ->whereIn('id', ProductSkuModel::query()
+                            ->whereIn('id', InitStockItemModel::query()
+                                ->where('order_id', $this->id)
+                                ->select('sku_id'))
+                            ->select('product_id'))
+                        ->pluck('name')
+                        ->toArray();
+                    $displayNames = '';
+                    foreach ($productNames as $productName) {
+                        $displayNames .= '<span class="badge" style="background:#5c6bc6">' . $productName . '</span><br>';
+                    }
+                    return $displayNames;
+                });
+            } else {
+                $grid->column('_', '物料明细')
+                    ->setAttributes(['class' => 'material-detail-cell'])
+                    ->expand(InitStockOrderItemDetail::class);
+            }
             $grid->column('other')->emp();
             $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at');
             $grid->tools(BatchOrderPrint::make());
             $grid->disableQuickEditButton();
             $grid->actions(EditOrder::make());
+            $grid->filter(function (Grid\Filter $filter) {
+                $filter->where('product_keyword', function (Builder $query) {
+                    $keyword = $this->getValue();
+                    $query->whereHasIn('items', function (Builder $query) use ($keyword) {
+                        $query->whereHasIn('sku.product', function (Builder $query) use ($keyword) {
+                            $query->where(function (Builder $query) use ($keyword) {
+                                $query->orWhere('name', 'like', '%' . $keyword . '%');
+                                $query->orWhere('py_code', 'like', '%' . $keyword . '%');
+                                $query->orWhere('item_no', 'like', '%' . $keyword . '%');
+                            });
+                        });
+                    });
+                }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
+            });
         });
     }
 
@@ -140,5 +185,20 @@ class InitStockOrderController extends OrderController
         $grid->column('batch_no', '批次号')->if(function () use ($order,$review_statu_ok) {
             return $order->review_status !== $review_statu_ok;
         })->edit();
+    }
+
+    private function useMaterialNameStyle(): bool
+    {
+        $userId = (int) optional(Admin::user())->id;
+        if (! $userId) {
+            return true;
+        }
+
+        $style = PersonalConfigModel::query()
+            ->where('user_id', $userId)
+            ->where('config_key', self::MATERIAL_DETAIL_STYLE_KEY)
+            ->value('config_value');
+
+        return $style !== self::MATERIAL_DETAIL_STYLE_DETAIL;
     }
 }
