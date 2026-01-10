@@ -24,12 +24,11 @@ class PersonalConfigController extends AdminController
 {
     public function index(Content $content)
     {
-        // 添加统一的背景样式
         Admin::style(<<<'CSS'
-.personal-settings-container {
+.personal-settings-tab .nav-tabs {
     background: #fff;
-    padding: 20px;
-    border-radius: 4px;
+    margin-bottom: 0;
+    padding-left: 1rem !important;
 }
 CSS
         );
@@ -46,7 +45,7 @@ CSS
         // 单据相关 tab（原个性化配置）
         $tab->add('个性皮肤', new PersonalConfigForm());
 
-        $tab->appendHtmlAttribute('class', 'personal-settings-container');
+        $tab->appendHtmlAttribute('class', 'personal-settings-tab');
 
         return $content
             ->title('个人设置')
@@ -68,6 +67,7 @@ CSS
             $form->disableEditingCheck();
             $form->disableViewCheck();
             $form->disableHeader();
+            $form->disableResetButton();
 
             $form->tools(function (Form\Tools $tools) {
                 $tools->disableView();
