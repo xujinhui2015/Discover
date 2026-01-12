@@ -51,6 +51,12 @@ class AttrModel extends BaseModel
         static::addGlobalScope('status', function ($builder) {
             $builder->where('status', 1);
         });
+
+        static::deleting(function ($attr) {
+            if (!$attr->forceDeleting) {
+                $attr->values()->delete();
+            }
+        });
     }
 
     public function values():HasMany

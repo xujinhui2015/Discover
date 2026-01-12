@@ -15,6 +15,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\ProductAttrModel
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $product_id 物料id
  * @property int $attr_id 属性id
  * @property array $attr_value_ids 物料可选值
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|ProductAttrModel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductAttrModel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductAttrModel query()
@@ -30,13 +32,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|ProductAttrModel whereAttrValueIds($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProductAttrModel whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProductAttrModel whereProductId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttrModel whereDeletedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|ProductAttrModel onlyTrashed()
+ * @method static \Illuminate\Database\Query\Builder|ProductAttrModel withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|ProductAttrModel withoutTrashed()
  * @mixin \Eloquent
  * @property-read \App\Models\AttrModel $attr
  */
 class ProductAttrModel extends BaseModel
 {
+    use SoftDeletes;
+
     protected $table = 'product_attr';
-    public $timestamps = false;
+    
+    // 不使用 created_at 和 updated_at，但保留 deleted_at
+    const CREATED_AT = null;
+    const UPDATED_AT = null;
 
     protected $casts = [
         'attr_value_ids' => 'json',

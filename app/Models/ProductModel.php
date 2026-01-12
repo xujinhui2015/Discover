@@ -75,6 +75,18 @@ class ProductModel extends BaseModel
 
     protected $table = 'product';
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($product) {
+            if (!$product->forceDeleting) {
+                $product->product_attr()->delete();
+                $product->sku()->delete();
+            }
+        });
+    }
+
     protected $with = ['product_attr', 'unit', 'sku', 'brand'];
 
     protected $appends = ['attr_value_arr', 'sku_key_value', 'sku_pluck', 'sku_id_text', 'type_str'];

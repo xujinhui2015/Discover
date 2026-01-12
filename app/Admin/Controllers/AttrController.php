@@ -62,6 +62,42 @@ class AttrController extends AdminController
             })->useTable();
 
             $form->hidden('status')->default(1);
+
+            $form->saving(function (Form $form) {
+                $id = $form->getKey();
+                if (!$id) {
+                    return; // 新建时不处理
+                }
+
+                $inputs = request()->input();
+
+                // 获取当前属性的所有属性值 ID
+                $existingIds = \App\Models\AttrValueModel::where('attr_id', $id)
+                    ->pluck('id')
+                    ->toArray();
+
+                // 获取提交的属性值 ID
+                $submittedIds = [];
+                if (isset($inputs['values']) && is_array($inputs['values'])) {
+                    foreach ($inputs['values'] as $value) {
+                        // 排除被标记为删除的项
+                        if (isset($value['_remove_']) && $value['_remove_'] == 1) {
+                            continue;
+                        }
+                        if (isset($value['id']) && $value['id']) {
+                            $submittedIds[] = (int)$value['id'];
+                        }
+                    }
+                }
+
+                // 计算需要删除的 ID（存在于数据库但不在提交数据中）
+                $toDeleteIds = array_diff($existingIds, $submittedIds);
+
+                // 软删除这些记录
+                if (!empty($toDeleteIds)) {
+                    \App\Models\AttrValueModel::whereIn('id', $toDeleteIds)->delete();
+                }
+            });
         });
     }
 }

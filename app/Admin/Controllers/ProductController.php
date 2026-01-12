@@ -262,6 +262,70 @@ class ProductController extends AdminController
                 })->values()->toArray();
                 $attr && $product->sku()->createMany($attr);
             });
+
+            $form->saving(function (Form $form) {
+                $id = $form->getKey();
+                if (!$id) {
+                    return; // 新建时不处理
+                }
+                
+                $inputs = request()->input();
+                
+                // 获取当前产品的所有 product_attr ID
+                $existingIds = \App\Models\ProductAttrModel::where('product_id', $id)
+                    ->pluck('id')
+                    ->toArray();
+                
+                // 获取提交的 product_attr ID（如果字段不存在，说明全部删除）
+                $submittedIds = [];
+                if (isset($inputs['product_attr']) && is_array($inputs['product_attr'])) {
+                    foreach ($inputs['product_attr'] as $attr) {
+                        if (isset($attr['id']) && $attr['id']) {
+                            $submittedIds[] = (int)$attr['id'];
+                        }
+                    }
+                }
+                
+                // 计算需要删除的 ID（存在于数据库但不在提交数据中）
+                $toDeleteIds = array_diff($existingIds, $submittedIds);
+                
+                // 软删除这些记录
+                if (!empty($toDeleteIds)) {
+                    // 1. 获取要删除的 ProductAttr 记录及其包含的属性值
+                    $attrsToDelete = \App\Models\ProductAttrModel::whereIn('id', $toDeleteIds)->get();
+
+                    // 2. 收集所有相关的 attr_value_id
+                    $relatedAttrValueIds = [];
+                    foreach ($attrsToDelete as $attr) {
+                        if (!empty($attr->attr_value_ids) && is_array($attr->attr_value_ids)) {
+                            $relatedAttrValueIds = array_merge($relatedAttrValueIds, $attr->attr_value_ids);
+                        }
+                    }
+                    $relatedAttrValueIds = array_unique($relatedAttrValueIds);
+
+                    // 3. 删除相关的 ProductSku
+                    if (!empty($relatedAttrValueIds)) {
+                        $product = ProductModel::find($id);
+                        if ($product) {
+                            $skus = $product->sku;
+                            $skusToDelete = [];
+                            foreach ($skus as $sku) {
+                                // 检查 SKU 是否包含任何要删除的属性值
+                                $skuAttrValueIds = explode(',', $sku->attr_value_ids);
+                                if (array_intersect($skuAttrValueIds, $relatedAttrValueIds)) {
+                                    $skusToDelete[] = $sku->id;
+                                }
+                            }
+                            if (!empty($skusToDelete)) {
+                                \App\Models\ProductSkuModel::whereIn('id', $skusToDelete)->delete();
+                            }
+                        }
+                    }
+
+                    // 4. 最后删除 ProductAttr
+                    \App\Models\ProductAttrModel::whereIn('id', $toDeleteIds)->delete();
+                }
+            });
         });
     }
 }
