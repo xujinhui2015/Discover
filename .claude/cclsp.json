@@ -5,8 +5,8 @@
         "php"
       ],
       "command": [
-        "intelephense",
-        "--stdio"
+          "phpactor",
+          "language-server"
       ],
       "rootDir": "."
     }
