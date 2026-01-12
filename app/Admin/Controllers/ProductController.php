@@ -268,62 +268,91 @@ class ProductController extends AdminController
                 if (!$id) {
                     return; // 新建时不处理
                 }
-                
+
                 $inputs = request()->input();
-                
-                // 获取当前产品的所有 product_attr ID
-                $existingIds = \App\Models\ProductAttrModel::where('product_id', $id)
-                    ->pluck('id')
-                    ->toArray();
-                
-                // 获取提交的 product_attr ID（如果字段不存在，说明全部删除）
+
+                // 待删除的属性值 ID 集合
+                $deletedAttrValueIds = [];
+
+                // 1. 获取现有 product_attr 记录
+                $existingAttrs = \App\Models\ProductAttrModel::where('product_id', $id)->get()->keyBy('id');
+                $existingIds = $existingAttrs->keys()->toArray();
+
                 $submittedIds = [];
                 if (isset($inputs['product_attr']) && is_array($inputs['product_attr'])) {
-                    foreach ($inputs['product_attr'] as $attr) {
-                        if (isset($attr['id']) && $attr['id']) {
-                            $submittedIds[] = (int)$attr['id'];
+                    foreach ($inputs['product_attr'] as $attrInput) {
+                        // 检查是否被标记为 _remove_
+                        if (isset($attrInput['_remove_']) && $attrInput['_remove_'] == 1) {
+                            continue;
+                        }
+
+                        if (isset($attrInput['id']) && $attrInput['id']) {
+                            $attrId = (int)$attrInput['id'];
+                            $submittedIds[] = $attrId;
+
+                            // 2. 处理修改的 product_attr (减少属性值)
+                            if (isset($existingAttrs[$attrId])) {
+                                $oldValues = $existingAttrs[$attrId]->attr_value_ids ?? [];
+                                $newValues = $attrInput['attr_value_ids'] ?? [];
+
+                                // 确保都是数组进行比较
+                                if (!is_array($newValues)) {
+                                    $newValues = [];
+                                }
+
+                                // 统一转为字符串比较，防止类型不一致
+                                $oldValues = array_map('strval', $oldValues);
+                                $newValues = array_map('strval', $newValues);
+
+                                // 计算减少的值
+                                $removedValues = array_diff($oldValues, $newValues);
+                                if (!empty($removedValues)) {
+                                    $deletedAttrValueIds = array_merge($deletedAttrValueIds, $removedValues);
+                                }
+                            }
                         }
                     }
                 }
-                
-                // 计算需要删除的 ID（存在于数据库但不在提交数据中）
-                $toDeleteIds = array_diff($existingIds, $submittedIds);
-                
-                // 软删除这些记录
-                if (!empty($toDeleteIds)) {
-                    // 1. 获取要删除的 ProductAttr 记录及其包含的属性值
-                    $attrsToDelete = \App\Models\ProductAttrModel::whereIn('id', $toDeleteIds)->get();
 
-                    // 2. 收集所有相关的 attr_value_id
-                    $relatedAttrValueIds = [];
-                    foreach ($attrsToDelete as $attr) {
-                        if (!empty($attr->attr_value_ids) && is_array($attr->attr_value_ids)) {
-                            $relatedAttrValueIds = array_merge($relatedAttrValueIds, $attr->attr_value_ids);
-                        }
-                    }
-                    $relatedAttrValueIds = array_unique($relatedAttrValueIds);
+                // 计算需要完全删除的 product_attr ID
+                $toDeleteAttrIds = array_diff($existingIds, $submittedIds);
 
-                    // 3. 删除相关的 ProductSku
-                    if (!empty($relatedAttrValueIds)) {
-                        $product = ProductModel::find($id);
-                        if ($product) {
-                            $skus = $product->sku;
-                            $skusToDelete = [];
-                            foreach ($skus as $sku) {
-                                // 检查 SKU 是否包含任何要删除的属性值
-                                $skuAttrValueIds = explode(',', $sku->attr_value_ids);
-                                if (array_intersect($skuAttrValueIds, $relatedAttrValueIds)) {
-                                    $skusToDelete[] = $sku->id;
-                                }
-                            }
-                            if (!empty($skusToDelete)) {
-                                \App\Models\ProductSkuModel::whereIn('id', $skusToDelete)->delete();
+                // 收集被删除的 product_attr 中的所有属性值
+                if (!empty($toDeleteAttrIds)) {
+                    foreach ($toDeleteAttrIds as $delId) {
+                        if (isset($existingAttrs[$delId])) {
+                            $vals = $existingAttrs[$delId]->attr_value_ids;
+                            if (is_array($vals)) {
+                                $deletedAttrValueIds = array_merge($deletedAttrValueIds, $vals);
                             }
                         }
                     }
+                    // 执行 product_attr 软删除
+                    \App\Models\ProductAttrModel::whereIn('id', $toDeleteAttrIds)->delete();
+                }
 
-                    // 4. 最后删除 ProductAttr
-                    \App\Models\ProductAttrModel::whereIn('id', $toDeleteIds)->delete();
+                // 3. 删除包含这些属性值的 SKU
+                if (!empty($deletedAttrValueIds)) {
+                    $deletedAttrValueIds = array_unique($deletedAttrValueIds);
+                    // 统一转字符串
+                    $deletedAttrValueIds = array_map('strval', $deletedAttrValueIds);
+
+                    $product = ProductModel::find($id);
+                    if ($product) {
+                        $skus = $product->sku; // 获取未删除的 SKU
+                        $skusToDelete = [];
+                        foreach ($skus as $sku) {
+                            $skuAttrValueIds = explode(',', $sku->attr_value_ids);
+                            // 如果 SKU 的属性值中有任何一个在已删除列表中，则该 SKU 无效
+                            if (array_intersect($skuAttrValueIds, $deletedAttrValueIds)) {
+                                $skusToDelete[] = $sku->id;
+                            }
+                        }
+
+                        if (!empty($skusToDelete)) {
+                            \App\Models\ProductSkuModel::whereIn('id', $skusToDelete)->delete();
+                        }
+                    }
                 }
             });
         });
