@@ -54,7 +54,7 @@ class ProductSkuModel extends BaseModel
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(ProductModel::class, 'product_id');
+        return $this->belongsTo(ProductModel::class, 'product_id')->withTrashed();
     }
 
     public function getAttrValueIdsStrAttribute(): string

@@ -50,7 +50,7 @@ class TransferItemModel extends BaseModel
 
     public function sku(): BelongsTo
     {
-        return $this->belongsTo(ProductSkuModel::class, 'sku_id');
+        return $this->belongsTo(ProductSkuModel::class, 'sku_id')->withTrashed();
     }
 
     public function order(): BelongsTo
