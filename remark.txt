@@ -1,53 +1,44 @@
-_token
-dLd0OjgFziSUiPHlusKGX21bNqkePxmlmu48cZ36
-item_no
-PMF47C369
-barcode
-name
-PMF47C369
-brand_id
-brand_id
-36
-type
-type
-3
-unit_id
-unit_id
-3
-warning_num
-0.00
-sale_price
-purchase_price
-product_attr[3099][attr_id]
-product_attr[3099][attr_id]
-2
-product_attr[3099][attr_value_ids][]
-37
-product_attr[3099][attr_value_ids][]
-product_attr[3099][id]
-3099
-product_attr[3099][_remove_]
-product_attr[3100][attr_id]
-product_attr[3100][attr_id]
-2
-product_attr[3100][attr_value_ids][]
-43
-product_attr[3100][attr_value_ids][]
-product_attr[3100][id]
-3100
-product_attr[3100][_remove_]
-product_attr[3101][attr_id]
-product_attr[3101][attr_id]
-1
-product_attr[3101][attr_value_ids][]
-4
-product_attr[3101][attr_value_ids][]
-product_attr[3101][id]
-3101
-product_attr[3101][_remove_]
-_method
-PUT
-_token
-dLd0OjgFziSUiPHlusKGX21bNqkePxmlmu48cZ36
-_previous_
-http://127.0.0.1:8000/admin/products
+激活：promptx
+使用这个角色行事：.promptx\resource\roles\discover-dev-engineer\discover-dev-engineer.role.md
+
+需要往库存管理菜单下，增加"物料报废单"的功能，报废类型设定：过期报废、包材更新
+
+----------------------------------
+查询最近7个git提交记录，需要细看每个提交的代码总结出修改的地方，形成普通用户看得懂的系统更新日记。类似举例： 日期：xxxx年xx月xx日 系统更新日记
+版本号：Vxxxx
+更新内容：
+
+新增功能：
+    1.xx
+    2.xxx
+优化改进：
+    1.xx
+    2.xxx
+问题修复：
+    1.xx
+更新结果：
+    1.xx
+    2.xxx
+备注：
+    2.xxx
+
+----------------------------------
+订单未审核状态的都可以删除
+低于安全库存 有状态提醒，参考豆包设计
+
+
+----------------------------------
+上线后需要做的事情：
+
+1.将menu表和本地的同步一下
+
+
+
+"env": {
+"HTTP_PROXY": "http://127.0.0.1:10808",
+"HTTPS_PROXY": "http://127.0.0.1:10808"
+},
+
+请记住如下2条全局规则，谢谢：
+1.回复尽量以中文回复
+2.如果没有显性需求，尽量不要写兼容代码
