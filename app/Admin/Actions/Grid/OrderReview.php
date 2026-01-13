@@ -184,6 +184,29 @@ class OrderReview extends AbstractTool
         }
     }
 
+    public function scrapOrderCheck(): void
+    {
+        if ($this->model->items->count() === 0) {
+            throw new \Exception('订单明细不能为空！');
+        }
+        if ($this->model->items()->where('actual_num', 0)->count()) {
+            throw new \Exception('明细数量不能为0！');
+        }
+
+        if (SystemConfigModel::getValue(SystemConfigModel::KEY_CHECK_INVENTORY, SystemConfigModel::DEFAULT_CHECK_INVENTORY)) {
+            $this->model->items->load(['batchs.stock_batch.sku.product']);
+            foreach ($this->model->items as $item) {
+                foreach ($item->batchs as $batch) {
+                    $stockBatch = $batch->stock_batch;
+                    if ($stockBatch && $stockBatch->num < $batch->actual_num) {
+                        $productName = $stockBatch->sku->product->name ?? '未知商品';
+                        throw new \Exception("商品[{$productName}]批次[{$stockBatch->batch_no}]库存不足！当前库存：{$stockBatch->num}，出库数量：{$batch->actual_num}");
+                    }
+                }
+            }
+        }
+    }
+
     public function purchaseOrderCheck(): void
 
     {

@@ -68,6 +68,12 @@ class ScrapBatchController extends AdminController
     {
         return Form::make(new ScrapBatch(), function (Form $form) {
             $form->decimal('actual_num');
+
+            $form->saving(function (Form $form) {
+                if ($form->actual_num) {
+                    $form->actual_num = strip_tags($form->actual_num);
+                }
+            });
         });
     }
 }
