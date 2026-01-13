@@ -39,6 +39,9 @@ class SystemConfigForm extends Form
         $attrValueName = trim((string) ($input[SystemConfigModel::KEY_DEFAULT_ATTR_VALUE_NAME] ?? ''));
         $this->saveValue(SystemConfigModel::KEY_DEFAULT_ATTR_VALUE_NAME, $attrValueName);
 
+        $checkInventory = trim((string) ($input[SystemConfigModel::KEY_CHECK_INVENTORY] ?? '0'));
+        $this->saveValue(SystemConfigModel::KEY_CHECK_INVENTORY, $checkInventory);
+
         return $this->success('保存成功');
     }
 
@@ -64,6 +67,14 @@ CSS
             $this->text(SystemConfigModel::KEY_DEFAULT_ATTR_VALUE_NAME, '默认属性值名')
                 ->required()
                 ->help('商品无规格时自动绑定的默认属性值名称');
+
+            $this->radio(SystemConfigModel::KEY_CHECK_INVENTORY, '出库验证库存')
+                ->options([
+                    '1' => '开启',
+                    '0' => '关闭',
+                ])
+                ->default('0')
+                ->help('开启后，销售出库审核时将验证库存是否充足，不允许负库存');
         });
 
         $this->tab('打印设置', function () {
@@ -96,6 +107,10 @@ CSS
             SystemConfigModel::KEY_DEFAULT_ATTR_VALUE_NAME => SystemConfigModel::getValue(
                 SystemConfigModel::KEY_DEFAULT_ATTR_VALUE_NAME,
                 SystemConfigModel::DEFAULT_ATTR_VALUE_NAME
+            ),
+            SystemConfigModel::KEY_CHECK_INVENTORY => SystemConfigModel::getValue(
+                SystemConfigModel::KEY_CHECK_INVENTORY,
+                SystemConfigModel::DEFAULT_CHECK_INVENTORY
             ),
         ];
     }
