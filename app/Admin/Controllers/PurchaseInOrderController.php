@@ -31,6 +31,7 @@ use App\Models\PurchaseInOrderModel;
 use App\Models\PurchaseOutOrderModel;
 use App\Models\PurchaseOrderModel;
 use App\Repositories\SupplierRepository;
+use App\Models\SystemConfigModel;
 use Dcat\Admin\Admin;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -222,7 +223,9 @@ class PurchaseInOrderController extends OrderController
                 $table->select('standard', '通用标准')->options(PurchaseOrderModel::STANDARD)->default(0);
                 $table->num('should_num', '采购数量')->required();
                 $table->tableDecimal('price', '采购价格')->default(0.00)->required();
-                $table->select('position_id', '入库位置')->options(PositionModel::orderBy('id', 'desc')->pluck('name', 'id'));
+                $table->select('position_id', '入库位置')
+                    ->options(PositionModel::orderBy('id', 'desc')->pluck('name', 'id'))
+                    ->default(SystemConfigModel::getValue(SystemConfigModel::KEY_DEFAULT_PURCHASE_IN_POSITION));
                 $table->ipt('batch_no', '批次号')->rem(8)->default("PC".date('Ymd'))->required();
             })->useTable()->width(12)->enableHorizontal();
         });

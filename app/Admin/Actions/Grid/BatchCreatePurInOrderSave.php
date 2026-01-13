@@ -15,6 +15,7 @@
 namespace App\Admin\Actions\Grid;
 
 use App\Models\PositionModel;
+use App\Models\SystemConfigModel;
 use App\Models\PurchaseInItemModel;
 use App\Models\PurchaseInOrderModel;
 use App\Models\PurchaseItemModel;
@@ -47,7 +48,14 @@ class BatchCreatePurInOrderSave extends BatchAction
     public function handle(Request $request)
     {
         $index = $request->input('_index');
-        $this->default_position_id = PositionModel::value('id') ?? 0;
+        // $this->default_position_id = PositionModel::value('id') ?? 0;
+        $configPositionId = SystemConfigModel::getValue(SystemConfigModel::KEY_DEFAULT_PURCHASE_IN_POSITION);
+        if ($configPositionId) {
+            $this->default_position_id = $configPositionId;
+        } else {
+            $this->default_position_id = PositionModel::value('id') ?? 0;
+        }
+
         DB::transaction(function () {
             foreach ($this->getKey() as $key) {
                 $purchase_order = PurchaseOrderModel::findOrFail($key);

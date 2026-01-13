@@ -15,6 +15,7 @@
 namespace App\Admin\Forms;
 
 use App\Models\SystemConfigModel;
+use App\Models\PositionModel;
 use Dcat\Admin\Admin;
 use Dcat\Admin\Widgets\Form;
 
@@ -41,6 +42,9 @@ class SystemConfigForm extends Form
 
         $checkInventory = trim((string) ($input[SystemConfigModel::KEY_CHECK_INVENTORY] ?? '0'));
         $this->saveValue(SystemConfigModel::KEY_CHECK_INVENTORY, $checkInventory);
+
+        $defaultPosition = trim((string) ($input[SystemConfigModel::KEY_DEFAULT_PURCHASE_IN_POSITION] ?? ''));
+        $this->saveValue(SystemConfigModel::KEY_DEFAULT_PURCHASE_IN_POSITION, $defaultPosition);
 
         return $this->success('保存成功');
     }
@@ -75,6 +79,10 @@ CSS
                 ])
                 ->default('0')
                 ->help('开启后，销售出库审核时将验证库存是否充足，不允许负库存');
+
+            $this->select(SystemConfigModel::KEY_DEFAULT_PURCHASE_IN_POSITION, '默认采购入库位置')
+                ->options(PositionModel::orderBy('id', 'desc')->pluck('name', 'id'))
+                ->help('用于采购入库单-选择单据入库创建单据时，默认选择的“入库位置”');
         });
 
         $this->tab('打印设置', function () {
@@ -111,6 +119,10 @@ CSS
             SystemConfigModel::KEY_CHECK_INVENTORY => SystemConfigModel::getValue(
                 SystemConfigModel::KEY_CHECK_INVENTORY,
                 SystemConfigModel::DEFAULT_CHECK_INVENTORY
+            ),
+            SystemConfigModel::KEY_DEFAULT_PURCHASE_IN_POSITION => SystemConfigModel::getValue(
+                SystemConfigModel::KEY_DEFAULT_PURCHASE_IN_POSITION,
+                SystemConfigModel::DEFAULT_PURCHASE_IN_POSITION
             ),
         ];
     }
