@@ -38,6 +38,8 @@ Filter::resolving(function (Filter $filter) {
     $filter->expand();
 });
 
+use App\Models\PersonalConfigModel;
+
 Grid::resolving(function (Grid $grid) {
     $grid->setActionClass(\Dcat\Admin\Grid\Displayers\Actions::class);
     $grid->model()->orderBy("id", "desc");
@@ -52,7 +54,36 @@ Grid::resolving(function (Grid $grid) {
         $actions->disableEdit();
     });
     $grid->option("dialog_form_area", ["85%", "90%"]);
+
+    // 个性化列表样式配置
+    $userId = (int) optional(Admin::user())->id;
+    if ($userId) {
+        $gridStyle = PersonalConfigModel::query()
+            ->where('user_id', $userId)
+            ->where('config_key', 'grid_style')
+            ->value('config_value');
+
+        if ($gridStyle === 'fixed_header') {
+            Admin::style(<<<'CSS'
+.table-responsive {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+.table-responsive thead th {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: #fff;
+}
+body.dark-mode .table-responsive thead th {
+    background-color: #2c2c43;
+}
+CSS
+            );
+        }
+    }
 });
+
 
 Form\Field::macro('enableHorizontal', function () {
     $this->horizontal = true;
@@ -200,4 +231,5 @@ Admin::css('/static/css/custom-select2.css');
 Admin::css('/static/css/custom-sidebar.css');
 Admin::css('/static/css/modern-navbar.css');
 Admin::css('/static/css/custom-filter.css?v=' . uniqid()); // 添加唯一ID避免缓存问题，确保加载最新的14px字体样式
+
 
