@@ -27,6 +27,7 @@ use App\Models\UnitModel;
 use App\Repositories\BrandRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\UnitRepository;
+use Dcat\Admin\Admin;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Grid\Tools;
@@ -89,6 +90,7 @@ class ProductController extends AdminController
     {
         return Grid::make(new Product(), function (Grid $grid) {
             $grid->setName('product_select');
+
 
             $grid->model()->whereHas('sku');
             $grid->column('id')->sortable();

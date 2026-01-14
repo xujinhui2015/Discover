@@ -226,6 +226,22 @@ Admin::script(<<<'JS'
     });
 JS);
 
+// Grid 全选修复（仅 iframe 列表）
+Admin::script(<<<'JS'
+    (function() {
+        var params = new URLSearchParams(window.location.search);
+        if (!params.has('_grid_iframe_')) {
+            return;
+        }
+
+        $(document).off('change.ps_selectall').on('change.ps_selectall', '.select-all', function() {
+            var isChecked = $(this).prop('checked');
+            var $table = $(this).closest('table');
+            var $rows = $table.find('.checkbox-grid-column input[type="checkbox"]');
+            $rows.prop('checked', isChecked).trigger('change');
+        });
+    })();
+JS);
 
 Admin::css('/static/css/custom-select2.css');
 Admin::css('/static/css/custom-sidebar.css');
