@@ -249,8 +249,9 @@ class PurchaseInOrderController extends OrderController
         })->display(function () {
             return $this->sku['attr_value_ids_str'] ?? '';
         })->else()->selectplus(function (Fluent $fluent) {
-            return $fluent->sku['product']['sku_key_value'];
+            return data_get($fluent, 'sku.product.sku_key_value', []);
         });
+
 
 //        $grid->column('percent', '含绒百分比')->if(function () use ($order, $review_statu_ok) {
 //            return $order->review_status !== $review_statu_ok;
