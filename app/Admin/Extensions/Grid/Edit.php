@@ -21,7 +21,7 @@ class Edit extends AbstractDisplayer
 {
     protected $selector = 'grid-filed-editor';
 
-    public function display($refresh = true)
+    public function display($refresh = false)
     {
         $this->addStyle();
         $this->addScript();
@@ -63,7 +63,11 @@ CSS
                     return
                 }
                 $(this).attr('contenteditable', true);
-                $(this).width($(this).width()+50);
+                // 保存原始宽度，编辑时临时增加宽度
+                if (!$(this).data('original-width')) {
+                    $(this).data('original-width', $(this).width());
+                }
+                $(this).css('min-width', $(this).data('original-width') + 50);
             })
             $(".{$this->selector}").on("blur",function() {
                 var obj = $(this),
@@ -72,6 +76,10 @@ CSS
                     refresh = obj.attr('data-refresh').trim(),
                     old_value = obj.attr('data-value').trim(),
                     value = obj.html().replace(new RegExp("<br>","g"), '').replace(new RegExp("&nbsp;","g"), '').trim();
+
+                // 恢复原始宽度
+                obj.css('min-width', '');
+                obj.attr('contenteditable', false);
 
                 if (value != old_value) {
                     var data = {
@@ -87,18 +95,17 @@ CSS
                         success: function (data) {
                             Dcat.NP.done();
                             if (data.status) {
-                                obj.attr('data-value',value)
-                                obj.attr('contenteditable', false);
+                                obj.attr('data-value',value);
                                 Dcat.success(data.message);
                                 refresh && Dcat.reload()
                             } else {
-                                obj.html(old_value)
+                                obj.html(old_value);
                                 Dcat.error(data.message);
                             }
                         },
                         error:function(a,b,c) {
                           Dcat.NP.done();
-                          obj.html(old_value)
+                          obj.html(old_value);
                           Dcat.handleAjaxError(a, b, c);
                         }
                     });
