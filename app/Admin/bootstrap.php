@@ -248,4 +248,13 @@ Admin::css('/static/css/custom-sidebar.css');
 Admin::css('/static/css/modern-navbar.css');
 Admin::css('/static/css/custom-filter.css?v=' . uniqid()); // 添加唯一ID避免缓存问题，确保加载最新的14px字体样式
 
+// 列表行鼠标悬停时背景色与选中行一致
+$hoverColor = Admin::color()->dark50();
+Admin::style(<<<CSS
+#grid-table > tbody > tr:hover {
+    background-color: {$hoverColor} !important;
+}
+CSS
+);
+
 
