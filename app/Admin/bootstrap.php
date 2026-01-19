@@ -251,7 +251,8 @@ Admin::css('/static/css/custom-filter.css?v=' . uniqid()); // 添加唯一ID避�
 // 列表行鼠标悬停时背景色与选中行一致
 $hoverColor = Admin::color()->dark50();
 Admin::style(<<<CSS
-#grid-table > tbody > tr:hover {
+#grid-table > tbody > tr:hover,
+table.dataTable tbody tr:hover {
     background-color: {$hoverColor} !important;
 }
 CSS
