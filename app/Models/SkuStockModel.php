@@ -87,6 +87,10 @@ class SkuStockModel extends BaseModel
      */
     public function getWarningStatusAttribute(): int
     {
+        if (!$this->sku || !$this->sku->product) {
+            return self::WARNING_STATUS_NORMAL;
+        }
+
         $stock = $this->num;
         $warningStock = $this->sku->product->warning_num;
 

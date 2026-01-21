@@ -38,6 +38,7 @@ class SkuStockController extends AdminController
             $grid->column('id')->sortable();
             $grid->column('sku.product.item_no', '物料编号');
             $grid->column('sku.product.name', '物料名称');
+            $grid->column('sku.product.barcode', '专属编码');
             $grid->column('sku.product.unit.name', '单位');
             $grid->column('sku.product.type_str', '分类');
             $grid->column('sku.product.brand.name', '品牌');
@@ -149,6 +150,30 @@ class SkuStockController extends AdminController
 
             });
 
+            $grid->export()->rows(function (array $rows) {
+                return array_map(function ($row) {
+                    $product = $row['sku']['product'] ?? [];
+                    $unit = $product['unit'] ?? [];
+                    $brand = $product['brand'] ?? [];
+                    $warningNum = $product['warning_num'] ?? 0;
+                    $warningStatus = $row['warning_status_str']
+                        ?? SkuStockModel::WARNING_STATUS[$row['warning_status']];
+
+                    return [
+                        '物料编号' => $product['item_no'] ?? '',
+                        '物料名称' => $product['name'] ?? '',
+                        '专属编码' => $product['barcode'] ?? '',
+                        '单位' => $unit['name'] ?? '',
+                        '分类' => $product['type_str'] ?? '',
+                        '品牌' => $brand['name'] ?? '',
+                        '属性' => $row['sku']['attr_value_ids_str'] ?? '',
+                        '通用标准' => $row['standard_str'] ?? '',
+                        '库存数量' => $row['num'] ?? 0,
+                        '预警库存' => $warningNum > 0 ? $warningNum : '-',
+                        '预警状态' => $warningStatus,
+                    ];
+                }, $rows);
+            })->extension('xlsx');
 
             $grid->disableActions();
             $grid->disableCreateButton();
