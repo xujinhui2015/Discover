@@ -15,6 +15,7 @@
 namespace App\Admin\Actions\Grid;
 
 use App\Models\ApplyForBatchModel;
+use App\Models\ApplyForItemModel;
 use App\Models\InventoryItemModel;
 use App\Models\ScrapBatchModel;
 use App\Models\SaleOutBatchModel;
@@ -99,14 +100,38 @@ class BatchStockSelectSave extends BatchAction
 
     public function saveToApplyForBatch(): void
     {
+        $scale = 3;
+        $applyForItem = ApplyForItemModel::query()->findOrFail($this->item_id);
+        $existingTotal = (string) (ApplyForBatchModel::query()
+            ->where('item_id', $this->item_id)
+            ->sum('actual_num') ?? '0');
+        $remaining = bcsub((string) $applyForItem->should_num, $existingTotal, $scale);
+        if (bccomp($remaining, '0', $scale) < 0) {
+            $remaining = '0';
+        }
+
         foreach ($this->getKey() as $stock_batch_id) {
+            $skuStockBatch = SkuStockBatchModel::query()->findOrFail($stock_batch_id);
+            $batchStockNum = (string) ($skuStockBatch->num ?? '0');
+            $maxForBatch = bccomp($remaining, $batchStockNum, $scale) === 1
+                ? $batchStockNum
+                : $remaining;
+            if (bccomp($maxForBatch, '0', $scale) < 0) {
+                $maxForBatch = '0';
+            }
+
             ApplyForBatchModel::create([
                 'stock_batch_id' => $stock_batch_id,
                 'sku_id' => $this->sku_id,
                 'item_id' => $this->item_id,
                 'standard' => $this->standard,
+                'actual_num' => $maxForBatch,
 //                'percent'        => $this->percent,
             ]);
+            $remaining = bcsub($remaining, $maxForBatch, $scale);
+            if (bccomp($remaining, '0', $scale) < 0) {
+                $remaining = '0';
+            }
         }
     }
 
