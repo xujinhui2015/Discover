@@ -254,7 +254,8 @@ class ProductController extends AdminController
 
             $form->row(function (Form\Row $row) {
                 $row->width(12)->image('product_image', '产品图片')
-                    ->help('请使用PS预先处理好产品图片的大小，推荐尺寸：800px * 800px')
+                    ->help('请使用PS预先处理好产品图片的大小，推荐尺寸：800px * 800px，大小不超过2M')
+                    ->maxSize(2048)
                     ->uniqueName()
                     ->autoUpload();
             });
