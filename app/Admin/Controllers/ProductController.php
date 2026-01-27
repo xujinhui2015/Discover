@@ -34,6 +34,7 @@ use Dcat\Admin\Grid\Tools;
 use Dcat\Admin\Controllers\AdminController;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 
@@ -54,6 +55,8 @@ class ProductController extends AdminController
 //            $grid->column('py_code')->emp();
             $grid->column('type', '分类')->using(ProductModel::TYPE);
             $grid->column('brand.name', '品牌')->emp();
+            $grid->column('luxury_brand_series', '对应大牌')->emp();
+            $grid->column('product_image', '产品图片')->image('', 64, 64);
             $grid->column('unit.name', '单位')->emp();
             $grid->column('warning_num')->emp();
             $grid->column('sale_price')->emp();
@@ -227,6 +230,8 @@ class ProductController extends AdminController
                     ->default(0)
                     ->help('填0则不预警')
                     ->required();
+                $row->width(6)->text('luxury_brand_series', '对应大牌')
+                    ->help('填写该产品对标的品牌系列，如：香奈儿-粉邂逅');
             });
 
             $form->row(function (Form\Row $row) use ($form) {
@@ -241,6 +246,13 @@ class ProductController extends AdminController
                     ->attribute('step', '0.01')
                     ->attribute('min', '0')
                     ->help('非必填,用于采购订购单预填价格');
+            });
+
+            $form->row(function (Form\Row $row) {
+                $row->width(12)->image('product_image', '产品图片')
+                    ->help('上传产品效果图片，用于展示参考')
+                    ->uniqueName()
+                    ->autoUpload();
             });
 
 //            $form->row(function (Form\Row $row) use ($form) {
