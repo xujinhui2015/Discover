@@ -49,16 +49,8 @@ class ProductController extends AdminController
     {
         return Grid::make(new Product(), function (Grid $grid) {
             $grid->column('id')->sortable();
-            $grid->column('item_no', '物料编号/专属编码')
-                ->display(function ($value) {
-                    $barcode = $this->barcode ?? '';
-                    if ($barcode === '') {
-                        return $value;
-                    }
-
-                    return $value . '<br><span class="text-muted">' . $barcode . '</span>';
-                })
-                ->emp();
+            $grid->column('item_no')->emp();
+            $grid->column('barcode', '专属编码')->emp();
             $grid->column('name')->emp();
 //            $grid->column('py_code')->emp();
             $grid->column('type', '分类')->using(ProductModel::TYPE);
