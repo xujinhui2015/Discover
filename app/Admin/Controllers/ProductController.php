@@ -56,7 +56,11 @@ class ProductController extends AdminController
             $grid->column('type', '分类')->using(ProductModel::TYPE);
             $grid->column('brand.name', '品牌')->emp();
             $grid->column('luxury_brand_series', '对应大牌')->emp();
-            $grid->column('product_image', '产品图片')->image('', 64, 64);
+            $grid->column('product_image', '产品图片')
+                ->display(function ($value) {
+                    return $value ?: 'public/default.png';
+                })
+                ->image('', 64, 64);
             $grid->column('unit.name', '单位')->emp();
             $grid->column('warning_num')->emp();
             $grid->column('sale_price')->emp();
