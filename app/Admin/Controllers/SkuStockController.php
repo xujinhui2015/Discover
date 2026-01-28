@@ -34,7 +34,8 @@ class SkuStockController extends AdminController
     protected function grid()
     {
         return Grid::make(new SkuStock(['sku.product']), function (Grid $grid) {
-//            $grid->model()->where('num', ">", 0);
+            // 过滤已删除的 SKU
+            $grid->model()->whereHas('sku');
             $grid->column('id')->sortable();
             $grid->column('sku.product.item_no', '物料编号');
             $grid->column('sku.product.name', '物料名称');

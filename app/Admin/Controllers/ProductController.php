@@ -277,6 +277,26 @@ class ProductController extends AdminController
                 $id = $form->getKey();
                 $product = ProductModel::findOrFail($id);
 
+                // 处理 product_attr：检查新创建的记录是否可以复用软删除记录
+                $currentAttrs = $product->product_attr()->get();
+                foreach ($currentAttrs as $attr) {
+                    // 查找同 product_id + attr_id 的软删除记录
+                    $trashedAttr = \App\Models\ProductAttrModel::onlyTrashed()
+                        ->where('product_id', $id)
+                        ->where('attr_id', $attr->attr_id)
+                        ->latest('id')
+                        ->first();
+
+                    if ($trashedAttr) {
+                        // 恢复软删除记录并更新 attr_value_ids
+                        $trashedAttr->restore();
+                        $trashedAttr->attr_value_ids = $attr->attr_value_ids;
+                        $trashedAttr->save();
+                        // 删除新创建的记录（用恢复的记录替代）
+                        $attr->forceDelete();
+                    }
+                }
+
                 // 获取现有（未删除）SKU 的 attr_value_ids
                 $existingSkuKeys = $product->sku->pluck('attr_value_ids')->toArray();
 
