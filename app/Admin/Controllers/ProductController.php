@@ -276,10 +276,28 @@ class ProductController extends AdminController
             $form->saved(function (Form $form, $result) {
                 $id = $form->getKey();
                 $product = ProductModel::findOrFail($id);
-                $attr = collect($product->attr_value_arr)->keys()->diff($product->sku->pluck('attr_value_ids'))->map(function (string $val) {
-                    return ['attr_value_ids' => $val];
-                })->values()->toArray();
-                $attr && $product->sku()->createMany($attr);
+
+                // 获取现有（未删除）SKU 的 attr_value_ids
+                $existingSkuKeys = $product->sku->pluck('attr_value_ids')->toArray();
+
+                // 计算需要新增的 attr_value_ids 组合
+                $toCreate = collect($product->attr_value_arr)->keys()->diff($existingSkuKeys);
+
+                foreach ($toCreate as $attrValueIds) {
+                    $attrValueIds = (string) $attrValueIds;
+                    // 优先尝试恢复最后删除的 SKU（按 ID 降序取最新）
+                    $trashedSku = \App\Models\ProductSkuModel::onlyTrashed()
+                        ->where('product_id', $id)
+                        ->where('attr_value_ids', $attrValueIds)
+                        ->latest('id')
+                        ->first();
+
+                    if ($trashedSku) {
+                        $trashedSku->restore();
+                    } else {
+                        $product->sku()->create(['attr_value_ids' => $attrValueIds]);
+                    }
+                }
             });
 
             $form->saving(function (Form $form) {

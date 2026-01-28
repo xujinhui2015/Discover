@@ -476,7 +476,7 @@ class ProductImportService extends BaseService
         return [$product, $mode];
     }
 
-    protected function syncProductRelations(ProductModel $product, array $productAttr, array $skuRows, string $mode): void
+    protected function syncProductRelations(ProductModel $product, ?array $productAttr, array $skuRows, string $mode): void
     {
         if ($mode === 'updated') {
             $product->unsetRelation('sku');
@@ -484,17 +484,49 @@ class ProductImportService extends BaseService
             return;
         }
 
+        // 处理 product_attr：优先恢复软删除记录
         if ($productAttr) {
-            $productAttr = array_map(function ($attr) {
-                $attr['attr_value_ids'] = array_values(array_unique($attr['attr_value_ids']));
+            foreach ($productAttr as $attr) {
+                $attrValueIds = array_values(array_unique($attr['attr_value_ids']));
 
-                return $attr;
-            }, $productAttr);
-            $product->product_attr()->createMany($productAttr);
+                // 尝试恢复最后删除的 product_attr（按 ID 降序取最新）
+                $trashedAttr = \App\Models\ProductAttrModel::onlyTrashed()
+                    ->where('product_id', $product->id)
+                    ->where('attr_id', $attr['attr_id'])
+                    ->latest('id')
+                    ->first();
+
+                if ($trashedAttr) {
+                    $trashedAttr->restore();
+                    $trashedAttr->attr_value_ids = $attrValueIds;
+                    $trashedAttr->save();
+                } else {
+                    $product->product_attr()->create([
+                        'attr_id'        => $attr['attr_id'],
+                        'attr_value_ids' => $attrValueIds,
+                    ]);
+                }
+            }
         }
 
+        // 处理 SKU：优先恢复软删除记录
         if (! empty($skuRows)) {
-            $product->sku()->createMany($skuRows);
+            foreach ($skuRows as $skuRow) {
+                $attrValueIds = (string) $skuRow['attr_value_ids'];
+
+                // 尝试恢复最后删除的 SKU（按 ID 降序取最新）
+                $trashedSku = \App\Models\ProductSkuModel::onlyTrashed()
+                    ->where('product_id', $product->id)
+                    ->where('attr_value_ids', $attrValueIds)
+                    ->latest('id')
+                    ->first();
+
+                if ($trashedSku) {
+                    $trashedSku->restore();
+                } else {
+                    $product->sku()->create(['attr_value_ids' => $attrValueIds]);
+                }
+            }
         }
 
         $product->unsetRelation('sku');

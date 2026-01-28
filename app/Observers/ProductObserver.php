@@ -166,10 +166,24 @@ class ProductObserver
                 });
             }
 
-            $productModel->product_attr()->create([
-                'attr_id'        => $attr->id,
-                'attr_value_ids' => $attrValues->pluck('id')->values()->toArray(),
-            ]);
+            // 优先尝试恢复最后删除的 product_attr 记录（按 ID 降序取最新）
+            $attrValueIdsArray = $attrValues->pluck('id')->values()->toArray();
+            $trashedAttr = ProductAttrModel::onlyTrashed()
+                ->where('product_id', $productModel->id)
+                ->where('attr_id', $attr->id)
+                ->latest('id')
+                ->first();
+
+            if ($trashedAttr) {
+                $trashedAttr->restore();
+                $trashedAttr->attr_value_ids = $attrValueIdsArray;
+                $trashedAttr->save();
+            } else {
+                $productModel->product_attr()->create([
+                    'attr_id'        => $attr->id,
+                    'attr_value_ids' => $attrValueIdsArray,
+                ]);
+            }
         }
     }
 
