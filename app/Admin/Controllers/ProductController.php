@@ -283,12 +283,35 @@ class ProductController extends AdminController
             });
 
             $form->saving(function (Form $form) {
+                $inputs = request()->input();
+
+                if (isset($inputs['product_attr']) && is_array($inputs['product_attr'])) {
+                    $attrIds = [];
+                    foreach ($inputs['product_attr'] as $attrInput) {
+                        if (isset($attrInput['_remove_']) && $attrInput['_remove_'] == 1) {
+                            continue;
+                        }
+
+                        $attrId = $attrInput['attr_id'] ?? null;
+                        if ($attrId !== null && $attrId !== '') {
+                            $attrIds[] = (int) $attrId;
+                        }
+                    }
+
+                    if ($attrIds) {
+                        $attrIdCounts = array_count_values($attrIds);
+                        foreach ($attrIdCounts as $count) {
+                            if ($count > 1) {
+                                return $form->error('属性不可重复，请检查属性设置');
+                            }
+                        }
+                    }
+                }
+
                 $id = $form->getKey();
                 if (!$id) {
                     return; // 新建时不处理
                 }
-
-                $inputs = request()->input();
 
                 // 待删除的属性值 ID 集合
                 $deletedAttrValueIds = [];
