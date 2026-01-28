@@ -319,9 +319,9 @@ class ProductController extends AdminController
                                     $newValues = [];
                                 }
 
-                                // 统一转为字符串比较，防止类型不一致
-                                $oldValues = array_map('strval', $oldValues);
-                                $newValues = array_map('strval', $newValues);
+                                // 统一转为整型比较，防止类型不一致
+                                $oldValues = array_map('intval', $oldValues);
+                                $newValues = array_map('intval', $newValues);
 
                                 // 计算减少的值
                                 $removedValues = array_diff($oldValues, $newValues);
@@ -342,7 +342,7 @@ class ProductController extends AdminController
                         if (isset($existingAttrs[$delId])) {
                             $vals = $existingAttrs[$delId]->attr_value_ids;
                             if (is_array($vals)) {
-                                $deletedAttrValueIds = array_merge($deletedAttrValueIds, $vals);
+                                $deletedAttrValueIds = array_merge($deletedAttrValueIds, array_map('intval', $vals));
                             }
                         }
                     }
@@ -353,15 +353,15 @@ class ProductController extends AdminController
                 // 3. 删除包含这些属性值的 SKU
                 if (!empty($deletedAttrValueIds)) {
                     $deletedAttrValueIds = array_unique($deletedAttrValueIds);
-                    // 统一转字符串
-                    $deletedAttrValueIds = array_map('strval', $deletedAttrValueIds);
+                    // 统一转整型
+                    $deletedAttrValueIds = array_map('intval', $deletedAttrValueIds);
 
                     $product = ProductModel::find($id);
                     if ($product) {
                         $skus = $product->sku; // 获取未删除的 SKU
                         $skusToDelete = [];
                         foreach ($skus as $sku) {
-                            $skuAttrValueIds = explode(',', $sku->attr_value_ids);
+                            $skuAttrValueIds = array_map('intval', explode(',', $sku->attr_value_ids));
                             // 如果 SKU 的属性值中有任何一个在已删除列表中，则该 SKU 无效
                             if (array_intersect($skuAttrValueIds, $deletedAttrValueIds)) {
                                 $skusToDelete[] = $sku->id;

@@ -53,6 +53,16 @@ class ProductAttrModel extends BaseModel
         'attr_value_ids' => 'json',
     ];
 
+    public function setAttrValueIdsAttribute($value): void
+    {
+        if (is_array($value)) {
+            $this->attributes['attr_value_ids'] = json_encode(array_map('intval', $value));
+            return;
+        }
+
+        $this->attributes['attr_value_ids'] = $value;
+    }
+
     public function attr(): BelongsTo
     {
         return $this->belongsTo(AttrModel::class, 'attr_id');
