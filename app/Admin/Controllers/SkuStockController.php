@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Renderables\SkuStockBatchTable;
 use App\Admin\Repositories\SkuStock;
 use App\Models\AttrModel;
@@ -36,28 +37,51 @@ class SkuStockController extends AdminController
         return Grid::make(new SkuStock(['sku.product']), function (Grid $grid) {
             // 过滤已删除的 SKU
             $grid->model()->whereHas('sku');
-            $grid->column('id')->sortable();
-            $grid->column('sku.product.item_no', '物料编号');
-            $grid->column('sku.product.name', '物料名称');
-            $grid->column('sku.product.barcode', '专属编码');
-            $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '分类');
-            $grid->column('sku.product.brand.name', '品牌');
-            $grid->column('sku.attr_value_ids_str', '属性');
+            
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'item_no', 'label' => '物料编号'],
+                ['name' => 'name', 'label' => '物料名称'],
+                ['name' => 'barcode', 'label' => '专属编码'],
+                ['name' => 'unit', 'label' => '单位'],
+                ['name' => 'type', 'label' => '分类'],
+                ['name' => 'brand', 'label' => '品牌'],
+                ['name' => 'attr', 'label' => '属性'],
+                ['name' => 'standard', 'label' => '通用标准'],
+                ['name' => 'num', 'label' => '库存数量'],
+                ['name' => 'warning_num', 'label' => '预警库存'],
+                ['name' => 'warning_status', 'label' => '预警状态'],
+                ['name' => 'batch_num', 'label' => '批次库存'],
+            ];
+            
+            // 添加列选择器到工具栏
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('sku.product.item_no', '物料编号')->setHeaderAttributes(['class' => 'column-item_no']);
+            $grid->column('sku.product.name', '物料名称')->setHeaderAttributes(['class' => 'column-name']);
+            $grid->column('sku.product.barcode', '专属编码')->setHeaderAttributes(['class' => 'column-barcode']);
+            $grid->column('sku.product.unit.name', '单位')->setHeaderAttributes(['class' => 'column-unit']);
+            $grid->column('sku.product.type_str', '分类')->setHeaderAttributes(['class' => 'column-type']);
+            $grid->column('sku.product.brand.name', '品牌')->setHeaderAttributes(['class' => 'column-brand']);
+            $grid->column('sku.attr_value_ids_str', '属性')->setHeaderAttributes(['class' => 'column-attr']);
 //            $grid->column('percent', '含绒量(%)');
-            $grid->column('standard_str', '通用标准');
-            $grid->column('num')->display(function ($num) {
+            $grid->column('standard_str', '通用标准')->setHeaderAttributes(['class' => 'column-standard']);
+            $grid->column('num')->setHeaderAttributes(['class' => 'column-num'])->display(function ($num) {
                 $color = SkuStockModel::WARNING_STATUS_COLOR[$this->warning_status];
 
                 return "<span style='color: $color;font-weight: bold;'>$num</span>";
             });
-            $grid->column('sku.product.warning_num', '预警库存')->display(function ($warningNum) {
+            $grid->column('sku.product.warning_num', '预警库存')->setHeaderAttributes(['class' => 'column-warning_num'])->display(function ($warningNum) {
                 return $warningNum > 0 ? $warningNum : '-';
             });
-            $grid->column('warning_status', '预警状态')->display(function ($warningStatus) {
+            $grid->column('warning_status', '预警状态')->setHeaderAttributes(['class' => 'column-warning_status'])->display(function ($warningStatus) {
                 return SkuStockModel::WARNING_STATUS_STYLE[$warningStatus];
             });
-            $grid->column('batch_num', '批次库存')->expand(function () {
+            $grid->column('batch_num', '批次库存')->setHeaderAttributes(['class' => 'column-batch_num'])->expand(function () {
                 return SkuStockBatchTable::make([
                     'sku_id' => $this->sku_id,
 //                    'percent' => $this->percent
