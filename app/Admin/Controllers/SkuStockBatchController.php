@@ -170,7 +170,7 @@ class SkuStockBatchController extends AdminController
 
                 $filter->where('brand_id', function (Builder $query) {
                     $query->whereHasIn('sku.product', function (Builder $query) {
-                        $query->where('brand_id', $this->getValue());
+                        $query->whereIn('brand_id', $this->getValue());
                     });
                 }, '品牌')
                     ->multipleSelect(BrandModel::query()->pluck('name', 'id'))
