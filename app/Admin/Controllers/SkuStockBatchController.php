@@ -173,7 +173,7 @@ class SkuStockBatchController extends AdminController
                         $query->where('brand_id', $this->getValue());
                     });
                 }, '品牌')
-                    ->select(BrandModel::query()->pluck('name', 'id'))
+                    ->multipleSelect(BrandModel::query()->pluck('name', 'id'))
                     ->width(3);
             });
             $grid->tools(BatchStockSelectSave::make());

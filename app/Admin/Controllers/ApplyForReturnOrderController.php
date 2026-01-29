@@ -146,7 +146,7 @@ class ApplyForReturnOrderController extends OrderController
                         });
                     });
                 }, '品牌')
-                    ->select(BrandModel::query()->pluck('name', 'id'))
+                    ->multipleSelect(BrandModel::query()->pluck('name', 'id'))
                     ->width(3);
 
                 $filter->where('apply_for_order_order_no', function (Builder $builder) {
