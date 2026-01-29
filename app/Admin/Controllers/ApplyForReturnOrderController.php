@@ -142,7 +142,7 @@ class ApplyForReturnOrderController extends OrderController
                 $filter->where('brand_id', function (Builder $query) {
                     $query->whereHasIn('items', function (Builder $query) {
                         $query->whereHasIn('sku.product', function (Builder $query) {
-                            $query->where('brand_id', $this->getValue());
+                            $query->whereIn('brand_id', $this->getValue());
                         });
                     });
                 }, '品牌')
