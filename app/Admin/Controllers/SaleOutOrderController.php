@@ -196,7 +196,7 @@ class SaleOutOrderController extends OrderController
     protected function setForm(Form &$form): void
     {
         $form->row(function (Form\Row $row) {
-            $row->width(6)->text('order_no', '单号')->default(build_order_no('CH'))->required()->readOnly();
+            $row->width(6)->text('order_no', '单号')->default('提交后自动生成')->required()->readOnly();
             $row->width(6)->datetime('created_at', '业务日期')->default(now())->required();
         });
         $with_order = $this->order_repository->getWithOrder();
@@ -223,6 +223,12 @@ class SaleOutOrderController extends OrderController
         $form->row(function (Form\Row $row) {
             $row->width(6)->select('drawee_id', '付款信息')->required();
             $row->width(6)->text('other', '备注')->saveAsString();
+        });
+
+        $form->saving(function (Form $form) {
+            if ($form->isCreating()) {
+                $form->order_no = build_order_no('CH');
+            }
         });
     }
 

@@ -139,7 +139,7 @@ class CheckProductController extends AdminController
             });
 
             $form->row(function (Form\Row $row) {
-                $row->width(3)->text('check_no')->default(build_order_no('JY'))->readOnly();
+                $row->width(3)->text('check_no')->default('提交后自动生成')->readOnly();
                 $row->width(3)->select('product_id', '物料')
                     ->ajax(route('api.product.search'))
                     ->config('ajax.delay', 100)
@@ -181,6 +181,12 @@ class CheckProductController extends AdminController
                 $row->width(3)->rate('bulkiness')->default(0);
                 $row->width(3)->rate('odor')->default(0);
                 $row->width(3)->rate('duck_ratio')->default(0);
+            });
+
+            $form->saving(function (Form $form) {
+                if ($form->isCreating()) {
+                    $form->check_no = build_order_no('JY');
+                }
             });
         });
     }

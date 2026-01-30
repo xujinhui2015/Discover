@@ -64,7 +64,7 @@ class TransferOrderController extends OrderController
         $positions = PositionModel::pluck('name', 'id');
 
         $form->row(function (Form\Row $row) {
-            $row->width(6)->text('order_no', '单号')->default(build_order_no('DB'))->required()->readOnly();
+            $row->width(6)->text('order_no', '单号')->default('提交后自动生成')->required()->readOnly();
             $row->width(6)->datetime('created_at', '业务日期')->default(now())->required();
         });
         $form->row(function (Form\Row $row) use ($positions) {
@@ -79,6 +79,9 @@ class TransferOrderController extends OrderController
 
         // 通用保存校验（创建/编辑均执行）
         $form->saving(function (Form $form) {
+            if ($form->isCreating()) {
+                $form->order_no = build_order_no('DB');
+            }
             $outPositionId = $form->input('out_position_id');
             $inPositionId = $form->input('in_position_id');
             $items = $form->input('items') ?: [];

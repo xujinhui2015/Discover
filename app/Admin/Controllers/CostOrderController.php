@@ -113,7 +113,7 @@ class CostOrderController extends OrderController
     protected function setForm(Form &$form): void
     {
         $form->row(function (Form\Row $row) {
-            $row->width(6)->text('order_no', '单号')->default(build_order_no('FY'))->required()->readOnly();
+            $row->width(6)->text('order_no', '单号')->default('提交后自动生成')->required()->readOnly();
             $row->width(6)->datetime('created_at', '业务日期')->default(now())->required();
         });
         $form->row(function (Form\Row $row) {
@@ -131,6 +131,12 @@ class CostOrderController extends OrderController
         $form->row(function (Form\Row $row) {
             $row->width(6)->text('company_str', '公司名称')->disable();
             $row->width(6)->text('other', '备注')->saveAsString();
+        });
+
+        $form->saving(function (Form $form) {
+            if ($form->isCreating()) {
+                $form->order_no = build_order_no('FY');
+            }
         });
     }
 

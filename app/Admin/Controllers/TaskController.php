@@ -157,7 +157,7 @@ class TaskController extends AdminController
                 $row->width(12)->html('<h1 align="center">生产任务单</h1>');
             });
             $form->row(function (Form\Row $row) use ($isFinished) {
-                $row->width(4)->text('order_no', '订单号')->default(build_order_no('SCRW'))->readOnly();
+                $row->width(4)->text('order_no', '订单号')->default('提交后自动生成')->readOnly();
                 $productField = $row->width(4)
                     ->select('product_id', '物料名称')
                     ->ajax(route('api.product.search'))
@@ -219,6 +219,12 @@ class TaskController extends AdminController
                 $otherField = $row->width(4)->text('other')->saveAsString();
                 if ($isFinished) {
                     $otherField->disable();
+                }
+            });
+
+            $form->saving(function (Form $form) {
+                if ($form->isCreating()) {
+                    $form->order_no = build_order_no('SCRW');
                 }
             });
 

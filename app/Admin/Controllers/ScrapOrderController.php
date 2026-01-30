@@ -129,7 +129,7 @@ class ScrapOrderController extends OrderController
     protected function setForm(Form &$form): void
     {
         $form->row(function (Form\Row $row) {
-            $row->width(6)->text('order_no', '单号')->default(build_order_no('BF'))->required()->readOnly();
+            $row->width(6)->text('order_no', '单号')->default('提交后自动生成')->required()->readOnly();
             $row->width(6)->datetime('created_at', '业务日期')->default(now())->required();
         });
         $form->row(function (Form\Row $row) {
@@ -145,6 +145,12 @@ class ScrapOrderController extends OrderController
         });
         $form->row(function (Form\Row $row) {
             $row->width(12)->text('other', '备注')->saveAsString();
+        });
+
+        $form->saving(function (Form $form) {
+            if ($form->isCreating()) {
+                $form->order_no = build_order_no('BF');
+            }
         });
     }
 

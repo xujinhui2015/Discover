@@ -200,7 +200,7 @@ class PurchaseInOrderController extends OrderController
     protected function setForm(Form &$form): void
     {
         $form->row(function (Form\Row $row) {
-            $row->width(6)->text('order_no', '单号')->default(build_order_no('RK'))->required()->readOnly();
+            $row->width(6)->text('order_no', '单号')->default('提交后自动生成')->required()->readOnly();
             $row->width(6)->datetime('created_at', '业务日期')->default(now())->required();
         });
         $with_order = $this->order_repository->getWithOrder();
@@ -218,6 +218,12 @@ class PurchaseInOrderController extends OrderController
             $supplier = SupplierRepository::pluck();
             $row->width(6)->select('supplier_id', '供应商')->options($supplier)->default(head($supplier->keys()->toArray()))->required();
             $row->width(6)->text('other', '备注')->saveAsString();
+        });
+
+        $form->saving(function (Form $form) {
+            if ($form->isCreating()) {
+                $form->order_no = build_order_no('RK');
+            }
         });
     }
 

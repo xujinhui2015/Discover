@@ -73,9 +73,15 @@ class InventoryController extends AdminController
     protected function form()
     {
         return Form::make(new Inventory(), function (Form $form) {
-            $form->text('order_no', "盘点任务号")->default(build_order_no("PDRW"))->readOnly();
+            $form->text('order_no', "盘点任务号")->default('提交后自动生成')->readOnly();
             $form->datetimeRange('start_at', 'end_at', '盘点启止时间')->required();
             $form->text('other')->saveAsString();
+
+            $form->saving(function (Form $form) {
+                if ($form->isCreating()) {
+                    $form->order_no = build_order_no('PDRW');
+                }
+            });
         });
     }
 }

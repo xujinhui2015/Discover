@@ -245,7 +245,7 @@ class SaleOrderController extends OrderController
     protected function setForm(Form &$form): void
     {
         $form->row(function (Form\Row $row) {
-            $row->width(6)->text('order_no', '单号')->default(build_order_no('YH'))->required()->readOnly();
+            $row->width(6)->text('order_no', '单号')->default('提交后自动生成')->required()->readOnly();
             $row->width(6)->datetime('created_at', '业务日期')->default(now())->required();
         });
 
@@ -270,6 +270,12 @@ class SaleOrderController extends OrderController
 
         $form->row(function (Form\Row $row) {
             $row->width(6)->select('drawee_id', '付款信息')->required();
+        });
+
+        $form->saving(function (Form $form) {
+            if ($form->isCreating()) {
+                $form->order_no = build_order_no('YH');
+            }
         });
     }
 
