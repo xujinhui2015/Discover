@@ -88,10 +88,8 @@ class PurchaseInOrderObserver
             && (int)$purchaseInOrderModel->review_status === PurchaseInOrderModel::REVIEW_STATUS_OK
             && (int)$purchaseInOrderModel->status === PurchaseInOrderModel::STATUS_ARRIVE
         ) {
-            // true 表示部分收货 false表示全部收货
-            $flag = true;
-            $purchaseInItems = $purchaseInOrderModel->with_order->items;
-            $purchaseInOrderModel->items->each(function (PurchaseInItemModel $purchaseInItemModel) use ($purchaseInOrderModel, $purchaseInItems, &$flag) {
+            // 创建库存流水记录
+            $purchaseInOrderModel->items->each(function (PurchaseInItemModel $purchaseInItemModel) use ($purchaseInOrderModel) {
                 $init_num = SkuStockModel::query()
                     ->where([
                         'sku_id' => $purchaseInItemModel->sku_id,
@@ -115,27 +113,39 @@ class PurchaseInOrderObserver
 //                    'percent'        => $purchaseInItemModel->percent,
                     'batch_no'       => $purchaseInItemModel->batch_no,
                 ]);
-
-                // 检查采购订单是否已经全部收货
-                if ($flag) {
-                    $sumActualNum = PurchaseInItemModel::query()
-                        ->where('sku_id', $purchaseInItemModel->sku_id)
-                        ->whereHas('order', function ($query) use ($purchaseInOrderModel) {
-                            $query->where('with_id', $purchaseInOrderModel->with_id);
-                            $query->where('review_status', PurchaseInOrderModel::REVIEW_STATUS_OK);
-                        })
-                        ->sum('actual_num');
-                    $purchaseInItem = $purchaseInItems->where('sku_id', $purchaseInItemModel->sku_id)->first();
-
-                    if ($purchaseInItem && $purchaseInItem->should_num <= ($purchaseInItemModel->actual_num + $sumActualNum)) {
-                        // 执行到这表示已经全部收货
-                        $flag = false;
-                    }
-                }
-
             });
 
-            $purchaseInOrderModel->with_order->status = $flag ? PurchaseOrderModel::STATUS_PART_RETURNED : PurchaseOrderModel::STATUS_ARRIVE;
+            // 检查采购订单是否已经全部收货
+            // 需要遍历采购单的所有明细项，而不是入库单的明细项
+            // 只有当采购单的每个SKU都已全部入库时，才标记为"已收货"
+            $allArrived = true;
+            $purchaseOrderItems = $purchaseInOrderModel->with_order->items;
+            foreach ($purchaseOrderItems as $purchaseItem) {
+                // 计算该SKU在所有已审核入库单中的累计实际入库数量（包含当前正在审核的入库单）
+                $sumActualNum = PurchaseInItemModel::query()
+                    ->where('sku_id', $purchaseItem->sku_id)
+                    ->where('standard', $purchaseItem->standard)
+                    ->whereHas('order', function ($query) use ($purchaseInOrderModel) {
+                        $query->where('with_id', $purchaseInOrderModel->with_id);
+                        $query->where('review_status', PurchaseInOrderModel::REVIEW_STATUS_OK);
+                    })
+                    ->sum('actual_num');
+
+                // 加上当前入库单中该SKU的入库数量（因为当前单据还未保存，数据库查不到）
+                $currentInItem = $purchaseInOrderModel->items
+                    ->where('sku_id', $purchaseItem->sku_id)
+                    ->where('standard', $purchaseItem->standard)
+                    ->first();
+                $currentActualNum = $currentInItem ? $currentInItem->actual_num : 0;
+
+                // 如果任一SKU的累计入库数量小于应采购数量，则为部分收货
+                if (bccomp((string)($sumActualNum + $currentActualNum), (string)$purchaseItem->should_num, 2) < 0) {
+                    $allArrived = false;
+                    break;
+                }
+            }
+
+            $purchaseInOrderModel->with_order->status = $allArrived ? PurchaseOrderModel::STATUS_ARRIVE : PurchaseOrderModel::STATUS_PART_RETURNED;
             $purchaseInOrderModel->with_order->save();
 
             $purchaseInOrderModel->apply_at = now();
