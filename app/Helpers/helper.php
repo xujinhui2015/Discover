@@ -32,18 +32,39 @@ if (! file_exists("lower_pinyin_abbr")) {
 
 if (! function_exists('build_order_no')) {
     /**
-     * @param string $prefix
+     * 生成订单号(并发安全版本)
+     * 使用数据库行锁确保多个用户同时提交时不会产生重复订单号
+     * 
+     * @param string $prefix 订单前缀
      * @return string
      */
     function build_order_no(string $prefix = ''): string
     {
         $date = date("Ymd");
-        $number = OrderNoGeneratorModel::query()->where([
-            'prefix' => $prefix,
-            'happen_date' => $date
-        ])->value('number');
-
-        return $prefix . $date . str_pad($number + 1, "4", "0", STR_PAD_LEFT);
+        
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($prefix, $date) {
+            // 使用行锁锁定记录,防止并发问题
+            $generator = OrderNoGeneratorModel::query()
+                ->where('prefix', $prefix)
+                ->where('happen_date', $date)
+                ->lockForUpdate()
+                ->first();
+            
+            if (!$generator) {
+                // 当天首次生成该类型订单,创建初始记录
+                $generator = OrderNoGeneratorModel::create([
+                    'prefix' => $prefix,
+                    'happen_date' => $date,
+                    'number' => 0,
+                ]);
+            }
+            
+            // 原子性递增序号并更新
+            $newNumber = $generator->number + 1;
+            $generator->update(['number' => $newNumber]);
+            
+            return $prefix . $date . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+        });
     }
 }
 if (! function_exists('crossJoin')) {
