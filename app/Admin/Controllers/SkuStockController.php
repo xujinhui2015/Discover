@@ -37,7 +37,7 @@ class SkuStockController extends AdminController
         return Grid::make(new SkuStock(['sku.product']), function (Grid $grid) {
             // 过滤已删除的 SKU
             $grid->model()->whereHas('sku');
-            
+
             // 定义列配置（用于列选择器）
             $columnConfig = [
                 ['name' => 'id', 'label' => 'ID'],
@@ -54,12 +54,12 @@ class SkuStockController extends AdminController
                 ['name' => 'warning_status', 'label' => '预警状态'],
                 ['name' => 'batch_num', 'label' => '批次库存'],
             ];
-            
+
             // 添加列选择器到工具栏
             $grid->tools(function ($tools) use ($columnConfig) {
                 $tools->append(new ColumnSelector($columnConfig));
             });
-            
+
             $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
             $grid->column('sku.product.item_no', '物料编号')->setHeaderAttributes(['class' => 'column-item_no']);
             $grid->column('sku.product.name', '物料名称')->setHeaderAttributes(['class' => 'column-name']);
@@ -191,6 +191,7 @@ class SkuStockController extends AdminController
                         '单位' => $unit['name'] ?? '',
                         '分类' => $product['type_str'] ?? '',
                         '品牌' => $brand['name'] ?? '',
+                        '对应大牌' => $product['luxury_brand_series'] ?? '',
                         '属性' => $row['sku']['attr_value_ids_str'] ?? '',
                         '通用标准' => $row['standard_str'] ?? '',
                         '库存数量' => $row['num'] ?? 0,
