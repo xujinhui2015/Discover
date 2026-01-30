@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\Drawee;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -29,9 +30,20 @@ class DraweeController extends AdminController
     protected function grid()
     {
         return Grid::make(new Drawee(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('name');
-            $grid->column('created_at');
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'name', 'label' => '付款人名称'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('name')->setHeaderAttributes(['class' => 'column-name']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
 
             $grid->filter(function (Grid\Filter $filter) {
             });

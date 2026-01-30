@@ -21,6 +21,7 @@ use App\Admin\Actions\Grid\OrderParentDelete;
 use App\Admin\Actions\Grid\OrderPrint;
 use App\Admin\Actions\Grid\OrderReview;
 use App\Admin\Extensions\Form\Order\OrderController;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Extensions\Grid\MakeProductOrderItemDetail;
 use App\Admin\Repositories\MakeProductOrder;
 use App\Models\MakeProductOrderModel;
@@ -50,12 +51,25 @@ class MakeProductOrderController extends OrderController
     {
         return Grid::make(new MakeProductOrder(['with_order', 'user']), function (Grid $grid) {
             $useNameStyle = $this->useMaterialNameStyle();
-            $grid->column('id')->sortable();
-            $grid->column('with_order.order_no', '任务单号')->emp();
-            $grid->column('order_no');
-            $grid->column('user.username', '创建用户');
+            
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'with_order_no', 'label' => '任务单号'],
+                ['name' => 'order_no', 'label' => '单号'],
+                ['name' => 'user', 'label' => '创建用户'],
+                ['name' => 'product_info', 'label' => '物料信息'],
+                ['name' => 'other', 'label' => '备注'],
+                ['name' => 'review_status', 'label' => '审核状态'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('with_order.order_no', '任务单号')->setHeaderAttributes(['class' => 'column-with_order_no'])->emp();
+            $grid->column('order_no')->setHeaderAttributes(['class' => 'column-order_no']);
+            $grid->column('user.username', '创建用户')->setHeaderAttributes(['class' => 'column-user']);
             if ($useNameStyle) {
-                $grid->column('product_names', '物料名称')->display(function () {
+                $grid->column('product_names', '物料名称')->setHeaderAttributes(['class' => 'column-product_info'])->display(function () {
                     $productNames = ProductModel::query()
                         ->whereIn('id', ProductSkuModel::query()
                             ->whereIn('id', MakeProductItemModel::query()
@@ -73,13 +87,17 @@ class MakeProductOrderController extends OrderController
             } else {
                 $grid->column('_', '物料明细')
                     ->setAttributes(['class' => 'material-detail-cell'])
+                    ->setHeaderAttributes(['class' => 'column-product_info'])
                     ->expand(MakeProductOrderItemDetail::class);
             }
-            $grid->column('other')->emp();
-            $grid->column('review_status', '审核状态')->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
-            $grid->column('created_at');
+            $grid->column('other')->setHeaderAttributes(['class' => 'column-other'])->emp();
+            $grid->column('review_status', '审核状态')->setHeaderAttributes(['class' => 'column-review_status'])->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
             $grid->disableQuickEditButton();
-            $grid->tools(BatchOrderPrint::make());
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+                $tools->append(BatchOrderPrint::make());
+            });
             $grid->actions(EditOrder::make());
             $grid->disableCreateButton();
 

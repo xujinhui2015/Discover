@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\StockHistory;
 use App\Models\SkuStockBatchModel;
 use App\Models\StockHistoryModel;
@@ -31,17 +32,27 @@ class StockHistoryController extends AdminController
     protected function grid()
     {
         return Grid::make(new StockHistory(['sku.product']), function (Grid $grid) {
-            $grid->column('id')->sortable();
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'flag', 'label' => '出入库标识'],
+                ['name' => 'type', 'label' => '操作类型'],
+                ['name' => 'user', 'label' => '操作用户'],
+                ['name' => 'with_order_no', 'label' => '关联单号'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
             $grid->combine('入库信息', ['in_num', 'in_position.name', 'in_price']);
             $grid->combine('出库信息', ['out_num', 'out_position.name', 'out_price']);
             $grid->combine('物料信息', ['sku.product.item_no', 'sku.product.name', 'sku.product.unit.name', 'sku.product.type_str', 'sku.attr_value_ids_str', 'standard_str']);
             $grid->combine("盘点信息", ["inventory_num", "inventory_diff_num"]);
             $grid->combine('库存信息', ['init_num', 'balance_num', 'batch_no', 'cost_price']);
 
-            $grid->column('flag')->using(StockHistoryModel::FLAG);
-            $grid->column('type')->using(StockHistoryModel::TYPE);
-            $grid->column('user.name', '操作用户');
-            $grid->column('with_order_no');
+            $grid->column('flag')->setHeaderAttributes(['class' => 'column-flag'])->using(StockHistoryModel::FLAG);
+            $grid->column('type')->setHeaderAttributes(['class' => 'column-type'])->using(StockHistoryModel::TYPE);
+            $grid->column('user.name', '操作用户')->setHeaderAttributes(['class' => 'column-user']);
+            $grid->column('with_order_no')->setHeaderAttributes(['class' => 'column-with_order_no']);
             $grid->column('in_num');
             $grid->column('in_position.name', '入库位置')->emp();
             $grid->column('in_price');
@@ -62,11 +73,15 @@ class StockHistoryController extends AdminController
             $grid->column('inventory_num', "盘点数量");
             $grid->column('inventory_diff_num', "盈亏数量");
             $grid->column('balance_num');
-            $grid->column('created_at');
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
 
             $grid->disableActions();
             $grid->disableCreateButton();
             $grid->disableRowSelector();
+            
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
 
 //            $grid->fixColumns(0);
 

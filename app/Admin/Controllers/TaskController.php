@@ -16,6 +16,7 @@ use App\Admin\Actions\Grid\AddApplyForOrder;
 use App\Admin\Actions\Grid\AddMakeProduct;
 use App\Admin\Actions\Grid\TaskActions;
 use App\Admin\Extensions\Grid\ApplyOfOrders;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Renderables\ProductTable;
 use App\Admin\Repositories\Task;
 use App\Models\CraftModel;
@@ -45,17 +46,31 @@ class TaskController extends AdminController
         return Grid::make(new Task(['sku', 'user', 'sku.product', 'craft', 'operator_user']), function (Grid $grid) {
             // 使用自定义的TaskActions类来渲染操作列
             $grid->setActionClass(TaskActions::class);
-            $grid->column('id')->sortable();
-            $grid->column('order_no');
-            $grid->column('info', '物料信息')->display(function () {
+            
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_no', 'label' => '任务单号'],
+                ['name' => 'info', 'label' => '物料信息'],
+                ['name' => 'plan_num', 'label' => '计划数量'],
+                ['name' => 'finish_num', 'label' => '完成数量'],
+                ['name' => 'status', 'label' => '单据状态'],
+                ['name' => 'operator_user', 'label' => '生产人员'],
+                ['name' => 'apply_records', 'label' => '领料记录'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order_no')->setHeaderAttributes(['class' => 'column-order_no']);
+            $grid->column('info', '物料信息')->setHeaderAttributes(['class' => 'column-info'])->display(function () {
 //                return $this->sku['product']['name']."|".$this->sku['attr_value_ids_str']."|".$this->percent."%|".$this->standard_str;
                 return $this->sku['product']['name']."|".$this->sku['attr_value_ids_str']."|".$this->standard_str;
             });
 //            $grid->column('sum_cost_price', "领料总成本");
 //            $grid->column('craft.name', '生产工艺');
-            $grid->column('plan_num');
-            $grid->column('finish_num');
-            $grid->column('status', '单据状态')
+            $grid->column('plan_num')->setHeaderAttributes(['class' => 'column-plan_num']);
+            $grid->column('finish_num')->setHeaderAttributes(['class' => 'column-finish_num']);
+            $grid->column('status', '单据状态')->setHeaderAttributes(['class' => 'column-status'])
                 ->display(function ($value) {
                     // 添加状态说明的tooltip
                     $descriptions = [
@@ -72,10 +87,13 @@ class TaskController extends AdminController
                 });
 //            $grid->column('other')->emp();
 //            $grid->column('user.name', "任务创建人");
-            $grid->column('operator_user.name', "生产人员");
-            $grid->column("_id", "领料记录")->expand(ApplyOfOrders::make());
-            $grid->column('created_at');
+            $grid->column('operator_user.name', "生产人员")->setHeaderAttributes(['class' => 'column-operator_user']);
+            $grid->column("_id", "领料记录")->setHeaderAttributes(['class' => 'column-apply_records'])->expand(ApplyOfOrders::make());
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
             $grid->disableRowSelector();
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
             $grid->actions(function (\Dcat\Admin\Grid\Displayers\Actions $actions) {
                 if ($this->status !== TaskModel::STATUS_FINISH) {
                     $actions->append(new AddApplyForOrder());

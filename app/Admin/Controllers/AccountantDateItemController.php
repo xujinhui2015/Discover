@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\AccountantDateItem;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -29,12 +30,25 @@ class AccountantDateItemController extends AdminController
     protected function grid()
     {
         return Grid::make(new AccountantDateItem(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('accountant_date_id');
-            $grid->column('start_at');
-            $grid->column('end_at');
-            $grid->column('created_at');
-            $grid->column('updated_at')->sortable();
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'accountant_date_id', 'label' => '会计年度ID'],
+                ['name' => 'start_at', 'label' => '开始时间'],
+                ['name' => 'end_at', 'label' => '结束时间'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+                ['name' => 'updated_at', 'label' => '更新时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('accountant_date_id')->setHeaderAttributes(['class' => 'column-accountant_date_id']);
+            $grid->column('start_at')->setHeaderAttributes(['class' => 'column-start_at']);
+            $grid->column('end_at')->setHeaderAttributes(['class' => 'column-end_at']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            $grid->column('updated_at')->setHeaderAttributes(['class' => 'column-updated_at'])->sortable();
+
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');

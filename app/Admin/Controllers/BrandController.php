@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\Brand;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -30,10 +31,22 @@ class BrandController extends AdminController
     protected function grid()
     {
         return Grid::make(new Brand(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('name');
-            $grid->column('created_at');
-            $grid->column('updated_at')->sortable();
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'name', 'label' => '品牌名称'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+                ['name' => 'updated_at', 'label' => '更新时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('name')->setHeaderAttributes(['class' => 'column-name']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            $grid->column('updated_at')->setHeaderAttributes(['class' => 'column-updated_at'])->sortable();
+
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
 
             $grid->filter(function (Grid\Filter $filter) {
             });

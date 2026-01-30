@@ -16,6 +16,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\Delete;
 use App\Admin\Actions\Grid\EditInventoryOrder;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\Inventory;
 use App\Models\InventoryModel;
 use Dcat\Admin\Form;
@@ -32,13 +33,24 @@ class InventoryController extends AdminController
     protected function grid()
     {
         return Grid::make(new Inventory('user'), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('order_no');
-            $grid->column('start_at');
-            $grid->column('end_at');
-            $grid->column('status', '单据状态')->using(InventoryModel::STATUS)->label(InventoryModel::STATUS_COLOR);
-            $grid->column('user.name', "创建人");
-            $grid->column('other');
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_no', 'label' => '任务单号'],
+                ['name' => 'start_at', 'label' => '开始时间'],
+                ['name' => 'end_at', 'label' => '结束时间'],
+                ['name' => 'status', 'label' => '单据状态'],
+                ['name' => 'user', 'label' => '创建人'],
+                ['name' => 'other', 'label' => '备注'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order_no')->setHeaderAttributes(['class' => 'column-order_no']);
+            $grid->column('start_at')->setHeaderAttributes(['class' => 'column-start_at']);
+            $grid->column('end_at')->setHeaderAttributes(['class' => 'column-end_at']);
+            $grid->column('status', '单据状态')->setHeaderAttributes(['class' => 'column-status'])->using(InventoryModel::STATUS)->label(InventoryModel::STATUS_COLOR);
+            $grid->column('user.name', "创建人")->setHeaderAttributes(['class' => 'column-user']);
+            $grid->column('other')->setHeaderAttributes(['class' => 'column-other']);
             $grid->disableQuickEditButton();
             $grid->showBatchDelete();
             $grid->actions(function (\Dcat\Admin\Grid\Displayers\Actions $actions) {
@@ -46,7 +58,10 @@ class InventoryController extends AdminController
                     $actions->append(new EditInventoryOrder());
                 }
             });
-            $grid->tools(Delete::make());
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+                $tools->append(Delete::make());
+            });
         });
     }
 

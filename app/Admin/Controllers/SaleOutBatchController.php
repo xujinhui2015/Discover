@@ -16,6 +16,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\BatchStockSelect;
 use App\Admin\Actions\Grid\Delete;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\SaleOutBatch;
 use App\Models\SaleOutItemModel;
 use App\Models\SaleOutOrderModel;
@@ -33,6 +34,13 @@ class SaleOutBatchController extends AdminController
     protected function grid()
     {
         return Grid::make(new SaleOutBatch(), function (Grid $grid) {
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+            ];
+            
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
         });
     }
 

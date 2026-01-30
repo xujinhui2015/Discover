@@ -15,6 +15,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\Grid\AccountantDateItems;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\AccountantDate;
 use App\Models\AccountantDateModel;
 use Dcat\Admin\Form;
@@ -33,13 +34,25 @@ class AccountantDateController extends AdminController
         return Grid::make(new AccountantDate(), function (Grid $grid) {
             $grid->model()->resetOrderBy();
             $grid->model()->orderBy('year', 'desc');
-            $grid->column('year')->sortable();
-            $grid->column('day')->display(function () {
+            
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'year', 'label' => '年份'],
+                ['name' => 'day', 'label' => '结算日'],
+                ['name' => 'accountant_period', 'label' => '会计期'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('year')->setHeaderAttributes(['class' => 'column-year'])->sortable();
+            $grid->column('day')->setHeaderAttributes(['class' => 'column-day'])->display(function () {
                 return $this->day_type === AccountantDateModel::DEFAULT ? "自然日" : $this->day;
             });
-            $grid->column('_id', "会计期")->expand(AccountantDateItems::make());
-            $grid->column('created_at');
+            $grid->column('_id', "会计期")->setHeaderAttributes(['class' => 'column-accountant_period'])->expand(AccountantDateItems::make());
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
             $grid->showBatchDelete();
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
         });
     }
 

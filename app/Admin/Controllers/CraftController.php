@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\Craft;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -29,10 +30,22 @@ class CraftController extends AdminController
     protected function grid()
     {
         return Grid::make(new Craft(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('name');
-            $grid->column('created_at');
-            $grid->column('updated_at')->sortable();
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'name', 'label' => '工艺名称'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+                ['name' => 'updated_at', 'label' => '更新时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('name')->setHeaderAttributes(['class' => 'column-name']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            $grid->column('updated_at')->setHeaderAttributes(['class' => 'column-updated_at'])->sortable();
+
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
 
             $grid->filter(function (Grid\Filter $filter) {
             });

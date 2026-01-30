@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\Demand;
 use App\Models\DemandModel;
 use Dcat\Admin\Form;
@@ -30,10 +31,22 @@ class DemandController extends AdminController
     protected function grid()
     {
         return Grid::make(new Demand(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('status')->using(DemandModel::STATUS)->label(DemandModel::STATUS_COLOR);
-            $grid->column('type')->using(DemandModel::TYPE)->label(DemandModel::TYPE_COLOR);
-            $grid->column('created_at');
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'status', 'label' => '状态'],
+                ['name' => 'type', 'label' => '类型'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('status')->setHeaderAttributes(['class' => 'column-status'])->using(DemandModel::STATUS)->label(DemandModel::STATUS_COLOR);
+            $grid->column('type')->setHeaderAttributes(['class' => 'column-type'])->using(DemandModel::TYPE)->label(DemandModel::TYPE_COLOR);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
         });
     }
 

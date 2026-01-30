@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\InventoryItem;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -30,14 +31,29 @@ class InventoryItemController extends AdminController
     protected function grid()
     {
         return Grid::make(new InventoryItem(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('order_id');
-            $grid->column('stock_batch_id');
-            $grid->column('should_num');
-            $grid->column('actual_num');
-            $grid->column('diff_num');
-            $grid->column('created_at');
-            $grid->column('updated_at')->sortable();
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_id', 'label' => '订单ID'],
+                ['name' => 'stock_batch_id', 'label' => '批次ID'],
+                ['name' => 'should_num', 'label' => '账面数量'],
+                ['name' => 'actual_num', 'label' => '实际数量'],
+                ['name' => 'diff_num', 'label' => '盈亏数量'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+                ['name' => 'updated_at', 'label' => '更新时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order_id')->setHeaderAttributes(['class' => 'column-order_id']);
+            $grid->column('stock_batch_id')->setHeaderAttributes(['class' => 'column-stock_batch_id']);
+            $grid->column('should_num')->setHeaderAttributes(['class' => 'column-should_num']);
+            $grid->column('actual_num')->setHeaderAttributes(['class' => 'column-actual_num']);
+            $grid->column('diff_num')->setHeaderAttributes(['class' => 'column-diff_num']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            $grid->column('updated_at')->setHeaderAttributes(['class' => 'column-updated_at'])->sortable();
+
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');

@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\AttrValue;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -29,11 +30,24 @@ class AttrValueController extends AdminController
     protected function grid()
     {
         return Grid::make(new AttrValue(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('attr_id');
-            $grid->column('name');
-            $grid->column('created_at');
-            $grid->column('updated_at')->sortable();
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'attr_id', 'label' => '属性ID'],
+                ['name' => 'name', 'label' => '属性值名称'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+                ['name' => 'updated_at', 'label' => '更新时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('attr_id')->setHeaderAttributes(['class' => 'column-attr_id']);
+            $grid->column('name')->setHeaderAttributes(['class' => 'column-name']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            $grid->column('updated_at')->setHeaderAttributes(['class' => 'column-updated_at'])->sortable();
+
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
 
             $grid->filter(function (Grid\Filter $filter) {
             });

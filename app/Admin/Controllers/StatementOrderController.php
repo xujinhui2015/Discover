@@ -23,6 +23,7 @@ use App\Admin\Actions\Grid\OrderDelete;
 use App\Admin\Actions\Grid\OrderPrint;
 use App\Admin\Actions\Grid\OrderReview;
 use App\Admin\Extensions\Form\Order\OrderController;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Extensions\Grid\CostItemOrderDetail;
 use App\Admin\Extensions\Grid\StatementDetail;
 use App\Admin\Repositories\StatementOrder;
@@ -46,21 +47,42 @@ class StatementOrderController extends OrderController
     protected function grid()
     {
         return Grid::make(new StatementOrder(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('order_no');
-            $grid->column('category', "费用分类")->using(StatementOrderModel::CATEGORY);
-            $grid->column("_", "结算明细")->expand(StatementDetail::class);
-            $grid->column('company_name', '公司名称');
-            $grid->column('other')->emp();
-            $grid->column('review_status', "审核状态")->using(StatementOrderModel::REVIEW_STATUS)->label(StatementOrderModel::REVIEW_STATUS_COLOR);
-            $grid->column('should_amount');
-            $grid->column('actual_amount');
-            $grid->column('discount_amount');
-            $grid->column('created_at');
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_no', 'label' => '单号'],
+                ['name' => 'category', 'label' => '费用分类'],
+                ['name' => 'statement_detail', 'label' => '结算明细'],
+                ['name' => 'company_name', 'label' => '公司名称'],
+                ['name' => 'other', 'label' => '备注'],
+                ['name' => 'review_status', 'label' => '审核状态'],
+                ['name' => 'should_amount', 'label' => '应付金额'],
+                ['name' => 'actual_amount', 'label' => '实付金额'],
+                ['name' => 'discount_amount', 'label' => '优惠金额'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order_no')->setHeaderAttributes(['class' => 'column-order_no']);
+            $grid->column('category', "费用分类")->setHeaderAttributes(['class' => 'column-category'])->using(StatementOrderModel::CATEGORY);
+            $grid->column("_", "结算明细")->setHeaderAttributes(['class' => 'column-statement_detail'])->expand(StatementDetail::class);
+            $grid->column('company_name', '公司名称')->setHeaderAttributes(['class' => 'column-company_name']);
+            $grid->column('other')->setHeaderAttributes(['class' => 'column-other'])->emp();
+            $grid->column('review_status', "审核状态")->setHeaderAttributes(['class' => 'column-review_status'])->using(StatementOrderModel::REVIEW_STATUS)->label(StatementOrderModel::REVIEW_STATUS_COLOR);
+            $grid->column('should_amount')->setHeaderAttributes(['class' => 'column-should_amount']);
+            $grid->column('actual_amount')->setHeaderAttributes(['class' => 'column-actual_amount']);
+            $grid->column('discount_amount')->setHeaderAttributes(['class' => 'column-discount_amount']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
             $grid->actions(EditOrder::make());
             $grid->disableQuickEditButton();
             $grid->disableCreateButton();
-            $grid->tools([BatchOrderPrint::make(), BatchSupplierStatement::make(), BatchCustomerStatement::make(), Delete::make()]);
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+                $tools->append(BatchOrderPrint::make());
+                $tools->append(BatchSupplierStatement::make());
+                $tools->append(BatchCustomerStatement::make());
+                $tools->append(Delete::make());
+            });
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('category', '费用分类')->width(4)->radio(StatementOrderModel::CATEGORY);

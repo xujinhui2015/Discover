@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Extensions\Form\Order\OrderController;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\TransferOrder;
 use App\Models\PositionModel;
 use App\Models\ProductModel;
@@ -28,15 +29,30 @@ class TransferOrderController extends OrderController
     protected function grid()
     {
         return Grid::make(new TransferOrder(['user', 'out_position', 'in_position']), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('order_no', '单号');
-            $grid->column('out_position.name', '调出仓库');
-            $grid->column('in_position.name', '调入仓库');
-            $grid->column('user.name', '创建用户');
-            $grid->column('other', '备注')->emp();
-            $grid->column('review_status', '单据状态')->using(TransferOrderModel::REVIEW_STATUS)->label(TransferOrderModel::REVIEW_STATUS_COLOR);
-            $grid->column('created_at', '创建时间');
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_no', 'label' => '单号'],
+                ['name' => 'out_position', 'label' => '调出仓库'],
+                ['name' => 'in_position', 'label' => '调入仓库'],
+                ['name' => 'user', 'label' => '创建用户'],
+                ['name' => 'other', 'label' => '备注'],
+                ['name' => 'review_status', 'label' => '单据状态'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order_no', '单号')->setHeaderAttributes(['class' => 'column-order_no']);
+            $grid->column('out_position.name', '调出仓库')->setHeaderAttributes(['class' => 'column-out_position']);
+            $grid->column('in_position.name', '调入仓库')->setHeaderAttributes(['class' => 'column-in_position']);
+            $grid->column('user.name', '创建用户')->setHeaderAttributes(['class' => 'column-user']);
+            $grid->column('other', '备注')->setHeaderAttributes(['class' => 'column-other'])->emp();
+            $grid->column('review_status', '单据状态')->setHeaderAttributes(['class' => 'column-review_status'])->using(TransferOrderModel::REVIEW_STATUS)->label(TransferOrderModel::REVIEW_STATUS_COLOR);
+            $grid->column('created_at', '创建时间')->setHeaderAttributes(['class' => 'column-created_at']);
             $grid->disableQuickEditButton();
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
             $grid->actions(function (Grid\Displayers\Actions $actions) {
                  $actions->append(EditOrder::make());
             });

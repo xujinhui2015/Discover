@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\TransferItem;
 use App\Models\SkuStockBatchModel;
 use App\Models\TransferItemModel;
@@ -15,12 +16,25 @@ class TransferItemController extends AdminController
     protected function grid()
     {
         return Grid::make(new TransferItem(['sku.product', 'order']), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('order.order_no', '单号');
-            $grid->column('sku.product.name', '物料名称');
-            $grid->column('num', '数量');
-            $grid->column('batch_no', '批次号');
-            $grid->column('created_at');
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_no', 'label' => '单号'],
+                ['name' => 'product_name', 'label' => '物料名称'],
+                ['name' => 'num', 'label' => '数量'],
+                ['name' => 'batch_no', 'label' => '批次号'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order.order_no', '单号')->setHeaderAttributes(['class' => 'column-order_no']);
+            $grid->column('sku.product.name', '物料名称')->setHeaderAttributes(['class' => 'column-product_name']);
+            $grid->column('num', '数量')->setHeaderAttributes(['class' => 'column-num']);
+            $grid->column('batch_no', '批次号')->setHeaderAttributes(['class' => 'column-batch_no']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
             
             $grid->disableActions();
             $grid->disableCreateButton();

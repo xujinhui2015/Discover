@@ -19,6 +19,7 @@ use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Actions\Grid\PurchaseOrderUnreview;
 use App\Admin\Extensions\Form\Order\OrderController;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Extensions\Grid\PurchaseOrderItemDetail;
 use App\Admin\Repositories\PurchaseOrder;
 use App\Models\PersonalConfigModel;
@@ -47,13 +48,27 @@ class PurchaseOrderController extends OrderController
     {
         return Grid::make(new PurchaseOrder(['user', 'supplier']), function (Grid $grid) {
             $useNameStyle = $this->useMaterialNameStyle();
-            $grid->column('id')->sortable();
+            
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_no', 'label' => '单号'],
+                ['name' => 'status', 'label' => '单据状态'],
+                ['name' => 'review_status', 'label' => '审核状态'],
+                ['name' => 'product_info', 'label' => '物料信息'],
+                ['name' => 'supplier', 'label' => '供应商名称'],
+                ['name' => 'user', 'label' => '创建用户'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+                ['name' => 'other', 'label' => '备注'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
 //            $grid->column('check_status')->using(PurchaseOrderModel::CHECK_STATUS);
-            $grid->column('order_no');
-            $grid->column('status', '单据状态')->using(PurchaseOrderModel::STATUS)->label(PurchaseOrderModel::STATUS_COLOR);
-            $grid->column('review_status', '审核状态')->using(PurchaseOrderModel::REVIEW_STATUS)->label(PurchaseOrderModel::REVIEW_STATUS_COLOR);
+            $grid->column('order_no')->setHeaderAttributes(['class' => 'column-order_no']);
+            $grid->column('status', '单据状态')->setHeaderAttributes(['class' => 'column-status'])->using(PurchaseOrderModel::STATUS)->label(PurchaseOrderModel::STATUS_COLOR);
+            $grid->column('review_status', '审核状态')->setHeaderAttributes(['class' => 'column-review_status'])->using(PurchaseOrderModel::REVIEW_STATUS)->label(PurchaseOrderModel::REVIEW_STATUS_COLOR);
             if ($useNameStyle) {
-                $grid->column('product_names', '物料名称')->display(function () {
+                $grid->column('product_names', '物料名称')->setHeaderAttributes(['class' => 'column-product_info'])->display(function () {
                     $productNames = ProductModel::query()
                         ->whereIn('id', ProductSkuModel::query()
                             ->whereIn('id', PurchaseItemModel::query()
@@ -71,13 +86,19 @@ class PurchaseOrderController extends OrderController
             } else {
                 $grid->column('_', '物料明细')
                     ->setAttributes(['class' => 'material-detail-cell'])
+                    ->setHeaderAttributes(['class' => 'column-product_info'])
                     ->expand(PurchaseOrderItemDetail::class);
             }
-            $grid->column('supplier.name', '供应商名称')->emp();
-            $grid->column('user.username', '创建用户');
-            $grid->column('created_at');
-            $grid->column('other')->emp();
-            $grid->tools(BatchOrderPrint::make());
+            $grid->column('supplier.name', '供应商名称')->setHeaderAttributes(['class' => 'column-supplier'])->emp();
+            $grid->column('user.username', '创建用户')->setHeaderAttributes(['class' => 'column-user']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            $grid->column('other')->setHeaderAttributes(['class' => 'column-other'])->emp();
+            
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+                $tools->append(BatchOrderPrint::make());
+            });
+            
             $grid->disableQuickEditButton();
             $grid->actions(new EditOrder());
             $grid->filter(function (Grid\Filter $filter) {

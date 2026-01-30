@@ -18,6 +18,7 @@ use App\Admin\Actions\Grid\BatchCreateProSave;
 use App\Admin\Actions\Grid\BatchDeleteProduct;
 use App\Admin\Actions\Grid\ImportProduct as ImportProductTool;
 use App\Admin\Actions\Grid\ImportProductPrice;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\Product;
 use App\Models\AttrModel;
 use App\Models\BrandModel;
@@ -48,23 +49,39 @@ class ProductController extends AdminController
     protected function grid()
     {
         return Grid::make(new Product(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('item_no')->emp();
-            $grid->column('barcode', '专属编码')->emp();
-            $grid->column('name')->emp();
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'item_no', 'label' => '物料编号'],
+                ['name' => 'barcode', 'label' => '专属编码'],
+                ['name' => 'name', 'label' => '物料名称'],
+                ['name' => 'type', 'label' => '分类'],
+                ['name' => 'brand', 'label' => '品牌'],
+                ['name' => 'luxury_brand_series', 'label' => '对应大牌'],
+                ['name' => 'product_image', 'label' => '产品图片'],
+                ['name' => 'unit', 'label' => '单位'],
+                ['name' => 'warning_num', 'label' => '预警库存'],
+                ['name' => 'sale_price', 'label' => '销售价'],
+                ['name' => 'purchase_price', 'label' => '采购价'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('item_no')->setHeaderAttributes(['class' => 'column-item_no'])->emp();
+            $grid->column('barcode', '专属编码')->setHeaderAttributes(['class' => 'column-barcode'])->emp();
+            $grid->column('name')->setHeaderAttributes(['class' => 'column-name'])->emp();
 //            $grid->column('py_code')->emp();
-            $grid->column('type', '分类')->using(ProductModel::TYPE);
-            $grid->column('brand.name', '品牌')->emp();
-            $grid->column('luxury_brand_series', '对应大牌')->emp();
-            $grid->column('product_image', '产品图片')
+            $grid->column('type', '分类')->setHeaderAttributes(['class' => 'column-type'])->using(ProductModel::TYPE);
+            $grid->column('brand.name', '品牌')->setHeaderAttributes(['class' => 'column-brand'])->emp();
+            $grid->column('luxury_brand_series', '对应大牌')->setHeaderAttributes(['class' => 'column-luxury_brand_series'])->emp();
+            $grid->column('product_image', '产品图片')->setHeaderAttributes(['class' => 'column-product_image'])
                 ->display(function ($value) {
                     return $value ?: 'public/default.png';
                 })
                 ->image('', 64, 64);
-            $grid->column('unit.name', '单位')->emp();
-            $grid->column('warning_num')->emp();
-            $grid->column('sale_price')->emp();
-            $grid->column('purchase_price')->emp();
+            $grid->column('unit.name', '单位')->setHeaderAttributes(['class' => 'column-unit'])->emp();
+            $grid->column('warning_num')->setHeaderAttributes(['class' => 'column-warning_num'])->emp();
+            $grid->column('sale_price')->setHeaderAttributes(['class' => 'column-sale_price'])->emp();
+            $grid->column('purchase_price')->setHeaderAttributes(['class' => 'column-purchase_price'])->emp();
 //            $grid->column('created_at');
 //            $grid->column('updated_at')->sortable();
 
@@ -72,7 +89,8 @@ class ProductController extends AdminController
                 new BatchDeleteProduct(),
             ]);
 
-            $grid->tools(function (Grid\Tools $tools) {
+            $grid->tools(function (Grid\Tools $tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
                 $tools->append(new ImportProductTool());
                 $tools->append(new ImportProductPrice());
             });

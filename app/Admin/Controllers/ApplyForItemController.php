@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\ApplyForItem;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -30,16 +31,32 @@ class ApplyForItemController extends AdminController
     protected function grid()
     {
         return Grid::make(new ApplyForItem(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('order_id');
-            $grid->column('sku_id');
-            $grid->column('cost_price');
-            $grid->column('standard');
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_id', 'label' => '订单ID'],
+                ['name' => 'sku_id', 'label' => 'SKU ID'],
+                ['name' => 'cost_price', 'label' => '成本价'],
+                ['name' => 'standard', 'label' => '标准'],
+                ['name' => 'num', 'label' => '数量'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+                ['name' => 'updated_at', 'label' => '更新时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order_id')->setHeaderAttributes(['class' => 'column-order_id']);
+            $grid->column('sku_id')->setHeaderAttributes(['class' => 'column-sku_id']);
+            $grid->column('cost_price')->setHeaderAttributes(['class' => 'column-cost_price']);
+            $grid->column('standard')->setHeaderAttributes(['class' => 'column-standard']);
 //            $grid->column('percent');
-            $grid->column('num');
-            $grid->column('created_at');
-            $grid->column('updated_at')->sortable();
+            $grid->column('num')->setHeaderAttributes(['class' => 'column-num']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            $grid->column('updated_at')->setHeaderAttributes(['class' => 'column-updated_at'])->sortable();
 
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
+            
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');
             });

@@ -16,6 +16,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\Statement;
 use App\Admin\Actions\Grid\ImportCustomer as ImportCustomerTool;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\Customer;
 use App\Models\CustomerModel;
 use Dcat\Admin\Form;
@@ -33,16 +34,29 @@ class CustomerController extends AdminController
     protected function grid()
     {
         return Grid::make(new Customer(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('link')->emp();
-            $grid->column('name')->emp();
-            $grid->column('other')->emp();
-            $grid->column('pay_method')->using(CustomerModel::PAY);
-            $grid->column('phone');
-            $grid->column('created_at');
-//            $grid->tools(function (Tools $tools) {
-//                $tools->append(new ImportCustomerTool());
-//            });
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'link', 'label' => '联系人'],
+                ['name' => 'name', 'label' => '客户名称'],
+                ['name' => 'other', 'label' => '备注'],
+                ['name' => 'pay_method', 'label' => '付款方式'],
+                ['name' => 'phone', 'label' => '电话'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('link')->setHeaderAttributes(['class' => 'column-link'])->emp();
+            $grid->column('name')->setHeaderAttributes(['class' => 'column-name'])->emp();
+            $grid->column('other')->setHeaderAttributes(['class' => 'column-other'])->emp();
+            $grid->column('pay_method')->setHeaderAttributes(['class' => 'column-pay_method'])->using(CustomerModel::PAY);
+            $grid->column('phone')->setHeaderAttributes(['class' => 'column-phone']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            
+            $grid->tools(function (Tools $tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
+            
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->like('name', '客户名称')->width(4);
             });

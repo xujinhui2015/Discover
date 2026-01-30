@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Extensions\Grid\SaleBatchDetail;
 use App\Admin\Repositories\SaleOrderAmount;
 use App\Admin\Repositories\SaleOutItem;
@@ -33,16 +34,32 @@ class SaleOutReportController extends Controller
     public function orderAmount(Content $content)
     {
         $grid = Grid::make(new SaleOrderAmount(['order', 'customer', 'accountant']), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('order.order_no', "销售订单");
-            $grid->column('customer.name', "客户名称");
-            $grid->column('should_amount', '费用金额');
-            $grid->column('actual_amount', '结算金额');
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_no', 'label' => '销售订单'],
+                ['name' => 'customer_name', 'label' => '客户名称'],
+                ['name' => 'should_amount', 'label' => '费用金额'],
+                ['name' => 'actual_amount', 'label' => '结算金额'],
+                ['name' => 'status', 'label' => '单据状态'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            // 添加列选择器到工具栏
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order.order_no', "销售订单")->setHeaderAttributes(['class' => 'column-order_no']);
+            $grid->column('customer.name', "客户名称")->setHeaderAttributes(['class' => 'column-customer_name']);
+            $grid->column('should_amount', '费用金额')->setHeaderAttributes(['class' => 'column-should_amount']);
+            $grid->column('actual_amount', '结算金额')->setHeaderAttributes(['class' => 'column-actual_amount']);
             $grid->column(
                 'status',
                 '单据状态'
-            )->using(SaleOrderAmountModel::STATUS)->label(SaleOrderAmountModel::STATUS_COLOR);
-            $grid->column('created_at');
+            )->setHeaderAttributes(['class' => 'column-status'])->using(SaleOrderAmountModel::STATUS)->label(SaleOrderAmountModel::STATUS_COLOR);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->between('created_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
@@ -80,27 +97,52 @@ class SaleOutReportController extends Controller
     public function items(Content $content)
     {
         $grid = Grid::make(new SaleOutItem(['order', 'sku', 'order.customer', 'sku.product', 'batchs']), function (Grid $grid) {
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'order_no', 'label' => '订单号'],
+                ['name' => 'customer_name', 'label' => '客户名称'],
+                ['name' => 'product_name', 'label' => '物料名称'],
+                ['name' => 'unit_name', 'label' => '单位'],
+                ['name' => 'type_str', 'label' => '分类'],
+                ['name' => 'brand_name', 'label' => '品牌'],
+                ['name' => 'attr_value_ids_str', 'label' => '属性'],
+                ['name' => 'standard_str', 'label' => '通用标准'],
+                ['name' => 'should_num', 'label' => '要货数量'],
+                ['name' => 'actual_num', 'label' => '销售数量'],
+                ['name' => 'price', 'label' => '销售价格'],
+                ['name' => 'batch_detail', 'label' => '出库批次详情'],
+                ['name' => 'sum_price', 'label' => '销售合计'],
+                ['name' => 'sum_cost_price', 'label' => '成本合计'],
+                ['name' => 'profit', 'label' => '利润'],
+                ['name' => 'apply_at', 'label' => '时间'],
+            ];
+            
+            // 添加列选择器到工具栏
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
+            
             $grid->model()->resetOrderBy();
             $grid->model()->whereHas('order', function (Builder $builder) {
                 $builder->where('review_status', SaleOutOrderModel::REVIEW_STATUS_OK);
             })->orderByDesc('order_id');
-            $grid->column('order.order_no', '订单号');
-            $grid->column('order.customer.name', '客户名称');
-            $grid->column('sku.product.name', '物料名称');
-            $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '分类');
-            $grid->column('sku.product.brand.name', '品牌');
-            $grid->column('sku.attr_value_ids_str', '属性');
+            $grid->column('order.order_no', '订单号')->setHeaderAttributes(['class' => 'column-order_no']);
+            $grid->column('order.customer.name', '客户名称')->setHeaderAttributes(['class' => 'column-customer_name']);
+            $grid->column('sku.product.name', '物料名称')->setHeaderAttributes(['class' => 'column-product_name']);
+            $grid->column('sku.product.unit.name', '单位')->setHeaderAttributes(['class' => 'column-unit_name']);
+            $grid->column('sku.product.type_str', '分类')->setHeaderAttributes(['class' => 'column-type_str']);
+            $grid->column('sku.product.brand.name', '品牌')->setHeaderAttributes(['class' => 'column-brand_name']);
+            $grid->column('sku.attr_value_ids_str', '属性')->setHeaderAttributes(['class' => 'column-attr_value_ids_str']);
 //            $grid->column('percent', '含绒百分比');
-            $grid->column('standard_str', '通用标准');
-            $grid->column('should_num', '要货数量')->sortable();
-            $grid->column('actual_num', '销售数量')->sortable();
-            $grid->column('price', '销售价格')->sortable();
-            $grid->column('__', '出库批次详情')->expand(SaleBatchDetail::class);
-            $grid->column("sum_price", '销售合计')->sortable();
-            $grid->column("sum_cost_price", '成本合计')->sortable();
-            $grid->column("profit", '利润')->sortable();
-            $grid->column("order.apply_at", '时间')->sortable();
+            $grid->column('standard_str', '通用标准')->setHeaderAttributes(['class' => 'column-standard_str']);
+            $grid->column('should_num', '要货数量')->setHeaderAttributes(['class' => 'column-should_num'])->sortable();
+            $grid->column('actual_num', '销售数量')->setHeaderAttributes(['class' => 'column-actual_num'])->sortable();
+            $grid->column('price', '销售价格')->setHeaderAttributes(['class' => 'column-price'])->sortable();
+            $grid->column('__', '出库批次详情')->setHeaderAttributes(['class' => 'column-batch_detail'])->expand(SaleBatchDetail::class);
+            $grid->column("sum_price", '销售合计')->setHeaderAttributes(['class' => 'column-sum_price'])->sortable();
+            $grid->column("sum_cost_price", '成本合计')->setHeaderAttributes(['class' => 'column-sum_cost_price'])->sortable();
+            $grid->column("profit", '利润')->setHeaderAttributes(['class' => 'column-profit'])->sortable();
+            $grid->column("order.apply_at", '时间')->setHeaderAttributes(['class' => 'column-apply_at'])->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->between('order.apply_at', "时间")->datetime()->width(6)->default([
@@ -170,6 +212,27 @@ class SaleOutReportController extends Controller
     public function summaryByCustomer(Content $content)
     {
         $grid = Grid::make(new SaleOutItem(['sku', 'sku.product']), function (Grid $grid) {
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'customer_id', 'label' => '客户'],
+                ['name' => 'product_name', 'label' => '物料名称'],
+                ['name' => 'unit_name', 'label' => '单位'],
+                ['name' => 'type_str', 'label' => '分类'],
+                ['name' => 'brand_name', 'label' => '品牌'],
+                ['name' => 'attr_value_ids_str', 'label' => '属性'],
+                ['name' => 'standard_str', 'label' => '通用标准'],
+                ['name' => 'sum_should_num', 'label' => '要货数量'],
+                ['name' => 'sum_actual_num', 'label' => '出库数量'],
+                ['name' => 'sum_cost_price', 'label' => '成本价格'],
+                ['name' => 'sum_price', 'label' => '销售价格'],
+                ['name' => 'sum_profit', 'label' => '利润'],
+            ];
+            
+            // 添加列选择器到工具栏
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
+            
             $grid->model()->resetOrderBy();
             $grid->model()
                 ->select([
@@ -192,21 +255,21 @@ class SaleOutReportController extends Controller
                     'sale_out_item.percent'
                 );
 
-            $grid->column('customer_id', '客户')->display(function ($val) {
+            $grid->column('customer_id', '客户')->setHeaderAttributes(['class' => 'column-customer_id'])->display(function ($val) {
                 return CustomerModel::query()->where('id', $val)->value('name');
             })->sortable();
-            $grid->column('sku.product.name', '物料名称');
-            $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '分类');
-            $grid->column('sku.product.brand.name', '品牌');
-            $grid->column('sku.attr_value_ids_str', '属性');
+            $grid->column('sku.product.name', '物料名称')->setHeaderAttributes(['class' => 'column-product_name']);
+            $grid->column('sku.product.unit.name', '单位')->setHeaderAttributes(['class' => 'column-unit_name']);
+            $grid->column('sku.product.type_str', '分类')->setHeaderAttributes(['class' => 'column-type_str']);
+            $grid->column('sku.product.brand.name', '品牌')->setHeaderAttributes(['class' => 'column-brand_name']);
+            $grid->column('sku.attr_value_ids_str', '属性')->setHeaderAttributes(['class' => 'column-attr_value_ids_str']);
 //            $grid->column('percent', '含绒百分比');
-            $grid->column('standard_str', '通用标准');
-            $grid->column('sum_should_num', '要货数量')->sortable();
-            $grid->column('sum_actual_num', '出库数量')->sortable();
-            $grid->column('sum_cost_price', '成本价格')->sortable();
-            $grid->column('sum_price', '销售价格')->sortable();
-            $grid->column('sum_profit', '利润')->sortable();
+            $grid->column('standard_str', '通用标准')->setHeaderAttributes(['class' => 'column-standard_str']);
+            $grid->column('sum_should_num', '要货数量')->setHeaderAttributes(['class' => 'column-sum_should_num'])->sortable();
+            $grid->column('sum_actual_num', '出库数量')->setHeaderAttributes(['class' => 'column-sum_actual_num'])->sortable();
+            $grid->column('sum_cost_price', '成本价格')->setHeaderAttributes(['class' => 'column-sum_cost_price'])->sortable();
+            $grid->column('sum_price', '销售价格')->setHeaderAttributes(['class' => 'column-sum_price'])->sortable();
+            $grid->column('sum_profit', '利润')->setHeaderAttributes(['class' => 'column-sum_profit'])->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->between('order.apply_at', "时间")->datetime()->width(6)->default([
@@ -260,6 +323,26 @@ class SaleOutReportController extends Controller
     public function summaryBySku(Content $content)
     {
         $grid = Grid::make(new SaleOutItem(['order', 'sku', 'sku.product']), function (Grid $grid) {
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'product_name', 'label' => '物料名称'],
+                ['name' => 'unit_name', 'label' => '单位'],
+                ['name' => 'type_str', 'label' => '分类'],
+                ['name' => 'brand_name', 'label' => '品牌'],
+                ['name' => 'attr_value_ids_str', 'label' => '属性'],
+                ['name' => 'standard_str', 'label' => '通用标准'],
+                ['name' => 'sum_should_num', 'label' => '要货数量'],
+                ['name' => 'sum_actual_num', 'label' => '出库数量'],
+                ['name' => 'sum_cost_price', 'label' => '成本价格'],
+                ['name' => 'sum_price', 'label' => '销售价格'],
+                ['name' => 'sum_profit', 'label' => '利润'],
+            ];
+            
+            // 添加列选择器到工具栏
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
+            
             $grid->model()->resetOrderBy();
             $grid->model()->select(
                 'sku_id',
@@ -277,18 +360,18 @@ class SaleOutReportController extends Controller
 //                'percent',
                 'standard'
             );
-            $grid->column('sku.product.name', '物料名称');
-            $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '分类');
-            $grid->column('sku.product.brand.name', '品牌');
-            $grid->column('sku.attr_value_ids_str', '属性');
+            $grid->column('sku.product.name', '物料名称')->setHeaderAttributes(['class' => 'column-product_name']);
+            $grid->column('sku.product.unit.name', '单位')->setHeaderAttributes(['class' => 'column-unit_name']);
+            $grid->column('sku.product.type_str', '分类')->setHeaderAttributes(['class' => 'column-type_str']);
+            $grid->column('sku.product.brand.name', '品牌')->setHeaderAttributes(['class' => 'column-brand_name']);
+            $grid->column('sku.attr_value_ids_str', '属性')->setHeaderAttributes(['class' => 'column-attr_value_ids_str']);
 //            $grid->column('percent', '含绒百分比');
-            $grid->column('standard_str', '通用标准');
-            $grid->column('sum_should_num', '要货数量')->sortable();
-            $grid->column('sum_actual_num', '出库数量')->sortable();
-            $grid->column('sum_cost_price', '成本价格')->sortable();
-            $grid->column('sum_price', '销售价格')->sortable();
-            $grid->column('sum_profit', '利润')->sortable();
+            $grid->column('standard_str', '通用标准')->setHeaderAttributes(['class' => 'column-standard_str']);
+            $grid->column('sum_should_num', '要货数量')->setHeaderAttributes(['class' => 'column-sum_should_num'])->sortable();
+            $grid->column('sum_actual_num', '出库数量')->setHeaderAttributes(['class' => 'column-sum_actual_num'])->sortable();
+            $grid->column('sum_cost_price', '成本价格')->setHeaderAttributes(['class' => 'column-sum_cost_price'])->sortable();
+            $grid->column('sum_price', '销售价格')->setHeaderAttributes(['class' => 'column-sum_price'])->sortable();
+            $grid->column('sum_profit', '利润')->setHeaderAttributes(['class' => 'column-sum_profit'])->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->between('order.apply_at', "时间")->datetime()->width(6)->default([

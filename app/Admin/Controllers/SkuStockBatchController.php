@@ -16,6 +16,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\BatchStockSelectSave;
 use App\Admin\Actions\Grid\ProductCheck;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Extensions\Grid\ProductCheckDetails;
 use App\Admin\Repositories\SkuStockBatch;
 use App\Models\AttrModel;
@@ -40,23 +41,44 @@ class SkuStockBatchController extends AdminController
     {
         return Grid::make(new SkuStockBatch(['sku.product']), function (Grid $grid) {
 //            $grid->model()->where('num', ">", 0);
-            $grid->column('id')->sortable();
-            $grid->column('sku.product.item_no', '物料编号');
-            $grid->column('sku.product.name', '物料名称');
-            $grid->column('sku.product.unit.name', '单位');
-            $grid->column('sku.product.type_str', '分类');
-            $grid->column('sku.product.brand.name', '品牌');
-            $grid->column('sku.attr_value_ids_str', '属性');
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'item_no', 'label' => '物料编号'],
+                ['name' => 'name', 'label' => '物料名称'],
+                ['name' => 'unit', 'label' => '单位'],
+                ['name' => 'type', 'label' => '分类'],
+                ['name' => 'brand', 'label' => '品牌'],
+                ['name' => 'attr', 'label' => '属性'],
+                ['name' => 'standard', 'label' => '通用标准'],
+                ['name' => 'batch_no', 'label' => '批次号'],
+                ['name' => 'num', 'label' => '库存数量'],
+                ['name' => 'cost_price', 'label' => '成本价格'],
+                ['name' => 'cost_price_total', 'label' => '合计成本'],
+                ['name' => 'position', 'label' => '库位'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('sku.product.item_no', '物料编号')->setHeaderAttributes(['class' => 'column-item_no']);
+            $grid->column('sku.product.name', '物料名称')->setHeaderAttributes(['class' => 'column-name']);
+            $grid->column('sku.product.unit.name', '单位')->setHeaderAttributes(['class' => 'column-unit']);
+            $grid->column('sku.product.type_str', '分类')->setHeaderAttributes(['class' => 'column-type']);
+            $grid->column('sku.product.brand.name', '品牌')->setHeaderAttributes(['class' => 'column-brand']);
+            $grid->column('sku.attr_value_ids_str', '属性')->setHeaderAttributes(['class' => 'column-attr']);
 //            $grid->column('percent', '含绒量(%)');
-            $grid->column('standard_str', '通用标准');
-            $grid->column('batch_no');
-            $grid->column('num');
-            $grid->column('cost_price', "成本价格");
-            $grid->column("cost_price_total", "合计成本")->display(function () {
+            $grid->column('standard_str', '通用标准')->setHeaderAttributes(['class' => 'column-standard']);
+            $grid->column('batch_no')->setHeaderAttributes(['class' => 'column-batch_no']);
+            $grid->column('num')->setHeaderAttributes(['class' => 'column-num']);
+            $grid->column('cost_price', "成本价格")->setHeaderAttributes(['class' => 'column-cost_price']);
+            $grid->column("cost_price_total", "合计成本")->setHeaderAttributes(['class' => 'column-cost_price_total'])->display(function () {
                 return bcmul($this->num, $this->cost_price, 2);
             });
-            $grid->column('position.name', '库位');
+            $grid->column('position.name', '库位')->setHeaderAttributes(['class' => 'column-position']);
 
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
+            
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->where("product_name", function (Builder $query) {
                     $query->whereHasIn("sku.product", function (Builder $query) {

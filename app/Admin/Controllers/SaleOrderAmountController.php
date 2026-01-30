@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\SaleOrderAmount;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -30,17 +31,35 @@ class SaleOrderAmountController extends AdminController
     protected function grid()
     {
         return Grid::make(new SaleOrderAmount(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('order_id');
-            $grid->column('customer_id');
-            $grid->column('status');
-            $grid->column('should_amount');
-            $grid->column('actual_amount');
-            $grid->column('accountant_id');
-            $grid->column('settlement_at');
-            $grid->column('created_at');
-            $grid->column('updated_at')->sortable();
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_id', 'label' => '订单ID'],
+                ['name' => 'customer_id', 'label' => '客户ID'],
+                ['name' => 'status', 'label' => '状态'],
+                ['name' => 'should_amount', 'label' => '应收金额'],
+                ['name' => 'actual_amount', 'label' => '实收金额'],
+                ['name' => 'accountant_id', 'label' => '会计期ID'],
+                ['name' => 'settlement_at', 'label' => '结算时间'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+                ['name' => 'updated_at', 'label' => '更新时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order_id')->setHeaderAttributes(['class' => 'column-order_id']);
+            $grid->column('customer_id')->setHeaderAttributes(['class' => 'column-customer_id']);
+            $grid->column('status')->setHeaderAttributes(['class' => 'column-status']);
+            $grid->column('should_amount')->setHeaderAttributes(['class' => 'column-should_amount']);
+            $grid->column('actual_amount')->setHeaderAttributes(['class' => 'column-actual_amount']);
+            $grid->column('accountant_id')->setHeaderAttributes(['class' => 'column-accountant_id']);
+            $grid->column('settlement_at')->setHeaderAttributes(['class' => 'column-settlement_at']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            $grid->column('updated_at')->setHeaderAttributes(['class' => 'column-updated_at'])->sortable();
 
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
+            
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');
             });

@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\PurchaseOrderAmount;
 use App\Models\PurchaseOrderAmountModel;
 use App\Models\SupplierModel;
@@ -32,13 +33,29 @@ class PurchaseOrderAmountController extends AdminController
     protected function grid()
     {
         return Grid::make(new PurchaseOrderAmount(['order', 'supplier', 'accountant']), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('order.order_no', "采购订单");
-            $grid->column('supplier.name', "供应商名称");
-            $grid->column('should_amount');
-            $grid->column('actual_amount');
-            $grid->column('status', '单据状态')->using(PurchaseOrderAmountModel::STATUS)->label(PurchaseOrderAmountModel::STATUS_COLOR);
-            $grid->column('created_at');
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_no', 'label' => '采购订单'],
+                ['name' => 'supplier', 'label' => '供应商名称'],
+                ['name' => 'should_amount', 'label' => '费用金额'],
+                ['name' => 'actual_amount', 'label' => '结算金额'],
+                ['name' => 'status', 'label' => '单据状态'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order.order_no', "采购订单")->setHeaderAttributes(['class' => 'column-order_no']);
+            $grid->column('supplier.name', "供应商名称")->setHeaderAttributes(['class' => 'column-supplier']);
+            $grid->column('should_amount')->setHeaderAttributes(['class' => 'column-should_amount']);
+            $grid->column('actual_amount')->setHeaderAttributes(['class' => 'column-actual_amount']);
+            $grid->column('status', '单据状态')->setHeaderAttributes(['class' => 'column-status'])->using(PurchaseOrderAmountModel::STATUS)->label(PurchaseOrderAmountModel::STATUS_COLOR);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
+            
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->in('supplier_id', "供应商名称")->width(4)->multipleSelect(SupplierModel::query()->pluck('name', 'id'));
             });

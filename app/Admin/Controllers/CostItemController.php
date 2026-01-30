@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\CostItem;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -30,16 +31,33 @@ class CostItemController extends AdminController
     protected function grid()
     {
         return Grid::make(new CostItem(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('order_id');
-            $grid->column('cost_type');
-            $grid->column('pay_type');
-            $grid->column('should_amount');
-            $grid->column('actual_amount');
-            $grid->column('with_id');
-            $grid->column('other');
-            $grid->column('created_at');
-            $grid->column('updated_at')->sortable();
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_id', 'label' => '订单ID'],
+                ['name' => 'cost_type', 'label' => '费用类型'],
+                ['name' => 'pay_type', 'label' => '付款类型'],
+                ['name' => 'should_amount', 'label' => '应付金额'],
+                ['name' => 'actual_amount', 'label' => '实付金额'],
+                ['name' => 'with_id', 'label' => '关联ID'],
+                ['name' => 'other', 'label' => '备注'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+                ['name' => 'updated_at', 'label' => '更新时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order_id')->setHeaderAttributes(['class' => 'column-order_id']);
+            $grid->column('cost_type')->setHeaderAttributes(['class' => 'column-cost_type']);
+            $grid->column('pay_type')->setHeaderAttributes(['class' => 'column-pay_type']);
+            $grid->column('should_amount')->setHeaderAttributes(['class' => 'column-should_amount']);
+            $grid->column('actual_amount')->setHeaderAttributes(['class' => 'column-actual_amount']);
+            $grid->column('with_id')->setHeaderAttributes(['class' => 'column-with_id']);
+            $grid->column('other')->setHeaderAttributes(['class' => 'column-other']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            $grid->column('updated_at')->setHeaderAttributes(['class' => 'column-updated_at'])->sortable();
+
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');

@@ -15,6 +15,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\Expand\AttrValue;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\Attr;
 use App\Models\AttrModel;
 use Dcat\Admin\Form;
@@ -31,13 +32,26 @@ class AttrController extends AdminController
     protected function grid()
     {
         return Grid::make(AttrModel::withoutGlobalScope('status'), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('name');
-            $grid->column('value', '属性值')
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'name', 'label' => '属性名称'],
+                ['name' => 'value', 'label' => '属性值'],
+                ['name' => 'status', 'label' => '单据状态'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('name')->setHeaderAttributes(['class' => 'column-name']);
+            $grid->column('value', '属性值')->setHeaderAttributes(['class' => 'column-value'])
                 ->display('查看')
                 ->expand(AttrValue::class);
-            $grid->status('单据状态')->switch();
-            $grid->column('created_at');
+            $grid->status('单据状态')->setHeaderAttributes(['class' => 'column-status'])->switch();
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
 
             $grid->showBatchDelete();
         });

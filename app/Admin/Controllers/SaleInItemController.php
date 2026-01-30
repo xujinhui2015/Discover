@@ -14,6 +14,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\SaleInItem;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -29,17 +30,35 @@ class SaleInItemController extends AdminController
     protected function grid()
     {
         return Grid::make(new SaleInItem(), function (Grid $grid) {
-            $grid->column('id')->sortable();
-            $grid->column('actual_num');
-            $grid->column('batch_no');
-            $grid->column('order_id');
-            $grid->column('position_id');
-            $grid->column('price');
-            $grid->column('return_num');
-            $grid->column('should_num');
-            $grid->column('sku_id');
-            $grid->column('created_at');
-            $grid->column('updated_at')->sortable();
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_id', 'label' => '订单ID'],
+                ['name' => 'sku_id', 'label' => 'SKU ID'],
+                ['name' => 'should_num', 'label' => '应退数量'],
+                ['name' => 'actual_num', 'label' => '实退数量'],
+                ['name' => 'return_num', 'label' => '退货数量'],
+                ['name' => 'price', 'label' => '价格'],
+                ['name' => 'batch_no', 'label' => '批次号'],
+                ['name' => 'position_id', 'label' => '仓位ID'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+                ['name' => 'updated_at', 'label' => '更新时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order_id')->setHeaderAttributes(['class' => 'column-order_id']);
+            $grid->column('sku_id')->setHeaderAttributes(['class' => 'column-sku_id']);
+            $grid->column('should_num')->setHeaderAttributes(['class' => 'column-should_num']);
+            $grid->column('actual_num')->setHeaderAttributes(['class' => 'column-actual_num']);
+            $grid->column('return_num')->setHeaderAttributes(['class' => 'column-return_num']);
+            $grid->column('price')->setHeaderAttributes(['class' => 'column-price']);
+            $grid->column('batch_no')->setHeaderAttributes(['class' => 'column-batch_no']);
+            $grid->column('position_id')->setHeaderAttributes(['class' => 'column-position_id']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
+            $grid->column('updated_at')->setHeaderAttributes(['class' => 'column-updated_at'])->sortable();
+
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+            });
 
             $grid->filter(function (Grid\Filter $filter) {
             });

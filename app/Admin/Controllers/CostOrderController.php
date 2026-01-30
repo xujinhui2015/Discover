@@ -19,6 +19,7 @@ use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Actions\Grid\OrderPrint;
 use App\Admin\Actions\Grid\OrderReview;
 use App\Admin\Extensions\Form\Order\OrderController;
+use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Extensions\Grid\CostDetail;
 use App\Admin\Extensions\Grid\CostItemOrderDetail;
 use App\Admin\Repositories\CostOrder;
@@ -42,22 +43,41 @@ class CostOrderController extends OrderController
     {
         $yearMonth = $this->getOrderRepository()->getYearMonth();
         return Grid::make(new CostOrder(['accountant_item']), function (Grid $grid) use ($yearMonth) {
-            $grid->column('id')->sortable();
-            $grid->column('order_no', "费用单号");
-            $grid->column("_", "费用明细")->expand(CostDetail::class);
-            $grid->column('category', "费用分类")->using(CostOrderModel::CATEGORY);
-            $grid->column('company_str', "公司名称");
-            $grid->column("accountant_item.year_month", "费用月份")->emp();
-            $grid->column('review_status', '审核状态')->using(CostOrderModel::REVIEW_STATUS)->label(CostOrderModel::REVIEW_STATUS_COLOR);
-            $grid->column('other', '备注')->emp();
-            $grid->column('total_amount', "费用总金额");
-            $grid->column('settlement_amount', '已付款金额');
-            $grid->column('discount_amount', '已优惠金额');
-            $grid->column('created_at');
+            // 定义列配置（用于列选择器）
+            $columnConfig = [
+                ['name' => 'id', 'label' => 'ID'],
+                ['name' => 'order_no', 'label' => '费用单号'],
+                ['name' => 'cost_detail', 'label' => '费用明细'],
+                ['name' => 'category', 'label' => '费用分类'],
+                ['name' => 'company_str', 'label' => '公司名称'],
+                ['name' => 'year_month', 'label' => '费用月份'],
+                ['name' => 'review_status', 'label' => '审核状态'],
+                ['name' => 'other', 'label' => '备注'],
+                ['name' => 'total_amount', 'label' => '费用总金额'],
+                ['name' => 'settlement_amount', 'label' => '已付款金额'],
+                ['name' => 'discount_amount', 'label' => '已优惠金额'],
+                ['name' => 'created_at', 'label' => '创建时间'],
+            ];
+            
+            $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
+            $grid->column('order_no', "费用单号")->setHeaderAttributes(['class' => 'column-order_no']);
+            $grid->column("_", "费用明细")->setHeaderAttributes(['class' => 'column-cost_detail'])->expand(CostDetail::class);
+            $grid->column('category', "费用分类")->setHeaderAttributes(['class' => 'column-category'])->using(CostOrderModel::CATEGORY);
+            $grid->column('company_str', "公司名称")->setHeaderAttributes(['class' => 'column-company_str']);
+            $grid->column("accountant_item.year_month", "费用月份")->setHeaderAttributes(['class' => 'column-year_month'])->emp();
+            $grid->column('review_status', '审核状态')->setHeaderAttributes(['class' => 'column-review_status'])->using(CostOrderModel::REVIEW_STATUS)->label(CostOrderModel::REVIEW_STATUS_COLOR);
+            $grid->column('other', '备注')->setHeaderAttributes(['class' => 'column-other'])->emp();
+            $grid->column('total_amount', "费用总金额")->setHeaderAttributes(['class' => 'column-total_amount']);
+            $grid->column('settlement_amount', '已付款金额')->setHeaderAttributes(['class' => 'column-settlement_amount']);
+            $grid->column('discount_amount', '已优惠金额')->setHeaderAttributes(['class' => 'column-discount_amount']);
+            $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
 
             $grid->actions(EditOrder::make());
             $grid->disableQuickEditButton();
-            $grid->tools(BatchOrderPrint::make());
+            $grid->tools(function ($tools) use ($columnConfig) {
+                $tools->append(new ColumnSelector($columnConfig));
+                $tools->append(BatchOrderPrint::make());
+            });
             $grid->disableCreateButton();
 
             $grid->filter(function (Grid\Filter $filter) use ($yearMonth) {
