@@ -104,9 +104,9 @@ class SaleOutOrderController extends OrderController
             $grid->actions(EditOrder::make());
             
             $grid->tools(function ($tools) use ($columnConfig) {
-                $tools->append(new ColumnSelector($columnConfig));
                 $tools->append(BatchOrderPrint::make());
                 $tools->append(BatchCreateSaleOutOrder::make());
+                $tools->append(new ColumnSelector($columnConfig));
             });
 //            $grid->batchActions(BatchCreateSaleInOrderSave::make());
 

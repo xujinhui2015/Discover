@@ -59,8 +59,8 @@ class InventoryController extends AdminController
                 }
             });
             $grid->tools(function ($tools) use ($columnConfig) {
-                $tools->append(new ColumnSelector($columnConfig));
                 $tools->append(Delete::make());
+                $tools->append(new ColumnSelector($columnConfig));
             });
         });
     }

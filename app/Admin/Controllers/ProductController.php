@@ -90,9 +90,9 @@ class ProductController extends AdminController
             ]);
 
             $grid->tools(function (Grid\Tools $tools) use ($columnConfig) {
-                $tools->append(new ColumnSelector($columnConfig));
                 $tools->append(new ImportProductTool());
                 $tools->append(new ImportProductPrice());
+                $tools->append(new ColumnSelector($columnConfig));
             });
 
             $grid->filter(function (Grid\Filter $filter) {

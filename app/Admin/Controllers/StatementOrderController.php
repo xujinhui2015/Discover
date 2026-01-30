@@ -77,11 +77,11 @@ class StatementOrderController extends OrderController
             $grid->disableQuickEditButton();
             $grid->disableCreateButton();
             $grid->tools(function ($tools) use ($columnConfig) {
-                $tools->append(new ColumnSelector($columnConfig));
                 $tools->append(BatchOrderPrint::make());
                 $tools->append(BatchSupplierStatement::make());
                 $tools->append(BatchCustomerStatement::make());
                 $tools->append(Delete::make());
+                $tools->append(new ColumnSelector($columnConfig));
             });
 
             $grid->filter(function (Grid\Filter $filter) {

@@ -95,8 +95,8 @@ class PurchaseOrderController extends OrderController
             $grid->column('other')->setHeaderAttributes(['class' => 'column-other'])->emp();
             
             $grid->tools(function ($tools) use ($columnConfig) {
-                $tools->append(new ColumnSelector($columnConfig));
                 $tools->append(BatchOrderPrint::make());
+                $tools->append(new ColumnSelector($columnConfig));
             });
             
             $grid->disableQuickEditButton();

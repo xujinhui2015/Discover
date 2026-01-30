@@ -100,8 +100,8 @@ class ApplyForOrderController extends OrderController
             $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
             $grid->disableQuickEditButton();
             $grid->tools(function ($tools) use ($columnConfig) {
-                $tools->append(new ColumnSelector($columnConfig));
                 $tools->append(BatchOrderPrint::make());
+                $tools->append(new ColumnSelector($columnConfig));
             });
             $grid->actions(EditOrder::make());
 

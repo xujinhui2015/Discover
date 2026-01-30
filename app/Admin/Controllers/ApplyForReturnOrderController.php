@@ -102,9 +102,9 @@ class ApplyForReturnOrderController extends OrderController
 
             // 添加列选择器和其他工具
             $grid->tools(function ($tools) use ($columnConfig) {
-                $tools->append(new ColumnSelector($columnConfig));
                 $tools->append(BatchOrderPrint::make());
                 $tools->append(BatchCreateApplyForOrder::make());
+                $tools->append(new ColumnSelector($columnConfig));
             });
 
             $grid->filter(function (Grid\Filter $filter) {

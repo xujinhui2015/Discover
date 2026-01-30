@@ -99,9 +99,9 @@ class PurchaseOutOrderController extends OrderController
             $grid->disableCreateButton();
             $grid->actions(EditOrder::make());
             $grid->tools(function ($tools) use ($columnConfig) {
-                $tools->append(new ColumnSelector($columnConfig));
                 $tools->append(BatchOrderPrint::make());
                 $tools->append(BatchCreatePurOutOrder::make());
+                $tools->append(new ColumnSelector($columnConfig));
             });
 
             $grid->filter(function (Grid\Filter $filter) {

@@ -96,9 +96,9 @@ class SaleInOrderController extends OrderController
             $grid->disableCreateButton();
             $grid->actions(EditOrder::make());
             $grid->tools(function ($tools) use ($columnConfig) {
-                $tools->append(new ColumnSelector($columnConfig));
                 $tools->append(BatchOrderPrint::make());
                 $tools->append(BatchCreateSaleInOrder::make());
+                $tools->append(new ColumnSelector($columnConfig));
             });
 
             $grid->filter(function (Grid\Filter $filter) {

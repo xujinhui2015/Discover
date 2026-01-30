@@ -46,11 +46,6 @@ class ApplyForBatchController extends AdminController
                 ['name' => 'position', 'label' => '库位'],
             ];
             
-            // 添加列选择器到工具栏
-            $grid->tools(function ($tools) use ($columnConfig) {
-                $tools->append(new ColumnSelector($columnConfig));
-            });
-            
             $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
             $grid->column('item.sku.product.name', '物料名称')->setHeaderAttributes(['class' => 'column-name']);
             $grid->column('item.sku.product.unit.name', '单位')->setHeaderAttributes(['class' => 'column-unit']);
@@ -66,11 +61,15 @@ class ApplyForBatchController extends AdminController
             $grid->column('stock_batch.position.name', '库位')->setHeaderAttributes(['class' => 'column-position']);
             $grid->disableCreateButton();
             $grid->disableActions();
-            $grid->tools(Delete::make());
-
-            if ($order->review_status !== ApplyForOrderModel::REVIEW_STATUS_OK) {
-                $grid->tools(BatchStockSelect::make());
-            }
+            
+            // 添加工具栏按钮
+            $grid->tools(function ($tools) use ($columnConfig, $order) {
+                $tools->append(Delete::make());
+                if ($order->review_status !== ApplyForOrderModel::REVIEW_STATUS_OK) {
+                    $tools->append(BatchStockSelect::make());
+                }
+                $tools->append(new ColumnSelector($columnConfig));
+            });
             $grid->filter(function (Grid\Filter $filter) {
             });
         });

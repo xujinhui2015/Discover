@@ -88,8 +88,8 @@ class InitStockOrderController extends OrderController
             $grid->column('review_status', '审核状态')->setHeaderAttributes(['class' => 'column-review_status'])->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
             $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
             $grid->tools(function ($tools) use ($columnConfig) {
-                $tools->append(new ColumnSelector($columnConfig));
                 $tools->append(BatchOrderPrint::make());
+                $tools->append(new ColumnSelector($columnConfig));
             });
             $grid->disableQuickEditButton();
             $grid->actions(EditOrder::make());

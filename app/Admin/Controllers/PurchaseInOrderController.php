@@ -106,9 +106,9 @@ class PurchaseInOrderController extends OrderController
             $grid->actions(EditOrder::make());
             
             $grid->tools(function ($tools) use ($columnConfig) {
-                $tools->append(new ColumnSelector($columnConfig));
                 $tools->append(BatchOrderPrint::make());
                 $tools->append(BatchCreatePurInOrder::make());
+                $tools->append(new ColumnSelector($columnConfig));
             });
 
             $grid->filter(function (Grid\Filter $filter) {
