@@ -15,6 +15,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\Grid\ColumnSelector;
+use App\Admin\Extensions\BarcodeDrawer;
 use App\Admin\Renderables\SkuStockBatchTable;
 use App\Admin\Repositories\SkuStock;
 use App\Models\AttrModel;
@@ -63,7 +64,11 @@ class SkuStockController extends AdminController
             $grid->column('id')->setHeaderAttributes(['class' => 'column-id'])->sortable();
             $grid->column('sku.product.item_no', '物料编号')->setHeaderAttributes(['class' => 'column-item_no']);
             $grid->column('sku.product.name', '物料名称')->setHeaderAttributes(['class' => 'column-name']);
-            $grid->column('sku.product.barcode', '专属编码')->setHeaderAttributes(['class' => 'column-barcode']);
+            $grid->column('sku.product.barcode', '专属编码')
+                ->setHeaderAttributes(['class' => 'column-barcode'])
+                ->display(function ($value) {
+                    return BarcodeDrawer::render($value);
+                });
             $grid->column('sku.product.unit.name', '单位')->setHeaderAttributes(['class' => 'column-unit']);
             $grid->column('sku.product.type_str', '分类')->setHeaderAttributes(['class' => 'column-type']);
             $grid->column('sku.product.brand.name', '品牌')->setHeaderAttributes(['class' => 'column-brand']);
