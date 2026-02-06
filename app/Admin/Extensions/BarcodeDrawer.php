@@ -6,7 +6,7 @@ use Dcat\Admin\Admin;
 
 class BarcodeDrawer
 {
-    public static function render($value, int $limit = 10): string
+    public static function render($value, int $limit = 8): string
     {
         $value = trim((string) $value);
         if ($value === '') {
