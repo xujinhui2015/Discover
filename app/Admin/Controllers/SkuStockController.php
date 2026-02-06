@@ -67,7 +67,7 @@ class SkuStockController extends AdminController
             $grid->column('sku.product.barcode', '专属编码')
                 ->setHeaderAttributes(['class' => 'column-barcode'])
                 ->display(function ($value) {
-                    return BarcodeDrawer::render($value);
+                    return BarcodeDrawer::render($value, (string) data_get($this, 'sku.product.luxury_brand_series', ''));
                 });
             $grid->column('sku.product.unit.name', '单位')->setHeaderAttributes(['class' => 'column-unit']);
             $grid->column('sku.product.type_str', '分类')->setHeaderAttributes(['class' => 'column-type']);

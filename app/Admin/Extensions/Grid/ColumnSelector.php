@@ -300,10 +300,17 @@ class ColumnSelector extends AbstractTool
         renderCheckboxes();
         
         // 监听表格刷新事件（翻页、筛选等）
-        Dcat.grid.on('pjax:complete', function() {
-            var settings = loadSettings();
-            applySettings(settings);
-        });
+        if (window.Dcat && Dcat.grid && typeof Dcat.grid.on === 'function') {
+            Dcat.grid.on('pjax:complete', function() {
+                var settings = loadSettings();
+                applySettings(settings);
+            });
+        } else {
+            jQuery(document).on('pjax:complete', function() {
+                var settings = loadSettings();
+                applySettings(settings);
+            });
+        }
         
         // 也监听普通的表格加载
         setTimeout(function() {

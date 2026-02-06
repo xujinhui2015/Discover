@@ -71,7 +71,7 @@ class ProductController extends AdminController
             $grid->column('barcode', '专属编码')
                 ->setHeaderAttributes(['class' => 'column-barcode'])
                 ->display(function ($value) {
-                    return BarcodeDrawer::render($value);
+                    return BarcodeDrawer::render($value, (string) data_get($this, 'luxury_brand_series', ''));
                 })
                 ->emp();
             $grid->column('name')->setHeaderAttributes(['class' => 'column-name'])->emp();

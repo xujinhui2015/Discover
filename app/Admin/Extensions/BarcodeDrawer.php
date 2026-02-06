@@ -6,12 +6,19 @@ use Dcat\Admin\Admin;
 
 class BarcodeDrawer
 {
-    public static function render($value, int $limit = 8): string
+    public static function render($value, $luxuryBrandSeries = '', int $limit = 8): string
     {
+        if (is_int($luxuryBrandSeries)) {
+            $limit = $luxuryBrandSeries;
+            $luxuryBrandSeries = '';
+        }
+
         $value = trim((string) $value);
         if ($value === '') {
             return '';
         }
+
+        $luxuryBrandSeries = trim((string) $luxuryBrandSeries);
 
         self::ensureAssets();
 
@@ -23,10 +30,11 @@ class BarcodeDrawer
 
         $escapedValue = e($value);
         $escapedPreview = e($preview);
+        $escapedLuxury = e($luxuryBrandSeries);
 
         $toggleHtml = '';
         if ($isOverflow) {
-            $toggleHtml = '<button type="button" class="barcode-toggle" data-barcode="' . $escapedValue . '" aria-label="查看专属编码">'
+            $toggleHtml = '<button type="button" class="barcode-toggle" data-barcode="' . $escapedValue . '" data-luxury="' . $escapedLuxury . '" aria-label="查看专属编码">'
                 . '<i class="fa fa-eye"></i>'
                 . '</button>';
         }
@@ -48,21 +56,28 @@ HTML;
         $loaded = true;
 
         Admin::style(<<<CSS
-.barcode-cell{display:flex;align-items:center;gap:8px;}
-.barcode-preview{max-width:220px;display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.barcode-toggle{padding:0;border:none;background:transparent;line-height:1;cursor:pointer;color:#333;}
-.barcode-toggle:focus{outline:none;}
-.barcode-drawer-mask{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;visibility:hidden;transition:all .2s ease;z-index:1998;}
-.barcode-drawer{position:fixed;top:0;right:0;height:100%;width:420px;max-width:92vw;background:#fff;box-shadow:-6px 0 18px rgba(0,0,0,.12);transform:translateX(100%);transition:transform .25s ease;z-index:1999;display:flex;flex-direction:column;}
-.barcode-drawer.is-open{transform:translateX(0);}
-.barcode-drawer-mask.is-open{opacity:1;visibility:visible;}
-.barcode-drawer__header{padding:16px 18px;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;}
-.barcode-drawer__title{font-weight:600;font-size:15px;color:#333;}
-.barcode-drawer__header-actions{display:flex;align-items:center;gap:8px;}
-.barcode-drawer__body{padding:16px 18px;overflow:auto;flex:1;}
-.barcode-drawer__list{margin:0;padding-left:18px;}
-.barcode-drawer__list li{margin:6px 0;line-height:1.6;color:#333;word-break:break-all;}
-@media (max-width: 576px){.barcode-drawer{width:92vw;}}
+ .barcode-cell{display:flex;align-items:center;gap:8px;}
+ .barcode-preview{max-width:220px;display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+ .barcode-toggle{width:24px;height:24px;padding:0;border:1px solid #d7dde4;border-radius:4px;background:#fff;line-height:22px;cursor:pointer;color:#4f5d6b;text-align:center;}
+ .barcode-toggle:focus{outline:none;}
+ .barcode-modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.25);opacity:0;visibility:hidden;transition:all .2s ease;z-index:1998;}
+ .barcode-modal{position:fixed;top:0;right:0;height:100%;width:560px;max-width:94vw;background:#fff;border-left:1px solid #e5e9ef;box-shadow:-10px 0 28px rgba(0,0,0,.16);transform:translateX(100%);transition:transform .22s ease;z-index:1999;display:flex;flex-direction:column;}
+ .barcode-modal.is-open{transform:translateX(0);}
+ .barcode-modal-mask.is-open{opacity:1;visibility:visible;}
+ .barcode-modal__header{padding:16px 20px;border-bottom:1px solid #eceff3;display:flex;align-items:center;justify-content:space-between;}
+ .barcode-modal__title{font-size:15px;font-weight:600;line-height:1;color:#333;margin-right:auto;}
+ .barcode-modal__actions{display:flex;align-items:center;gap:12px;}
+ .barcode-modal__btn{height:34px;padding:0 18px;border:1px solid #d5dce5;border-radius:4px;background:#fff;color:#5d6874;font-size:14px;line-height:32px;cursor:pointer;}
+ .barcode-modal__btn--primary{border-color:#5977ff;color:#5977ff;box-shadow:0 0 0 1px rgba(89,119,255,.18) inset;}
+ .barcode-modal__body{padding:12px 14px 20px;overflow:auto;flex:1;}
+ .barcode-modal__section{padding:0 2px;}
+ .barcode-modal__divider{margin:18px 0;border-top:1px solid #d7dce2;}
+ .barcode-modal__tag{display:inline-flex;align-items:center;justify-content:center;min-width:160px;height:50px;padding:0 14px;margin-bottom:16px;border:2px solid #9ea4aa;border-radius:8px;background:#fff;color:#4d535a;font-size:16px;font-weight:700;line-height:1;}
+ .barcode-modal__list{margin:0;padding:0;list-style:none;}
+ .barcode-modal__item{position:relative;margin:0 0 10px;padding-left:14px;color:#4a5159;font-size:16px;line-height:1.55;word-break:break-all;}
+ .barcode-modal__item:before{content:'';position:absolute;left:0;top:.72em;width:5px;height:5px;border-radius:50%;background:#6b737c;transform:translateY(-50%);}
+ .barcode-modal__empty{color:#9aa3ad;font-size:14px;line-height:1.4;}
+ @media (max-width: 576px){.barcode-modal{width:92vw;}.barcode-modal__title{font-size:15px;}.barcode-modal__btn{padding:0 12px;}.barcode-modal__tag{min-width:130px;}}
 CSS);
 
         Admin::script(<<<JS
@@ -73,27 +88,37 @@ CSS);
     window.__barcodeDrawerInit = true;
 
     var drawerHtml = ''
-        + '<div class="barcode-drawer-mask" id="barcode-drawer-mask"></div>'
-        + '<div class="barcode-drawer" id="barcode-drawer">'
-        + '  <div class="barcode-drawer__header">'
-        + '    <div class="barcode-drawer__title">专属编码</div>'
-        + '    <div class="barcode-drawer__header-actions">'
-        + '      <button type="button" class="btn btn-sm btn-outline-primary" data-action="copy-all">复制全部</button>'
-        + '      <button type="button" class="btn btn-sm btn-light" data-action="close">关闭</button>'
+        + '<div class="barcode-modal-mask" id="barcode-modal-mask"></div>'
+        + '<div class="barcode-modal" id="barcode-modal">'
+        + '  <div class="barcode-modal__header">'
+        + '    <div class="barcode-modal__title">专属编码</div>'
+        + '    <div class="barcode-modal__actions">'
+        + '      <button type="button" class="barcode-modal__btn barcode-modal__btn--primary" data-action="copy-all">复制全部</button>'
+        + '      <button type="button" class="barcode-modal__btn" data-action="close">关闭</button>'
         + '    </div>'
         + '  </div>'
-        + '  <div class="barcode-drawer__body">'
-        + '    <ul class="barcode-drawer__list" id="barcode-drawer-list"></ul>'
+        + '  <div class="barcode-modal__body">'
+        + '    <div class="barcode-modal__section">'
+        + '      <div class="barcode-modal__tag">本厂香型</div>'
+        + '      <ul class="barcode-modal__list" id="barcode-factory-list"></ul>'
+        + '    </div>'
+        + '    <div class="barcode-modal__divider"></div>'
+        + '    <div class="barcode-modal__section">'
+        + '      <div class="barcode-modal__tag">对应大牌</div>'
+        + '      <ul class="barcode-modal__list" id="barcode-brand-list"></ul>'
+        + '    </div>'
         + '  </div>'
         + '</div>';
 
     document.body.insertAdjacentHTML('beforeend', drawerHtml);
 
-    var drawer = document.getElementById('barcode-drawer');
-    var mask = document.getElementById('barcode-drawer-mask');
-    var list = document.getElementById('barcode-drawer-list');
+    var drawer = document.getElementById('barcode-modal');
+    var mask = document.getElementById('barcode-modal-mask');
+    var factoryList = document.getElementById('barcode-factory-list');
+    var brandList = document.getElementById('barcode-brand-list');
     var currentButton = null;
     var currentRawText = '';
+    var currentLuxuryText = '';
 
     function splitLines(text) {
         return text.split(/[；;]+/)
@@ -101,26 +126,26 @@ CSS);
             .filter(function (item) { return item.length; });
     }
 
-    function formatLine(text) {
-        return text.replace(/\s*\/\s*/g, ' / ');
+    function safeText(text) {
+        return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    function renderList(text) {
-        var items = splitLines(text).map(formatLine);
+    function renderList(container, items) {
         if (!items.length) {
-            list.innerHTML = '';
+            container.innerHTML = '<li class="barcode-modal__empty">暂无</li>';
             return;
         }
-        list.innerHTML = items.map(function (item) {
-            var safe = item.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            return '<li>' + safe + '</li>';
+        container.innerHTML = items.map(function (item) {
+            return '<li class="barcode-modal__item">' + safeText(item) + '</li>';
         }).join('');
     }
 
-    function openDrawer(rawText, button) {
+    function openDrawer(rawText, luxuryText, button) {
         currentButton = button || null;
         currentRawText = rawText || '';
-        renderList(currentRawText);
+        currentLuxuryText = luxuryText || '';
+        renderList(factoryList, splitLines(currentRawText));
+        renderList(brandList, splitLines(currentLuxuryText));
         drawer.classList.add('is-open');
         mask.classList.add('is-open');
         if (currentButton) {
@@ -162,6 +187,10 @@ CSS);
             document.execCommand('copy');
             document.body.removeChild(temp);
         }
+
+        if (window.Dcat && Dcat.success) {
+            Dcat.success('已复制到剪贴板');
+        }
     }
 
     document.addEventListener('click', function (event) {
@@ -169,7 +198,8 @@ CSS);
         var toggle = target.closest('.barcode-toggle');
         if (toggle) {
             var rawText = toggle.getAttribute('data-barcode') || '';
-            openDrawer(rawText, toggle);
+            var luxuryText = toggle.getAttribute('data-luxury') || '';
+            openDrawer(rawText, luxuryText, toggle);
             return;
         }
 
@@ -181,12 +211,22 @@ CSS);
                 return;
             }
             if (action === 'copy-all') {
-                copyText(currentRawText);
+                var mergedText = currentRawText;
+                if (currentLuxuryText) {
+                    mergedText += (mergedText ? '\\n' : '') + currentLuxuryText;
+                }
+                copyText(mergedText);
                 return;
             }
         }
 
         if (target === mask) {
+            closeDrawer();
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
             closeDrawer();
         }
     });
