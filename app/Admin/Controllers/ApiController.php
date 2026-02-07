@@ -111,6 +111,35 @@ class ApiController extends Controller
         return Response::json($data);
     }
 
+    /**
+     * 获取物料明细行的实领数量和成本总价
+     */
+    public function getItemActualNum(Request $request): JsonResponse
+    {
+        $table = $request->get('table');
+        $itemId = $request->get('item_id');
+
+        $allowed = [
+            'apply_for_item',
+            'sale_out_item',
+            'scrap_item',
+        ];
+
+        if (! in_array($table, $allowed, true) || ! $itemId) {
+            return Response::json(['actual_num' => 0, 'cost_price' => 0]);
+        }
+
+        $row = \Illuminate\Support\Facades\DB::table($table)
+            ->where('id', $itemId)
+            ->select(['actual_num', 'cost_price'])
+            ->first();
+
+        return Response::json([
+            'actual_num' => $row->actual_num ?? 0,
+            'cost_price' => $row->cost_price ?? 0,
+        ]);
+    }
+
     public function getSkuBatches(Request $request): JsonResponse
     {
         $skuId = $request->get('q');

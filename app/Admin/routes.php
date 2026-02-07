@@ -37,6 +37,7 @@ Route::group([
     $router->get('api/get-customer-address', 'ApiController@getCustomerAddress')->name('api.customer.address.find');
     $router->get('api/get-customer-drawee', 'ApiController@getCustomerDrawee')->name('api.customer.drawee.find');
     $router->get('api/get-sku-batches', 'ApiController@getSkuBatches')->name('api.sku.batches');
+    $router->get('api/get-item-actual-num', 'ApiController@getItemActualNum')->name('api.item.actual-num');
 
     $router->resource('attrs', 'AttrController');
     $router->get('products/import', 'ProductImportController@index')->name('products.import');

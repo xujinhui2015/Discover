@@ -31,7 +31,7 @@ class ApplyForBatchObserver
             $costPrice =  bcadd($costPrice ?? 0, bcmul($applyForBatchModel->actual_num, $applyForBatchModel->stock_batch->cost_price, 5), 5);
             return $costPrice;
         });
-        ApplyForItemModel::query()->whereId($applyForBatchModel->item_id)->update(["actual_num" =>$applyForBatchs->sum('actual_num'), 'cost_price' => $costPrice]);
+        ApplyForItemModel::query()->whereId($applyForBatchModel->item_id)->update(["actual_num" =>$applyForBatchs->sum('actual_num'), 'cost_price' => $costPrice ?? 0]);
     }
 
     public function deleted(ApplyForBatchModel $applyForBatchModel): void
