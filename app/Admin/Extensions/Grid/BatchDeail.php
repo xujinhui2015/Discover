@@ -55,8 +55,11 @@ class BatchDeail extends AbstractDisplayer
                             var pathname = urlObj.pathname.replace(/\/$/, '');
                             var seg = pathname.substring(pathname.lastIndexOf('/') + 1);
                             var table = seg.replace(/-batchs$/, '').replace(/-/g, '_') + '_item';
-                            if (!itemId) return;
-                            var fieldMap = _batchDeailFieldMap[table] || {};
+                            if (!itemId || !_batchDeailFieldMap[table]) {
+                                Dcat.reload();
+                                return;
+                            }
+                            var fieldMap = _batchDeailFieldMap[table];
                             $.ajax({
                                 url: '{$apiUrl}',
                                 type: 'GET',
