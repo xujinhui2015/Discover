@@ -36,6 +36,11 @@ class BatchDeail extends AbstractDisplayer
     {
         $apiUrl = route('api.item.actual-num');
         $script = <<<JS
+            var _batchDeailFieldMap = {
+                'apply_for_item': {'实领数量':'actual_num', '成本总价':'cost_price'},
+                'sale_out_item':  {'销数':'actual_num', '合计':'total'},
+                'scrap_item':     {'报废数量':'actual_num'}
+            };
             $(".{$this->selector}").off("click").on("click",function() {
                 var url = $(this).attr('data-url');
                 var btn = $(this);
@@ -50,28 +55,22 @@ class BatchDeail extends AbstractDisplayer
                             var pathname = urlObj.pathname.replace(/\/$/, '');
                             var seg = pathname.substring(pathname.lastIndexOf('/') + 1);
                             var table = seg.replace(/-batchs$/, '').replace(/-/g, '_') + '_item';
-                            console.log('[BatchDeail] end触发', {itemId: itemId, table: table, url: url});
                             if (!itemId) return;
+                            var fieldMap = _batchDeailFieldMap[table] || {};
                             $.ajax({
                                 url: '{$apiUrl}',
                                 type: 'GET',
                                 dataType: 'json',
                                 data: {item_id: itemId, table: table},
                                 success: function(data) {
-                                    console.log('[BatchDeail] 接口返回', data);
                                     var tr = btn.closest('tr');
                                     var thead = tr.closest('table').find('thead tr:last');
                                     thead.find('th').each(function(i) {
                                         var text = $(this).text().trim();
-                                        if (text === '实领数量') {
-                                            tr.find('td').eq(i).text(data.actual_num);
-                                        } else if (text === '成本总价') {
-                                            tr.find('td').eq(i).text(data.cost_price);
+                                        if (fieldMap[text] && data[fieldMap[text]] !== undefined) {
+                                            tr.find('td').eq(i).text(data[fieldMap[text]]);
                                         }
                                     });
-                                },
-                                error: function(xhr) {
-                                    console.error('[BatchDeail] 接口请求失败', xhr.status, xhr.responseText);
                                 }
                             });
                         } catch(e) {

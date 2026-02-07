@@ -112,7 +112,7 @@ class ApiController extends Controller
     }
 
     /**
-     * 获取物料明细行的实领数量和成本总价
+     * 获取物料明细行的实领数量及相关金额
      */
     public function getItemActualNum(Request $request): JsonResponse
     {
@@ -120,24 +120,36 @@ class ApiController extends Controller
         $itemId = $request->get('item_id');
 
         $allowed = [
-            'apply_for_item',
-            'sale_out_item',
-            'scrap_item',
+            'apply_for_item'  => ['actual_num', 'cost_price'],
+            'sale_out_item'   => ['actual_num', 'price', 'sum_cost_price'],
+            'scrap_item'      => ['actual_num'],
         ];
 
-        if (! in_array($table, $allowed, true) || ! $itemId) {
-            return Response::json(['actual_num' => 0, 'cost_price' => 0]);
+        if (! isset($allowed[$table]) || ! $itemId) {
+            return Response::json(['actual_num' => 0]);
         }
 
+        $columns = $allowed[$table];
         $row = \Illuminate\Support\Facades\DB::table($table)
             ->where('id', $itemId)
-            ->select(['actual_num', 'cost_price'])
+            ->select($columns)
             ->first();
 
-        return Response::json([
-            'actual_num' => $row->actual_num ?? 0,
-            'cost_price' => $row->cost_price ?? 0,
-        ]);
+        if (! $row) {
+            return Response::json(array_fill_keys($columns, 0));
+        }
+
+        $data = [];
+        foreach ($columns as $col) {
+            $data[$col] = $row->{$col} ?? 0;
+        }
+
+        // 销售出库：合计 = actual_num × price
+        if ($table === 'sale_out_item' && isset($data['actual_num'], $data['price'])) {
+            $data['total'] = bcmul($data['actual_num'], $data['price'], 2);
+        }
+
+        return Response::json($data);
     }
 
     public function getSkuBatches(Request $request): JsonResponse
