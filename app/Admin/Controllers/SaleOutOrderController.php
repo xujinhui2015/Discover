@@ -266,7 +266,7 @@ class SaleOutOrderController extends OrderController
         $grid->column('actual_num', '销数');
         $grid->column('price', '销价')->if(function () use ($order) {
             return $order->review_status !== SaleOutOrderModel::REVIEW_STATUS_OK;
-        })->edit();
+        })->edit(true);
         $grid->column("_", '合计')->display(function () {
             return bcmul($this->actual_num, $this->price, 2);
         });

@@ -81,7 +81,6 @@ class SaleOutItemObserver
     {
         if ($saleOutItemModel->isDirty([
 //            'percent',
-            'price',
             'standard'
         ])) {
             SaleOutBatchModel::where(function (Builder $query) use ($saleOutItemModel) {
