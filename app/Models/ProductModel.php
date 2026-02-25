@@ -103,12 +103,18 @@ class ProductModel extends BaseModel
     const TYPE_WRAPPER = 2;
     const TYPE_RAW_MATERIAL = 3;
     const TYPE_BLANK_BOTTLE = 4;
+    const TYPE_RAW_MATERIAL_OUTSOURCE_FRAGRANCE = 5;
+    const TYPE_RAW_MATERIAL_PERFUME_FRAGRANCE = 6;
+    const TYPE_RAW_MATERIAL_AROMA_FRAGRANCE = 7;
 
     // 包材 / 原料 / 半成品 / 成品
     const TYPE = [
         self::TYPE_BLANK_BOTTLE => '空白瓶(外库)',
         self::TYPE_WRAPPER => '包材',
-        self::TYPE_RAW_MATERIAL => '原料',
+        self::TYPE_RAW_MATERIAL => '护肤',
+        self::TYPE_RAW_MATERIAL_OUTSOURCE_FRAGRANCE => '原料/外加工香精',
+        self::TYPE_RAW_MATERIAL_PERFUME_FRAGRANCE => '原料/香水香精',
+        self::TYPE_RAW_MATERIAL_AROMA_FRAGRANCE => '原料/香薰香精',
         self::TYPE_NOT_FINISH => '半成品',
         self::TYPE_FINISH => '成品',
     ];
