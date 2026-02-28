@@ -96,15 +96,16 @@ class SkuStockController extends AdminController
 //            $grid->column('updated_at')->sortable();
             $grid->disableRowSelector();
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->where("product_name", function (Builder $query) {
-                    $query->whereHasIn("sku.product", function (Builder $query) {
-                        $query->where(function (Builder $query) {
-                            $query->orWhere("name", "like", "%" . $this->getValue()."%");
-                            $query->orWhere("py_code", "like", "%" . $this->getValue()."%");
-                            $query->orWhere('item_no', 'like', "%" . $this->getValue()."%");
-                        });
+                $filter->where('product_name', function (Builder $query) {
+                    $value = trim((string) $this->getValue());
+                    if ($value === '') {
+                        return;
+                    }
+
+                    $query->whereHasIn('sku.product', function (Builder $query) use ($value) {
+                        $query->where('name', 'like', '%' . $value . '%');
                     });
-                }, "关键字")->placeholder("物料名称，拼音码，编号")->width(3);
+                }, '物料名称')->placeholder('请输入物料名称')->width(3);
                 $filter->where('item_no', function (Builder $query) {
                     $value = trim((string) $this->getValue());
                     if ($value === '') {
