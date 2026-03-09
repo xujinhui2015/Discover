@@ -212,6 +212,8 @@ class ProductController extends AdminController
     protected function form()
     {
         return Form::make(new Product(['product_attr']), function (Form $form) {
+            Admin::style('.toast-container{z-index:2147483647!important;}');
+
             $form->row(function (Form\Row $row) use ($form) {
                 $row->width(6)->text('item_no')
                     ->default(ProductRepository::buildItemNo())
@@ -455,6 +457,26 @@ class ProductController extends AdminController
                         }
 
                         if (!empty($skusToDelete)) {
+                            $stockedSkuIds = \App\Models\SkuStockModel::query()
+                                ->whereIn('sku_id', $skusToDelete)
+                                ->where('num', '>', 0)
+                                ->pluck('sku_id')
+                                ->all();
+
+                            if (!empty($stockedSkuIds)) {
+                                $stockedSkuText = $skus
+                                    ->whereIn('id', $stockedSkuIds)
+                                    ->pluck('attr_value_ids_str')
+                                    ->filter()
+                                    ->implode('、');
+
+                                return $form->error(
+                                    $stockedSkuText
+                                        ? '以下SKU仍有库存，不允许删除：'.$stockedSkuText
+                                        : '存在仍有库存的SKU，不允许删除'
+                                );
+                            }
+
                             \App\Models\ProductSkuModel::whereIn('id', $skusToDelete)->delete();
                         }
                     }
