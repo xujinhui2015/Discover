@@ -69,8 +69,8 @@ class PurchaseOrderController extends OrderController
             $grid->column('review_status', '审核状态')->setHeaderAttributes(['class' => 'column-review_status'])->using(PurchaseOrderModel::REVIEW_STATUS)->label(PurchaseOrderModel::REVIEW_STATUS_COLOR);
             if ($useNameStyle) {
                 $grid->column('product_names', '物料名称')->setHeaderAttributes(['class' => 'column-product_info'])->display(function () {
-                    $productNames = ProductModel::query()
-                        ->whereIn('id', ProductSkuModel::query()
+                    $productNames = ProductModel::withTrashed()
+                        ->whereIn('id', ProductSkuModel::withTrashed()
                             ->whereIn('id', PurchaseItemModel::query()
                                 ->where('order_id', $this->id)
                                 ->select('sku_id'))
@@ -143,8 +143,8 @@ class PurchaseOrderController extends OrderController
             $grid->column('review_status', '审核状态')->using(PurchaseOrderModel::REVIEW_STATUS)->label(PurchaseOrderModel::REVIEW_STATUS_COLOR);
             if ($useNameStyle) {
                 $grid->column('product_names', '物料名称')->display(function () {
-                    $productNames = ProductModel::query()
-                        ->whereIn('id', ProductSkuModel::query()
+                    $productNames = ProductModel::withTrashed()
+                        ->whereIn('id', ProductSkuModel::withTrashed()
                             ->whereIn('id', PurchaseItemModel::query()
                                 ->where('order_id', $this->id)
                                 ->select('sku_id'))

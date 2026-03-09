@@ -76,8 +76,8 @@ class ApplyForOrderController extends OrderController
 //            $grid->column('other')->emp();
             if ($useNameStyle) {
                 $grid->column('product_names', '物料名称')->display(function () {
-                    $productNames = ProductModel::query()
-                        ->whereIn('id', ProductSkuModel::query()
+                    $productNames = ProductModel::withTrashed()
+                        ->whereIn('id', ProductSkuModel::withTrashed()
                             ->whereIn('id', ApplyForItemModel::query()
                                 ->where('order_id', $this->id)
                                 ->select('sku_id'))
@@ -149,8 +149,8 @@ class ApplyForOrderController extends OrderController
             $grid->column('other')->emp();
             if ($useNameStyle) {
                 $grid->column('product_names', '物料名称')->display(function () {
-                    $productNames = ProductModel::query()
-                        ->whereIn('id', ProductSkuModel::query()
+                    $productNames = ProductModel::withTrashed()
+                        ->whereIn('id', ProductSkuModel::withTrashed()
                             ->whereIn('id', ApplyForItemModel::query()
                                 ->where('order_id', $this->id)
                                 ->select('sku_id'))

@@ -70,8 +70,8 @@ class SaleOrderController extends OrderController
             $grid->column('user.name', '创建用户')->setHeaderAttributes(['class' => 'column-user']);
             if ($useNameStyle) {
                 $grid->column('product_names', '物料名称')->setHeaderAttributes(['class' => 'column-product_info'])->display(function () {
-                    $productNames = ProductModel::query()
-                        ->whereIn('id', ProductSkuModel::query()
+                    $productNames = ProductModel::withTrashed()
+                        ->whereIn('id', ProductSkuModel::withTrashed()
                             ->whereIn('id', SaleItemModel::query()
                                 ->where('order_id', $this->id)
                                 ->select('sku_id'))
@@ -139,8 +139,8 @@ class SaleOrderController extends OrderController
             $grid->column('user.name', '创建用户');
             if ($useNameStyle) {
                 $grid->column('product_names', '物料名称')->display(function () {
-                    $productNames = ProductModel::query()
-                        ->whereIn('id', ProductSkuModel::query()
+                    $productNames = ProductModel::withTrashed()
+                        ->whereIn('id', ProductSkuModel::withTrashed()
                             ->whereIn('id', SaleItemModel::query()
                                 ->where('order_id', $this->id)
                                 ->select('sku_id'))
