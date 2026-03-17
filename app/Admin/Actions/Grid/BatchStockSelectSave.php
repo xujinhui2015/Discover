@@ -110,8 +110,14 @@ class BatchStockSelectSave extends BatchAction
             $remaining = '0';
         }
 
-        foreach ($this->getKey() as $stock_batch_id) {
-            $skuStockBatch = SkuStockBatchModel::query()->findOrFail($stock_batch_id);
+        $stockBatches = SkuStockBatchModel::query()
+            ->whereIn('id', $this->getKey())
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->get();
+
+        foreach ($stockBatches as $skuStockBatch) {
+            $stock_batch_id = $skuStockBatch->id;
             $batchStockNum = (string) ($skuStockBatch->num ?? '0');
             $maxForBatch = bccomp($remaining, $batchStockNum, $scale) === 1
                 ? $batchStockNum
