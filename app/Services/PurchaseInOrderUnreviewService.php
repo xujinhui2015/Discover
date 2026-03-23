@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\BaseModel;
+use App\Models\ProductSkuModel;
 use App\Models\PurchaseInOrderModel;
 use App\Models\PurchaseOrderModel;
 use App\Models\PurchaseOutOrderModel;
@@ -95,8 +96,42 @@ class PurchaseInOrderUnreviewService
             $order->apply_at = null;
             $order->save();
 
+            $this->fixDeletedSkuAttributes($order);
+
             $this->refreshPurchaseOrderStatus($order->with_order, $scale);
         });
+    }
+
+    /**
+     * 反审核后，将明细中引用已软删除 SKU 的条目重新指向该物料第一个未删除的 SKU
+     */
+    private function fixDeletedSkuAttributes(PurchaseInOrderModel $order): void
+    {
+        foreach ($order->items as $item) {
+            // SKU 未被删除，无需处理
+            if (ProductSkuModel::find($item->sku_id)) {
+                continue;
+            }
+
+            $deletedSku = ProductSkuModel::withTrashed()->find($item->sku_id);
+            if (! $deletedSku) {
+                continue;
+            }
+
+            // 取该物料第一个未删除的 SKU
+            $newSku = ProductSkuModel::query()
+                ->where('product_id', $deletedSku->product_id)
+                ->first();
+
+            if (! $newSku) {
+                throw new RuntimeException(
+                    "物料(ID:{$deletedSku->product_id})没有可用的规格，无法替换已删除的SKU(ID:{$item->sku_id})"
+                );
+            }
+
+            $item->sku_id = $newSku->id;
+            $item->save();
+        }
     }
 
     private function refreshPurchaseOrderStatus(PurchaseOrderModel $purchaseOrder, int $scale): void
