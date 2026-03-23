@@ -127,6 +127,62 @@ class SaleOutOrderController extends OrderController
                     });
                 }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
             });
+
+            $grid->export()->rows(function (array $rows) {
+                $itemsByOrder = SaleOutItemModel::query()
+                    ->with(['sku.product.unit', 'sku.product.brand'])
+                    ->whereIn('order_id', array_column($rows, 'id'))
+                    ->get()
+                    ->groupBy('order_id');
+
+                return collect($rows)->flatMap(function ($row) use ($itemsByOrder) {
+                    $items = $itemsByOrder->get($row['id'], collect());
+
+                    if ($items->isEmpty()) {
+                        return [[
+                            'ID' => $row['id'],
+                            '客户名称' => data_get($row, 'customer.name', ''),
+                            '单号' => $row['order_no'],
+                            '创建用户' => data_get($row, 'user.name', ''),
+                            '物料名称' => '',
+                            '属性' => '',
+                            '通用标准' => '',
+                            '需数' => '',
+                            '销数' => '',
+                            '销价' => '',
+                            '合计' => '',
+                            '单据状态' => SaleOutOrderModel::STATUS[$row['status']] ?? '',
+                            '审核状态' => SaleOutOrderModel::REVIEW_STATUS[$row['review_status']] ?? '',
+                            '创建时间' => $row['created_at'],
+                            '审核时间' => $row['apply_at'],
+                            '备注' => $row['other'],
+                        ]];
+                    }
+
+                    return $items->map(function (SaleOutItemModel $item) use ($row) {
+                        $product = data_get($item, 'sku.product');
+
+                        return [
+                            'ID' => $row['id'],
+                            '客户名称' => data_get($row, 'customer.name', ''),
+                            '单号' => $row['order_no'],
+                            '创建用户' => data_get($row, 'user.name', ''),
+                            '物料名称' => data_get($product, 'name', ''),
+                            '属性' => data_get($item, 'sku.attr_value_ids_str', ''),
+                            '通用标准' => $item->standard_str,
+                            '需数' => $item->should_num,
+                            '销数' => $item->actual_num,
+                            '销价' => $item->price,
+                            '合计' => bcmul((string) $item->actual_num, (string) $item->price, 2),
+                            '单据状态' => SaleOutOrderModel::STATUS[$row['status']] ?? '',
+                            '审核状态' => SaleOutOrderModel::REVIEW_STATUS[$row['review_status']] ?? '',
+                            '创建时间' => $row['created_at'],
+                            '审核时间' => $row['apply_at'],
+                            '备注' => $row['other'],
+                        ];
+                    })->all();
+                })->values()->all();
+            })->extension('xlsx');
         });
     }
 
