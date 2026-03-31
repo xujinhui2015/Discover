@@ -71,6 +71,10 @@ class OrderReview extends AbstractTool
         try {
             $this->check($request);
             DB::transaction(function () use ($request) {
+                // 审核时同步保存表单中修改的业务日期
+                if ($request->filled('created_at')) {
+                    $this->model->created_at = $request->input('created_at');
+                }
                 $this->model->review_status = $request->input("review_status");
                 return $this->model->save();
             });
@@ -330,6 +334,21 @@ class OrderReview extends AbstractTool
             }
         }
 
+    }
+
+    /**
+     * 审核前自动读取表单中的业务日期，随请求一起发送
+     */
+    protected function actionScript()
+    {
+        return <<<'JS'
+function (data, target, action) {
+    var createdAt = $('input[name="created_at"]').val();
+    if (createdAt) {
+        data.created_at = createdAt;
+    }
+}
+JS;
     }
 
     /**
