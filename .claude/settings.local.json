@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /d/project_php/Discover/app/Models -name *Attr*)"
+    ]
+  }
+}
