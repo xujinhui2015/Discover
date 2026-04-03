@@ -2,7 +2,7 @@
 
 namespace App\Admin\Metrics;
 
-use App\Models\SaleOrderAmountModel;
+use App\Models\SaleOutOrderModel;
 use Carbon\Carbon;
 use Dcat\Admin\Widgets\Metrics\Line;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ class SaleTrend extends Line
     {
         parent::init();
 
-        $this->title('销售趋势');
+        $this->title('客户出货单数趋势');
         $this->height(260);
         $this->class('dashboard-metric-tall', true);
         $this->dropdown([
@@ -59,15 +59,15 @@ class SaleTrend extends Line
             $date = $startDate->copy()->addDays($i * $interval)->startOfDay();
             $nextDate = $date->copy()->addDays($interval)->startOfDay();
 
-            $amount = SaleOrderAmountModel::query()
+            $count = SaleOutOrderModel::query()
                 ->whereBetween('created_at', [$date, $nextDate])
-                ->sum('should_amount');
+                ->count();
 
-            $data[] = (float)$amount;
-            $totalAmount += $amount;
+            $data[] = $count;
+            $totalAmount += $count;
         }
 
-        $this->withContent('¥' . number_format($totalAmount, 2));
+        $this->withContent($totalAmount . ' 单');
         $this->withChart($data);
     }
 
@@ -76,7 +76,7 @@ class SaleTrend extends Line
         return $this->chart([
             'series' => [
                 [
-                    'name' => '销售金额',
+                    'name' => '出货单数',
                     'data' => $data,
                 ],
             ],

@@ -3,15 +3,14 @@
 namespace App\Admin\Metrics;
 
 use App\Helpers\AccuracyCalc;
-use App\Models\BaseModel;
-use App\Models\InventoryOrderModel;
+use App\Models\TaskModel;
 use Carbon\Carbon;
 use Closure;
 use Dcat\Admin\Widgets\Metrics\Card;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 
-class TotalPurchaseAmount extends Card
+class TotalTask extends Card
 {
     protected Renderable|Closure|string|null $footer = null;
 
@@ -24,7 +23,7 @@ class TotalPurchaseAmount extends Card
     {
         parent::init();
 
-        $this->title('盘点单据数');
+        $this->title('生产任务数');
         $this->dropdown([
             '7' => '最近7天',
             '28' => '最近28天',
@@ -35,33 +34,44 @@ class TotalPurchaseAmount extends Card
 
     public function handle(Request $request): void
     {
-        $query = fn ($start, $end) => InventoryOrderModel::query()
-            ->where('review_status', BaseModel::REVIEW_STATUS_OK)
-            ->whereBetween('created_at', [$start, $end])
-            ->count();
-
         switch ($request->get('option')) {
             case '365':
-                $num = $query(Carbon::now()->subYear(), Carbon::now());
-                $numLast = $query(Carbon::now()->subYears(2), Carbon::now()->subYear());
+                $count = TaskModel::query()
+                    ->whereBetween('created_at', [Carbon::now()->subYear(), Carbon::now()])
+                    ->count();
+                $countLast = TaskModel::query()
+                    ->whereBetween('created_at', [Carbon::now()->subYears(2), Carbon::now()->subYear()])
+                    ->count();
                 break;
             case '30':
-                $num = $query(Carbon::now()->subMonth(), Carbon::now());
-                $numLast = $query(Carbon::now()->subMonths(2), Carbon::now()->subMonth());
+                $count = TaskModel::query()
+                    ->whereBetween('created_at', [Carbon::now()->subMonth(), Carbon::now()])
+                    ->count();
+                $countLast = TaskModel::query()
+                    ->whereBetween('created_at', [Carbon::now()->subMonths(2), Carbon::now()->subMonth()])
+                    ->count();
                 break;
             case '28':
-                $num = $query(Carbon::now()->subDays(28), Carbon::now());
-                $numLast = $query(Carbon::now()->subDays(56), Carbon::now()->subDays(28));
+                $count = TaskModel::query()
+                    ->whereBetween('created_at', [Carbon::now()->subDays(28), Carbon::now()])
+                    ->count();
+                $countLast = TaskModel::query()
+                    ->whereBetween('created_at', [Carbon::now()->subDays(56), Carbon::now()->subDays(28)])
+                    ->count();
                 break;
             case '7':
             default:
-                $num = $query(Carbon::now()->subDays(7), Carbon::now());
-                $numLast = $query(Carbon::now()->subDays(14), Carbon::now()->subDays(7));
+                $count = TaskModel::query()
+                    ->whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()])
+                    ->count();
+                $countLast = TaskModel::query()
+                    ->whereBetween('created_at', [Carbon::now()->subDays(14), Carbon::now()->subDays(7)])
+                    ->count();
         }
 
-        $this->content($num);
-        if ($numLast > 0) {
-            $percent = AccuracyCalc::begin($numLast)->proportion($num)->result();
+        $this->content($count);
+        if ($countLast > 0) {
+            $percent = AccuracyCalc::begin($countLast)->proportion($count)->result();
             $this->up($percent);
         } else {
             $this->footer('');

@@ -15,13 +15,17 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Metrics\OrderStatus;
+use App\Admin\Metrics\ProductionTrend;
+use App\Admin\Metrics\TotalApplyForMaterial;
 use App\Admin\Metrics\PurchaseTrend;
 use App\Admin\Metrics\SaleTrend;
 use App\Admin\Metrics\StockWarning;
+use App\Admin\Metrics\TotalProductionOutput;
 use App\Admin\Metrics\TotalPurchase;
 use App\Admin\Metrics\TotalPurchaseAmount;
 use App\Admin\Metrics\TotalSaleAmount;
 use App\Admin\Metrics\TotalSaleOrder;
+use App\Admin\Metrics\TotalTask;
 use App\Http\Controllers\Controller;
 use Dcat\Admin\Layout\Column;
 use Dcat\Admin\Layout\Content;
@@ -51,7 +55,20 @@ class HomeController extends Controller
                     $column->row(TotalPurchaseAmount::make());
                 });
 
-                // 第二行：库存预警和订单状态
+                // 第二行：生产指标
+                $row->column(4, function (Column $column) {
+                    $column->row(TotalTask::make());
+                });
+
+                $row->column(4, function (Column $column) {
+                    $column->row(TotalProductionOutput::make());
+                });
+
+                $row->column(4, function (Column $column) {
+                    $column->row(TotalApplyForMaterial::make());
+                });
+
+                // 第三行：库存预警和订单状态
                 $row->column(6, function (Column $column) {
                     $column->row(StockWarning::make());
                 });
@@ -60,13 +77,17 @@ class HomeController extends Controller
                     $column->row(OrderStatus::make());
                 });
 
-                // 第三行：趋势图表
-                $row->column(6, function (Column $column) {
+                // 第四行：趋势图表
+                $row->column(4, function (Column $column) {
                     $column->row(SaleTrend::make());
                 });
-                
-                $row->column(6, function (Column $column) {
+
+                $row->column(4, function (Column $column) {
                     $column->row(PurchaseTrend::make());
+                });
+
+                $row->column(4, function (Column $column) {
+                    $column->row(ProductionTrend::make());
                 });
             });
     }

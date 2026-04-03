@@ -2,18 +2,18 @@
 
 namespace App\Admin\Metrics;
 
-use App\Models\PurchaseInOrderModel;
+use App\Models\MakeProductOrderModel;
 use Carbon\Carbon;
 use Dcat\Admin\Widgets\Metrics\Line;
 use Illuminate\Http\Request;
 
-class PurchaseTrend extends Line
+class ProductionTrend extends Line
 {
     protected function init()
     {
         parent::init();
 
-        $this->title('采购入库单趋势');
+        $this->title('生产入库单趋势');
         $this->height(260);
         $this->class('dashboard-metric-tall', true);
         $this->dropdown([
@@ -32,7 +32,7 @@ class PurchaseTrend extends Line
             case '365':
                 $days = 12;
                 $startDate = Carbon::now()->subYear()->startOfMonth();
-                $interval = 30; // 按月统计
+                $interval = 30;
                 break;
             case '30':
                 $days = 30;
@@ -59,7 +59,7 @@ class PurchaseTrend extends Line
             $date = $startDate->copy()->addDays($i * $interval)->startOfDay();
             $nextDate = $date->copy()->addDays($interval)->startOfDay();
 
-            $count = PurchaseInOrderModel::query()
+            $count = MakeProductOrderModel::query()
                 ->whereBetween('created_at', [$date, $nextDate])
                 ->count();
 

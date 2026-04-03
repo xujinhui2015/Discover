@@ -3,15 +3,15 @@
 namespace App\Admin\Metrics;
 
 use App\Helpers\AccuracyCalc;
+use App\Models\ApplyForOrderModel;
 use App\Models\BaseModel;
-use App\Models\InventoryOrderModel;
 use Carbon\Carbon;
 use Closure;
 use Dcat\Admin\Widgets\Metrics\Card;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 
-class TotalPurchaseAmount extends Card
+class TotalApplyForMaterial extends Card
 {
     protected Renderable|Closure|string|null $footer = null;
 
@@ -24,7 +24,7 @@ class TotalPurchaseAmount extends Card
     {
         parent::init();
 
-        $this->title('盘点单据数');
+        $this->title('物料申领单数');
         $this->dropdown([
             '7' => '最近7天',
             '28' => '最近28天',
@@ -35,7 +35,7 @@ class TotalPurchaseAmount extends Card
 
     public function handle(Request $request): void
     {
-        $query = fn ($start, $end) => InventoryOrderModel::query()
+        $query = fn ($start, $end) => ApplyForOrderModel::query()
             ->where('review_status', BaseModel::REVIEW_STATUS_OK)
             ->whereBetween('created_at', [$start, $end])
             ->count();

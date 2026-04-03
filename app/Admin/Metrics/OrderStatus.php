@@ -116,8 +116,13 @@ class OrderStatus extends Round
 
     public function withChart(array $data)
     {
+        $total = array_sum($data);
+        $percentages = $total > 0
+            ? array_map(fn ($v) => round($v / $total * 100, 1), $data)
+            : array_map(fn () => 0, $data);
+
         return $this->chart([
-            'series' => $data,
+            'series' => $percentages,
         ]);
     }
 
