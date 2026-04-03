@@ -267,8 +267,9 @@ HTML;
             $userName = $record->user->name ?? '-';
             $orderNo = $record->with_order_no ?: '-';
 
+            $timeRaw = $record->created_at ? $record->created_at->format('H:i:s') : '00:00:00';
             $rows .= <<<HTML
-<tr style="border-bottom: 1px solid #f0f0f0;">
+<tr style="border-bottom: 1px solid #f0f0f0;" data-time="{$timeRaw}" data-in="{$record->in_num}" data-out="{$record->out_num}" data-balance="{$record->balance_num}">
     <td style="padding: 12px 16px; white-space: nowrap; font-size: 13px; color: #888;">{$userName}</td>
     <td style="padding: 12px 16px; white-space: nowrap; color: #888; font-size: 13px;">{$time}</td>
     <td style="padding: 12px 16px; white-space: nowrap; font-weight: 500;">{$skuName}</td>
@@ -301,17 +302,17 @@ HTML;
             <span style="font-size: 13px; color: #888;">共 {$totalCount} 条记录</span>
         </div>
         <div style="overflow-x: auto;">
-            <table style="min-width: 1100px; width: 100%; border-collapse: collapse;">
+            <table id="stock-detail-table" style="min-width: 1100px; width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr style="background: #fafafa; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0;">
                         <th style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap;">操作人</th>
-                        <th style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap;">时间</th>
+                        <th class="stock-sortable" data-sort-key="time" style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap; cursor: pointer; user-select: none;">时间 <span class="sort-icon">↕</span></th>
                         <th style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap;">物料</th>
                         <th style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap;">方向</th>
                         <th style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap;">类型</th>
-                        <th style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap; text-align: right;">入库</th>
-                        <th style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap; text-align: right;">出库</th>
-                        <th style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap; text-align: right;">结余</th>
+                        <th class="stock-sortable" data-sort-key="in" style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap; text-align: right; cursor: pointer; user-select: none;">入库 <span class="sort-icon">↕</span></th>
+                        <th class="stock-sortable" data-sort-key="out" style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap; text-align: right; cursor: pointer; user-select: none;">出库 <span class="sort-icon">↕</span></th>
+                        <th class="stock-sortable" data-sort-key="balance" style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap; text-align: right; cursor: pointer; user-select: none;">结余 <span class="sort-icon">↕</span></th>
                         <th style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap;">入库位置</th>
                         <th style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap;">出库位置</th>
                         <th style="padding: 10px 16px; font-size: 12px; font-weight: 600; color: #888; white-space: nowrap;">关联单号</th>
@@ -324,6 +325,43 @@ HTML;
         </div>
     </div>
 </div>
+<script>
+(function(){
+    var table = document.getElementById('stock-detail-table');
+    if (!table) return;
+    var headers = table.querySelectorAll('.stock-sortable');
+    var currentKey = null, currentDir = 0; // 0=none, 1=asc, -1=desc
+    headers.forEach(function(th) {
+        th.addEventListener('click', function() {
+            var key = th.getAttribute('data-sort-key');
+            if (currentKey === key) {
+                currentDir = currentDir === 1 ? -1 : 1;
+            } else {
+                currentKey = key;
+                currentDir = 1;
+            }
+            // 更新箭头
+            headers.forEach(function(h) {
+                h.querySelector('.sort-icon').textContent = '↕';
+                h.style.color = '#888';
+            });
+            th.querySelector('.sort-icon').textContent = currentDir === 1 ? '↑' : '↓';
+            th.style.color = '#333';
+            // 排序
+            var tbody = table.querySelector('tbody');
+            var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+            rows.sort(function(a, b) {
+                var va = key === 'time' ? a.getAttribute('data-time') : parseFloat(a.getAttribute('data-' + key)) || 0;
+                var vb = key === 'time' ? b.getAttribute('data-time') : parseFloat(b.getAttribute('data-' + key)) || 0;
+                if (va < vb) return -1 * currentDir;
+                if (va > vb) return 1 * currentDir;
+                return 0;
+            });
+            rows.forEach(function(row) { tbody.appendChild(row); });
+        });
+    });
+})();
+</script>
 HTML;
     }
 }
