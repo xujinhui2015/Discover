@@ -93,7 +93,11 @@ class PurchaseOrderController extends OrderController
             }
             $grid->column('supplier.name', '供应商名称')->setHeaderAttributes(['class' => 'column-supplier'])->emp();
             $grid->column('user.username', '创建用户')->setHeaderAttributes(['class' => 'column-user']);
-            $grid->column('_in_orders', '入库记录')->setHeaderAttributes(['class' => 'column-in_orders'])->expand(PurchaseInOfOrders::make());
+            $grid->column('_in_orders', '入库记录')->setHeaderAttributes(['class' => 'column-in_orders'])->display(function () {
+                return $this->status === PurchaseOrderModel::STATUS_WAIT ? '-' : '';
+            })->if(function () {
+                return $this->status !== PurchaseOrderModel::STATUS_WAIT;
+            })->expand(PurchaseInOfOrders::make());
             $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
             $grid->column('other')->setHeaderAttributes(['class' => 'column-other'])->emp();
             
@@ -117,6 +121,7 @@ class PurchaseOrderController extends OrderController
                         });
                     });
                 }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
+                $filter->like('order_no', '订单编号')->width(3);
                 $filter->equal('supplier_id', '供应商')->select(SupplierRepository::pluck())->width(3);
                 $filter->in('status', '单据状态')->multipleSelect(PurchaseOrderModel::STATUS)->width(3);
                 $filter->between('created_at', '业务日期')->datetime()->width(3);
