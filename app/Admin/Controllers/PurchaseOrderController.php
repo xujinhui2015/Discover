@@ -20,6 +20,7 @@ use App\Admin\Actions\Grid\EditOrder;
 use App\Admin\Actions\Grid\PurchaseOrderUnreview;
 use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Extensions\Grid\ColumnSelector;
+use App\Admin\Extensions\Grid\PurchaseInOfOrders;
 use App\Admin\Extensions\Grid\PurchaseOrderItemDetail;
 use App\Admin\Repositories\PurchaseOrder;
 use App\Models\PersonalConfigModel;
@@ -58,6 +59,7 @@ class PurchaseOrderController extends OrderController
                 ['name' => 'product_info', 'label' => '物料信息'],
                 ['name' => 'supplier', 'label' => '供应商名称'],
                 ['name' => 'user', 'label' => '创建用户'],
+                ['name' => 'in_orders', 'label' => '入库记录'],
                 ['name' => 'created_at', 'label' => '创建时间'],
                 ['name' => 'other', 'label' => '备注'],
             ];
@@ -91,6 +93,7 @@ class PurchaseOrderController extends OrderController
             }
             $grid->column('supplier.name', '供应商名称')->setHeaderAttributes(['class' => 'column-supplier'])->emp();
             $grid->column('user.username', '创建用户')->setHeaderAttributes(['class' => 'column-user']);
+            $grid->column('_in_orders', '入库记录')->setHeaderAttributes(['class' => 'column-in_orders'])->expand(PurchaseInOfOrders::make());
             $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
             $grid->column('other')->setHeaderAttributes(['class' => 'column-other'])->emp();
             

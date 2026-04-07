@@ -124,6 +124,12 @@ class PurchaseInOrderController extends OrderController
                         });
                     });
                 }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
+                $filter->like('order_no', '订单单号')->width(3);
+                $filter->where('with_order_no', function (Builder $query) {
+                    $query->whereHas('with_order', function (Builder $query) {
+                        $query->where('order_no', 'like', '%' . $this->getValue() . '%');
+                    });
+                }, '关联单号')->placeholder('采购订单单号')->width(3);
                 $filter->equal('review_status', '审核状态')->select($this->oredr_model::REVIEW_STATUS)->width(3);
             });
         });
@@ -189,6 +195,12 @@ class PurchaseInOrderController extends OrderController
                         });
                     });
                 }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
+                $filter->like('order_no', '订单单号')->width(3);
+                $filter->where('with_order_no', function (Builder $query) {
+                    $query->whereHas('with_order', function (Builder $query) {
+                        $query->where('order_no', 'like', '%' . $this->getValue() . '%');
+                    });
+                }, '关联单号')->placeholder('采购订单单号')->width(3);
                 $filter->equal('review_status', '审核状态')->select($this->oredr_model::REVIEW_STATUS)->width(3);
             });
         });
