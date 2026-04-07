@@ -21,6 +21,7 @@ use App\Admin\Actions\Grid\SaleOrderUnreview;
 use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Extensions\Grid\SaleOrderItemDetail;
+use App\Admin\Extensions\Grid\SaleOutOfOrders;
 use App\Admin\Repositories\SaleOrder;
 use App\Models\CustomerModel;
 use App\Models\PersonalConfigModel;
@@ -59,6 +60,7 @@ class SaleOrderController extends OrderController
                 ['name' => 'product_info', 'label' => '物料信息'],
                 ['name' => 'status', 'label' => '单据状态'],
                 ['name' => 'review_status', 'label' => '审核状态'],
+                ['name' => 'out_orders', 'label' => '出库记录'],
                 ['name' => 'created_at', 'label' => '创建时间'],
                 ['name' => 'other', 'label' => '备注'],
             ];
@@ -92,6 +94,11 @@ class SaleOrderController extends OrderController
             }
             $grid->column('status', '单据状态')->setHeaderAttributes(['class' => 'column-status'])->using($this->oredr_model::STATUS)->label($this->oredr_model::STATUS_COLOR);
             $grid->column('review_status', '审核状态')->setHeaderAttributes(['class' => 'column-review_status'])->using($this->oredr_model::REVIEW_STATUS)->label($this->oredr_model::REVIEW_STATUS_COLOR);
+            $grid->column('_out_orders', '出库记录')->setHeaderAttributes(['class' => 'column-out_orders'])->display(function () {
+                return $this->status === SaleOrderModel::STATUS_DOING ? '-' : '';
+            })->if(function () {
+                return $this->status !== SaleOrderModel::STATUS_DOING;
+            })->expand(SaleOutOfOrders::make());
             $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
 //            $grid->column('finished_at', "完成日期")->emp();
             $grid->column('other', '备注')->setHeaderAttributes(['class' => 'column-other'])->emp();
