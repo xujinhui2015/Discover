@@ -115,7 +115,7 @@ class PurchaseOrderController extends OrderController
                     });
                 }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
                 $filter->equal('supplier_id', '供应商')->select(SupplierRepository::pluck())->width(3);
-                $filter->equal('status', '单据状态')->select(PurchaseOrderModel::STATUS)->width(3);
+                $filter->in('status', '单据状态')->multipleSelect(PurchaseOrderModel::STATUS)->width(3);
                 $filter->between('created_at', '业务日期')->datetime()->width(3);
             });
 

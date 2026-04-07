@@ -113,7 +113,7 @@ class TaskController extends AdminController
                     });
                 }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
                 $filter->like('order_no')->width(3);
-                $filter->equal('status', '单据状态')->select(TaskModel::STATUS)->width(3);
+                $filter->in('status', '单据状态')->multipleSelect(TaskModel::STATUS)->width(3);
 //                $filter->group('plan_num', function ($group) {
 //                    $group->gt('大于');
 //                    $group->lt('小于');

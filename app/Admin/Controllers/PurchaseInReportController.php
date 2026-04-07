@@ -60,7 +60,7 @@ class PurchaseInReportController extends Controller
                     'end' => now()
                 ]);
                 $filter->in('supplier_id', "供应商名称")->width(3)->multipleSelect(SupplierModel::query()->pluck('name', 'id'));
-                $filter->equal('status', '单据状态')->width(3)->radio(PurchaseOrderAmountModel::STATUS);
+                $filter->in('status', '单据状态')->width(3)->multipleSelect(PurchaseOrderAmountModel::STATUS);
             });
             $grid->disableCreateButton();
             $grid->export()->rows(function (array $rows) {

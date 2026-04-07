@@ -69,7 +69,7 @@ class SaleOutReportController extends Controller
                     'name',
                     'id'
                 ));
-                $filter->equal('status', '单据状态')->width(4)->radio(SaleOrderAmountModel::STATUS);
+                $filter->in('status', '单据状态')->width(4)->multipleSelect(SaleOrderAmountModel::STATUS);
             });
             $grid->disableCreateButton();
             $grid->export()->rows(function (array $rows) {
