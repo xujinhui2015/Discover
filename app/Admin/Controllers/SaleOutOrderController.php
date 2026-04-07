@@ -50,14 +50,15 @@ class SaleOutOrderController extends OrderController
      */
     protected function grid()
     {
-        return Grid::make(new SaleOutOrder(['customer', 'user']), function (Grid $grid) {
+        return Grid::make(new SaleOutOrder(['customer', 'user', 'with_order']), function (Grid $grid) {
             $useNameStyle = $this->useMaterialNameStyle();
-            
+
             // 定义列配置（用于列选择器）
             $columnConfig = [
                 ['name' => 'id', 'label' => 'ID'],
                 ['name' => 'customer', 'label' => '客户名称'],
                 ['name' => 'order_no', 'label' => '单号'],
+                ['name' => 'with_order_no', 'label' => '关联单号'],
                 ['name' => 'user', 'label' => '创建用户'],
                 ['name' => 'product_info', 'label' => '物料信息'],
                 ['name' => 'status', 'label' => '单据状态'],
@@ -71,6 +72,7 @@ class SaleOutOrderController extends OrderController
             $grid->column('customer.name', '客户名称')->setHeaderAttributes(['class' => 'column-customer']);
 
             $grid->column('order_no')->setHeaderAttributes(['class' => 'column-order_no']);
+            $grid->column('with_order.order_no', '关联单号')->setHeaderAttributes(['class' => 'column-with_order_no'])->emp();
             $grid->column('user.name', '创建用户')->setHeaderAttributes(['class' => 'column-user']);
             if ($useNameStyle) {
                 $grid->column('product_names', '物料名称')->setHeaderAttributes(['class' => 'column-product_info'])->display(function () {
@@ -126,6 +128,13 @@ class SaleOutOrderController extends OrderController
                         });
                     });
                 }, '物料信息')->placeholder('物料名称，拼音码，编号')->width(3);
+                $filter->like('order_no', '订单单号')->width(3);
+                $filter->where('with_order_no', function (Builder $query) {
+                    $query->whereHas('with_order', function (Builder $query) {
+                        $query->where('order_no', 'like', '%' . $this->getValue() . '%');
+                    });
+                }, '关联单号')->placeholder('销售订单单号')->width(3);
+                $filter->in('status', '单据状态')->multipleSelect(SaleOutOrderModel::STATUS)->width(3);
             });
 
             $grid->export()->rows(function (array $rows) {
