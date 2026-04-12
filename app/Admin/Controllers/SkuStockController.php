@@ -117,6 +117,17 @@ class SkuStockController extends AdminController
                     });
                 }, '物料编号')->width(3);
 
+                $filter->where('barcode', function (Builder $query) {
+                    $value = trim((string) $this->getValue());
+                    if ($value === '') {
+                        return;
+                    }
+
+                    $query->whereHasIn('sku.product', function (Builder $query) use ($value) {
+                        $query->where('barcode', 'like', '%' . $value . '%');
+                    });
+                }, '专属编码')->width(3);
+
                 $attrIdFilter = $filter->where('attr_id', function (Builder $query) {
                     $attrId = (string) $this->getValue();
                     if ($attrId === '') {

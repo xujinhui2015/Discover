@@ -104,6 +104,7 @@ class ProductController extends AdminController
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->like('name', '物料名称')->width(4);
                 $filter->like('item_no', '物料编号')->width(4);
+                $filter->like('barcode', '专属编码')->width(4);
                 $filter->equal('type', '分类')
                     ->select(ProductModel::TYPE)
                     ->width(4);
