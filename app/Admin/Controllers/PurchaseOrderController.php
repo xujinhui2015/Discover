@@ -17,6 +17,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Grid\BatchCreatePurInOrderSave;
 use App\Admin\Actions\Grid\BatchOrderPrint;
 use App\Admin\Actions\Grid\EditOrder;
+use App\Admin\Actions\Grid\PurchaseOrderFinish;
 use App\Admin\Actions\Grid\PurchaseOrderUnreview;
 use App\Admin\Extensions\Form\Order\OrderController;
 use App\Admin\Extensions\Grid\ColumnSelector;
@@ -299,6 +300,14 @@ class PurchaseOrderController extends OrderController
             && $this->hasUnreviewPermission()
         ) {
             $grid->tools(PurchaseOrderUnreview::make());
+        }
+
+        if ($this->order
+            && $this->order->review_status === $this->oredr_model::REVIEW_STATUS_OK
+            && (int) $this->order->status === PurchaseOrderModel::STATUS_PART_RETURNED
+            && $this->hasReviewPermission()
+        ) {
+            $grid->tools(PurchaseOrderFinish::make());
         }
     }
 
