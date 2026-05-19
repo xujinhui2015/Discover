@@ -265,6 +265,9 @@ class ApplyForReturnOrderController extends OrderController
                     ->value('review_status') == ApplyForReturnOrderModel::REVIEW_STATUS_WAIT;
             })
             ->edit();
+        $grid->column('sku_stock_num', '库存')->display(function ($val) {
+            return $val;
+        });
     }
 
     public function setItemsCommon(Grid &$grid): void

@@ -17,6 +17,7 @@ namespace App\Admin\Actions\Grid;
 use App\Models\ApplyForBatchModel;
 use App\Models\ApplyForItemModel;
 use App\Models\InventoryItemModel;
+use App\Models\SaleOutItemModel;
 use App\Models\ScrapBatchModel;
 use App\Models\SaleOutBatchModel;
 use App\Models\SkuStockBatchModel;
@@ -85,16 +86,45 @@ class BatchStockSelectSave extends BatchAction
      */
     protected function saveToSaleOutBatch(): void
     {
-        foreach ($this->getKey() as $stock_batch_id) {
-            $skuStockBatch = SkuStockBatchModel::query()->findOrFail($stock_batch_id);
+        $scale = 3;
+        $saleOutItem = SaleOutItemModel::query()->findOrFail($this->item_id);
+        $existingTotal = (string) (SaleOutBatchModel::query()
+            ->where('item_id', $this->item_id)
+            ->sum('actual_num') ?? '0');
+        $remaining = bcsub((string) $saleOutItem->should_num, $existingTotal, $scale);
+        if (bccomp($remaining, '0', $scale) < 0) {
+            $remaining = '0';
+        }
+
+        $stockBatches = SkuStockBatchModel::query()
+            ->whereIn('id', $this->getKey())
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->get();
+
+        foreach ($stockBatches as $skuStockBatch) {
+            $batchStockNum = (string) ($skuStockBatch->num ?? '0');
+            $maxForBatch = bccomp($remaining, $batchStockNum, $scale) === 1
+                ? $batchStockNum
+                : $remaining;
+            if (bccomp($maxForBatch, '0', $scale) < 0) {
+                $maxForBatch = '0';
+            }
+
             SaleOutBatchModel::create([
-                'stock_batch_id' => $stock_batch_id,
+                'stock_batch_id' => $skuStockBatch->id,
                 'sku_id' => $this->sku_id,
                 'item_id' => $this->item_id,
                 'standard' => $this->standard,
 //                'percent'        => $this->percent,
                 'cost_price' => $skuStockBatch->cost_price,
+                'actual_num' => $maxForBatch,
             ]);
+
+            $remaining = bcsub($remaining, $maxForBatch, $scale);
+            if (bccomp($remaining, '0', $scale) < 0) {
+                $remaining = '0';
+            }
         }
     }
 
