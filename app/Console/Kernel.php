@@ -39,6 +39,11 @@ class Kernel extends ConsoleKernel
         $schedule
              ->command('check:inventory-status')
              ->everyMinute();
+
+        // 每天凌晨清理 Telescope 监控记录，仅保留最近一个月，避免 telescope_entries 表过大
+        $schedule
+             ->command('telescope:prune', ['--hours' => 720])
+             ->dailyAt('02:00');
     }
 
     /**
