@@ -40,10 +40,27 @@ class Kernel extends ConsoleKernel
              ->command('check:inventory-status')
              ->everyMinute();
 
-        // 每天凌晨清理 Telescope 监控记录，仅保留最近一个月，避免 telescope_entries 表过大
+        // 每天凌晨清理 Telescope 监控记录，仅保留最近一个月，避免 telescope_entries 表过大。
+        // Telescope 在 require-dev，生产环境未安装，无法使用 telescope:prune 命令，故直接清理数据表。
         $schedule
-             ->command('telescope:prune', ['--hours' => 720])
-             ->dailyAt('02:00');
+             ->call(function () {
+                 if (! \Schema::hasTable('telescope_entries')) {
+                     return;
+                 }
+
+                 $before = now()->subMonth();
+
+                 // 分批删除，避免大表一次性删除锁表；关联的 telescope_entries_tags 由外键级联清理。
+                 do {
+                     $deleted = \DB::table('telescope_entries')
+                         ->where('created_at', '<', $before)
+                         ->limit(1000)
+                         ->delete();
+                 } while ($deleted > 0);
+             })
+             ->name('prune-telescope-entries')
+             ->dailyAt('02:00')
+             ->withoutOverlapping();
     }
 
     /**
