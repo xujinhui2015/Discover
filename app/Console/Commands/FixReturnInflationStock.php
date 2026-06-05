@@ -17,9 +17,10 @@ use Illuminate\Support\Facades\DB;
  * 安全策略：
  *  1. 默认仅预览（dry-run），加 --execute 才真正落库；
  *  2. 仅处理「未平」批次（返仓后无盘点重置）；已被真实盘点平掉的不动；
- *  3. 当前批次库存不足以扣减的（虚增已流向下游出库）一律跳过并单独列出，绝不把库存改成负数；
- *  4. 幂等：重复运行会扣除已冲正部分，不会重复冲减；
- *  5. 事务 + 行锁；冲减通过 Eloquent 保存批次（自动联动同步 SKU 总库存），留痕流水用原生插入避免被观察者二次扣减。
+ *  3. 同一物理批次被多个返仓单冲减时，按可用库存在各单之间递减分配，能冲多少冲多少，冲不动的残留单独列出；
+ *  4. 当前批次库存不足的（虚增已流向下游出库）只冲到 0、绝不为负，剩余残留交人工；原出库关联缺失、无法核算的单独列出；
+ *  5. 幂等：已冲正部分由 already_fixed 扣除，重复运行不会重复冲减；
+ *  6. 事务 + 行锁；冲减通过 Eloquent 保存批次（自动联动同步 SKU 总库存），留痕流水用原生插入避免被观察者二次扣减。
  */
 class FixReturnInflationStock extends Command
 {
@@ -37,9 +38,20 @@ class FixReturnInflationStock extends Command
         $this->info('正在从库存流水重新核算返仓虚增……');
         $rows = DB::select($this->detectionSql());
 
-        $safe = [];
-        $stuck = [];
+        // 收集候选；over_b 为 NULL 表示原出库关联缺失、无法核算，单列出来交人工，而不是当 0 静默漏掉
+        $candidates = [];
+        $unresolved = [];
         foreach ($rows as $r) {
+            if ($r->over_b === null) {
+                $unresolved[] = [
+                    'odr' => $r->odr,
+                    'pno' => $r->pno,
+                    'pname' => mb_substr((string) $r->pname, 0, 24),
+                    'batch_no' => $r->batch_no,
+                    'cur_num' => round((float) $r->cur_num, 2),
+                ];
+                continue;
+            }
             $overB = round((float) $r->over_b, 2);
             if ($overB <= 0.005) {
                 continue;
@@ -49,9 +61,7 @@ class FixReturnInflationStock extends Command
             if ($remainder <= 0.005) {
                 continue; // 已冲正
             }
-            $curNum = round((float) $r->cur_num, 2);
-
-            $item = [
+            $candidates[] = [
                 'odr' => $r->odr,
                 'sku_id' => (int) $r->sku_id,
                 'standard' => (int) $r->standard,
@@ -59,19 +69,34 @@ class FixReturnInflationStock extends Command
                 'pos' => (int) $r->pos,
                 'pno' => $r->pno,
                 'pname' => mb_substr((string) $r->pname, 0, 24),
-                'cur_num' => $curNum,
+                'cur_num' => round((float) $r->cur_num, 2),
                 'remainder' => $remainder,
             ];
+        }
 
-            if ($curNum + 0.001 >= $remainder) {
-                $safe[] = $item;
-            } else {
-                $item['deductible'] = max($curNum, 0);
-                $stuck[] = $item;
+        // 同一物理批次可能被多个返仓单冲减：按待冲减额从大到小，在各单之间「递减分配」该批次的可用库存，
+        // 避免多个单各自按全额库存都判为「可安全冲减」而高估，也避免执行时相互挤占导致静默少冲。
+        usort($candidates, fn ($a, $b) => $b['remainder'] <=> $a['remainder']);
+
+        $safe = [];
+        $stuck = [];
+        $availByBatch = [];
+        foreach ($candidates as $c) {
+            $key = $c['sku_id'] . '|' . $c['standard'] . '|' . $c['batch_no'] . '|' . $c['pos'];
+            $avail = $availByBatch[$key] ?? $c['cur_num'];
+            $deduct = round(min($c['remainder'], max($avail, 0)), 2);
+            $residual = round($c['remainder'] - $deduct, 2);
+            $availByBatch[$key] = round($avail - $deduct, 2);
+
+            if ($deduct > 0.005) {
+                $safe[] = $c + ['deduct' => $deduct];
+            }
+            if ($residual > 0.005) {
+                $stuck[] = $c + ['residual' => $residual];
             }
         }
 
-        $this->renderTables($safe, $stuck);
+        $this->renderTables($safe, $stuck, $unresolved);
 
         if (! $execute) {
             $this->newLine();
@@ -103,29 +128,16 @@ class FixReturnInflationStock extends Command
                     continue;
                 }
 
-                // 事务内复算已冲正量，保证幂等
-                $alreadyFixed = (float) DB::table('stock_history')
-                    ->where('type', StockHistoryModel::RETURN_INFLATION_FIX_TYPE)
-                    ->where('with_order_no', $t['odr'])
-                    ->where('sku_id', $t['sku_id'])
-                    ->where('standard', $t['standard'])
-                    ->where('batch_no', $t['batch_no'])
-                    ->where('out_position_id', $t['pos'])
-                    ->sum('out_num');
-
-                $remainder = round($t['remainder'] - round($alreadyFixed, 2), 2);
-                if ($remainder <= 0.005) {
-                    continue; // 已被前次运行冲正
-                }
-
+                // 锁定后以实时库存为准，最多扣到 0，绝不为负（防并发/预估偏差）。
+                // 幂等：已冲正的单在预览阶段 remainder 归零即被剔除，不会进入 $safe，故此处直接扣预分配的 deduct。
                 $before = round((float) $batch->num, 2);
-                if ($before + 0.001 < $remainder) {
-                    // 锁定后库存已不足，跳过（绝不改成负数）
-                    $this->warn("跳过：库存不足 sku={$t['sku_id']} 批次={$t['batch_no']} 现存{$before} < 待冲{$remainder}");
+                $deduct = round(min($t['deduct'], $before), 2);
+                if ($deduct <= 0.005) {
+                    $this->warn("跳过：库存不足 sku={$t['sku_id']} 批次={$t['batch_no']} 现存{$before}");
                     continue;
                 }
 
-                $after = round($before - $remainder, 2);
+                $after = round($before - $deduct, 2);
                 $batch->num = $after;
                 $batch->save(); // 触发 SkuStockBatchObserver，自动同步 sku_stock 总库存
 
@@ -140,7 +152,7 @@ class FixReturnInflationStock extends Command
                     'init_num' => $before,
                     'in_num' => 0,
                     'in_price' => 0,
-                    'out_num' => $remainder,
+                    'out_num' => $deduct,
                     'out_price' => $batch->cost_price ?? 0,
                     'balance_num' => $after,
                     'user_id' => $operator,
@@ -151,7 +163,7 @@ class FixReturnInflationStock extends Command
                 ]);
 
                 $applied++;
-                $appliedQty += $remainder;
+                $appliedQty += $deduct;
             }
         });
 
@@ -163,26 +175,35 @@ class FixReturnInflationStock extends Command
         return self::SUCCESS;
     }
 
-    private function renderTables(array $safe, array $stuck): void
+    private function renderTables(array $safe, array $stuck, array $unresolved = []): void
     {
         $this->newLine();
         $this->info('【可安全冲减】当前批次库存充足，' . count($safe) . ' 个批次：');
         if ($safe) {
             $this->table(
-                ['返仓单', '物料编号', '物料', '批次', '现库存', '冲减'],
-                array_map(fn ($t) => [$t['odr'], $t['pno'], $t['pname'], $t['batch_no'], $t['cur_num'], $t['remainder']], $safe)
+                ['返仓单', '物料编号', '物料', '批次', '现库存', '本次冲减'],
+                array_map(fn ($t) => [$t['odr'], $t['pno'], $t['pname'], $t['batch_no'], $t['cur_num'], $t['deduct']], $safe)
             );
-            $this->line('  小计冲减：' . number_format(array_sum(array_column($safe, 'remainder')), 2));
+            $this->line('  小计冲减：' . number_format(array_sum(array_column($safe, 'deduct')), 2));
         }
 
         $this->newLine();
         $this->warn('【需人工核对】虚增已流向下游出库、当前库存不足，' . count($stuck) . ' 个批次（命令不会改动）：');
         if ($stuck) {
             $this->table(
-                ['返仓单', '物料编号', '物料', '批次', '现库存', '应冲减'],
-                array_map(fn ($t) => [$t['odr'], $t['pno'], $t['pname'], $t['batch_no'], $t['cur_num'], $t['remainder']], $stuck)
+                ['返仓单', '物料编号', '物料', '批次', '现库存', '残留虚增'],
+                array_map(fn ($t) => [$t['odr'], $t['pno'], $t['pname'], $t['batch_no'], $t['cur_num'], $t['residual']], $stuck)
             );
-            $this->line('  其中虚增合计：' . number_format(array_sum(array_column($stuck, 'remainder')), 2));
+            $this->line('  残留合计：' . number_format(array_sum(array_column($stuck, 'residual')), 2));
+        }
+
+        if ($unresolved) {
+            $this->newLine();
+            $this->warn('【无法自动核算】原出库关联缺失、算不出应冲减量，' . count($unresolved) . ' 项（命令不会改动，需人工核对）：');
+            $this->table(
+                ['返仓单', '物料编号', '物料', '批次', '现库存'],
+                array_map(fn ($t) => [$t['odr'], $t['pno'], $t['pname'], $t['batch_no'], $t['cur_num']], $unresolved)
+            );
         }
     }
 
@@ -237,7 +258,7 @@ FROM (
 LEFT JOIN sku_stock_batch ssb ON ssb.sku_id=pb.sku_id AND ssb.standard=pb.standard AND ssb.batch_no=pb.batch_no AND ssb.position_id=pb.pos
 LEFT JOIN product_sku ps ON ps.id=pb.sku_id
 LEFT JOIN product p ON p.id=ps.product_id
-WHERE pb.pd_total=0 AND pb.over_b > 0.005
+WHERE pb.pd_total=0 AND (pb.over_b > 0.005 OR pb.over_b IS NULL)
 ORDER BY pb.over_b DESC, pb.odr
 SQL;
     }
