@@ -95,6 +95,7 @@ class StockHistoryModel extends BaseModel
     const CHECK_OUT_TYPE = 10;
     const RETURN_TO_WAREHOUSE_TYPE = 11;
     const STORE_IN_TYPE = 12;
+    const RETURN_INFLATION_FIX_TYPE = 13;
 
     const TYPE = [
         self::OUT_STOCK_PUCHASE => "采购退货",
@@ -110,6 +111,7 @@ class StockHistoryModel extends BaseModel
         self::CHECK_OUT_TYPE => '检验出库',
         self::RETURN_TO_WAREHOUSE_TYPE => '物料返仓',
         self::STORE_IN_TYPE => '销售退货',
+        self::RETURN_INFLATION_FIX_TYPE => '返仓虚增冲正',
     ];
 
     const OUT = 0;
