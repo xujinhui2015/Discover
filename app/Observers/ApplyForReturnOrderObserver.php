@@ -41,7 +41,27 @@ class ApplyForReturnOrderObserver
 
                 $applyForOrderItemsRow = $applyForOrderItems->where('sku_id', $applyForReturnItemModel->sku_id)->first();
 
-                $applyForOrderItemsRow->batchs->each(function (ApplyForBatchModel $applyForBatchModel) use ($applyForReturnItemModel, $applyForReturnOrderModel, $applyForOrderItemsRow) {
+                $scale = 3;
+                $batchs = $applyForOrderItemsRow->batchs->values();
+                $lastIndex = $batchs->count() - 1;
+                // 原出库各批次实领合计，用于按比例把退数分摊回对应批次
+                $totalActual = $batchs->reduce(function ($carry, ApplyForBatchModel $applyForBatchModel) use ($scale) {
+                    return bcadd($carry, (string) $applyForBatchModel->actual_num, $scale);
+                }, '0');
+                $shouldNum = (string) $applyForReturnItemModel->should_num;
+                $allocated = '0';
+
+                $batchs->each(function (ApplyForBatchModel $applyForBatchModel, $index) use (&$allocated, $lastIndex, $totalActual, $shouldNum, $scale, $applyForReturnItemModel, $applyForReturnOrderModel, $applyForOrderItemsRow) {
+                    // 最后一个批次用余数补齐，保证各批次入库合计恰好等于退数
+                    if ($index === $lastIndex) {
+                        $allocNum = bcsub($shouldNum, $allocated, $scale);
+                    } elseif (bccomp($totalActual, '0', $scale) === 0) {
+                        $allocNum = '0';
+                    } else {
+                        $allocNum = bcdiv(bcmul($shouldNum, (string) $applyForBatchModel->actual_num, $scale + 2), $totalActual, $scale);
+                        $allocated = bcadd($allocated, $allocNum, $scale);
+                    }
+
                     $init_num = SkuStockModel::where([
                         'sku_id' => $applyForReturnItemModel->sku_id,
 //                        'percent' => $applyForOrderItemsRow->percent,
@@ -56,9 +76,9 @@ class ApplyForReturnOrderObserver
                         'flag'            => StockHistoryModel::IN,
                         'with_order_no'   => $applyForReturnOrderModel->order_no,
                         'init_num'        => $init_num,
-                        'in_num'         => $applyForReturnItemModel->should_num,
+                        'in_num'         => $allocNum,
                         'in_price'       => $applyForBatchModel->stock_batch->cost_price,
-                        'balance_num'     => $init_num + $applyForReturnItemModel->should_num,
+                        'balance_num'     => bcadd((string) $init_num, $allocNum, $scale),
 //                        'percent'         => $applyForOrderItemsRow->percent,
                         'standard'        => $applyForOrderItemsRow->standard,
                         'user_id'         => Admin::user()->id,
