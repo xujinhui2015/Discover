@@ -478,6 +478,46 @@ class ProductController extends AdminController
                                 );
                             }
 
+                            // 校验：被未完成采购单或未审核入库单引用的 SKU 不允许删除
+                            // 否则删除后采购/入库明细仍绑定旧 SKU，入库审核会把库存写到已删除的 SKU 上，导致库存页不可见
+                            $openPurchaseStatuses = [
+                                \App\Models\PurchaseOrderModel::STATUS_WAIT,
+                                \App\Models\PurchaseOrderModel::STATUS_RETURNING,
+                                \App\Models\PurchaseOrderModel::STATUS_PART_RETURNED,
+                            ];
+
+                            $referencedSkuIds = \App\Models\PurchaseItemModel::query()
+                                ->whereIn('sku_id', $skusToDelete)
+                                ->whereIn('order_id', \App\Models\PurchaseOrderModel::query()
+                                    ->whereIn('status', $openPurchaseStatuses)
+                                    ->select('id'))
+                                ->pluck('sku_id')
+                                ->all();
+
+                            $referencedInSkuIds = \App\Models\PurchaseInItemModel::query()
+                                ->whereIn('sku_id', $skusToDelete)
+                                ->whereIn('order_id', \App\Models\PurchaseInOrderModel::query()
+                                    ->where('review_status', '!=', \App\Models\PurchaseInOrderModel::REVIEW_STATUS_OK)
+                                    ->select('id'))
+                                ->pluck('sku_id')
+                                ->all();
+
+                            $referencedSkuIds = array_unique(array_merge($referencedSkuIds, $referencedInSkuIds));
+
+                            if (!empty($referencedSkuIds)) {
+                                $referencedSkuText = $skus
+                                    ->whereIn('id', $referencedSkuIds)
+                                    ->pluck('attr_value_ids_str')
+                                    ->filter()
+                                    ->implode('、');
+
+                                return $form->error(
+                                    $referencedSkuText
+                                        ? '以下SKU仍被未完成的采购单或未审核入库单引用，不允许删除：'.$referencedSkuText
+                                        : '存在被未完成采购单或未审核入库单引用的SKU，不允许删除'
+                                );
+                            }
+
                             \App\Models\ProductSkuModel::whereIn('id', $skusToDelete)->delete();
                         }
                     }
