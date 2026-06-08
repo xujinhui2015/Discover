@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\SkuStockBatchModel;
+use App\Models\SkuStockModel;
 use App\Models\StockHistoryModel;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -151,6 +152,12 @@ class FixReturnInflationStock extends Command
                 $batch->num = $after;
                 $batch->save(); // 触发 SkuStockBatchObserver，自动同步 sku_stock 总库存
 
+                // balance_num 全表口径为「该 SKU 的总结余」，故冲减后从已同步的 sku_stock 读总库存，
+                // 不能写批次结余 $after，否则流水结余列会与 SKU 总库存断层。
+                $skuBalance = SkuStockModel::query()
+                    ->where(['sku_id' => $t['sku_id'], 'standard' => $t['standard']])
+                    ->value('num');
+
                 DB::table('stock_history')->insert([
                     'sku_id' => $t['sku_id'],
                     'in_position_id' => 0,
@@ -159,12 +166,14 @@ class FixReturnInflationStock extends Command
                     'type' => StockHistoryModel::RETURN_INFLATION_FIX_TYPE,
                     'flag' => StockHistoryModel::OUT,
                     'with_order_no' => $t['odr'],
-                    'init_num' => $before,
+                    // init_num 同为 SKU 总口径（其他流水满足 init_num - out_num = balance_num），
+                    // 即冲减前的 SKU 总库存 = 冲减后总库存 + 本次冲减量。
+                    'init_num' => bcadd((string) $skuBalance, (string) $deduct, 2),
                     'in_num' => 0,
                     'in_price' => 0,
                     'out_num' => $deduct,
                     'out_price' => $batch->cost_price ?? 0,
-                    'balance_num' => $after,
+                    'balance_num' => $skuBalance,
                     'user_id' => $operator,
                     'batch_no' => $t['batch_no'],
                     'standard' => $t['standard'],
