@@ -41,7 +41,9 @@ class ApplyForReturnOrderObserver
 
                 $applyForOrderItemsRow = $applyForOrderItems->where('sku_id', $applyForReturnItemModel->sku_id)->first();
 
-                $scale = 3;
+                // 与 stock_history.in_num / sku_stock.num 的 decimal(10,2) 字段精度对齐，
+                // 避免按 3 位小数分摊后写库被截断为 2 位、各批次分别进位导致合计虚增。
+                $scale = 2;
                 $batchs = $applyForOrderItemsRow->batchs->values();
                 $lastIndex = $batchs->count() - 1;
                 // 原出库各批次实领合计，用于按比例把退数分摊回对应批次
