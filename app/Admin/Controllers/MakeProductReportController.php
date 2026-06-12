@@ -70,7 +70,7 @@ class MakeProductReportController extends Controller
             $grid->column('_', '领料批次详情')->setHeaderAttributes(['class' => 'column-batch_detail'])->expand(ApplyOfBatchDetail::class);
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('order.updated_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('order.updated_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);
@@ -179,7 +179,7 @@ class MakeProductReportController extends Controller
             $grid->column('sum_cost_price', '成本总价')->setHeaderAttributes(['class' => 'column-sum_cost_price']);
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('order.updated_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('order.updated_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);
@@ -270,7 +270,7 @@ class MakeProductReportController extends Controller
             $grid->column('batch_no', '批次号')->setHeaderAttributes(['class' => 'column-batch_no']);
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('order.updated_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('order.updated_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);
@@ -382,7 +382,7 @@ class MakeProductReportController extends Controller
             $grid->column('sum_cost_price', '成本总价')->setHeaderAttributes(['class' => 'column-sum_cost_price']);
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('order.updated_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('order.updated_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);

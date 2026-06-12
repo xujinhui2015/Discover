@@ -55,7 +55,7 @@ class PurchaseInReportController extends Controller
             $grid->column('status', '单据状态')->setHeaderAttributes(['class' => 'column-status'])->using(PurchaseOrderAmountModel::STATUS)->label(PurchaseOrderAmountModel::STATUS_COLOR);
             $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('created_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('created_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);
@@ -131,7 +131,7 @@ class PurchaseInReportController extends Controller
             $grid->column('batch_no', '批次号')->setHeaderAttributes(['class' => 'column-batch_no'])->sortable();
             $grid->column('order.apply_at', '时间')->setHeaderAttributes(['class' => 'column-apply_at'])->sortable();
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('order.apply_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('order.apply_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);
@@ -248,7 +248,7 @@ class PurchaseInReportController extends Controller
             $grid->column('sum_actual_num', '入库数量')->setHeaderAttributes(['class' => 'column-sum_actual_num'])->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('order.apply_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('order.apply_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);
@@ -339,7 +339,7 @@ class PurchaseInReportController extends Controller
             $grid->column('sum_actual_num', '入库数量')->setHeaderAttributes(['class' => 'column-sum_actual_num'])->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('order.apply_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('order.apply_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);

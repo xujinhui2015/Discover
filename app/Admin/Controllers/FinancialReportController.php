@@ -68,7 +68,7 @@ class FinancialReportController extends AdminController
             $grid->column('order.updated_at', '操作日期')->setHeaderAttributes(['class' => 'column-updated_at']);
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('order.updated_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('order.updated_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);
@@ -142,7 +142,7 @@ class FinancialReportController extends AdminController
             $grid->disableCreateButton();
 
             $grid->filter(function (Grid\Filter $filter) use ($yearMonth) {
-                $filter->between('created_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('created_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);

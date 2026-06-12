@@ -61,7 +61,7 @@ class SaleOutReportController extends Controller
             )->setHeaderAttributes(['class' => 'column-status'])->using(SaleOrderAmountModel::STATUS)->label(SaleOrderAmountModel::STATUS_COLOR);
             $grid->column('created_at')->setHeaderAttributes(['class' => 'column-created_at']);
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('created_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('created_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);
@@ -145,7 +145,7 @@ class SaleOutReportController extends Controller
             $grid->column("order.apply_at", '时间')->setHeaderAttributes(['class' => 'column-apply_at'])->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('order.apply_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('order.apply_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);
@@ -272,7 +272,7 @@ class SaleOutReportController extends Controller
             $grid->column('sum_profit', '利润')->setHeaderAttributes(['class' => 'column-sum_profit'])->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('order.apply_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('order.apply_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);
@@ -374,7 +374,7 @@ class SaleOutReportController extends Controller
             $grid->column('sum_profit', '利润')->setHeaderAttributes(['class' => 'column-sum_profit'])->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->between('order.apply_at', "时间")->datetime()->width(6)->default([
+                $filter->dateRange('order.apply_at', "时间")->datetime()->width(6)->default([
                     'start' => now()->subMonth(),
                     'end' => now()
                 ]);
