@@ -74,7 +74,16 @@ class InventoryController extends AdminController
     {
         return Form::make(new Inventory(), function (Form $form) {
             $form->text('order_no', "盘点任务号")->default('提交后自动生成')->readOnly();
-            $form->datetimeRange('start_at', 'end_at', '盘点启止时间')->required();
+            $form->datetimeRange('start_at', 'end_at', '盘点启止时间')
+                ->default(function () {
+                    $startAt = now();
+
+                    return [
+                        'start' => $startAt->format('Y-m-d H:i:s'),
+                        'end' => $startAt->copy()->addMinutes(10)->format('Y-m-d H:i:s'),
+                    ];
+                })
+                ->required();
             $form->text('other')->saveAsString();
 
             $form->saving(function (Form $form) {
