@@ -14,6 +14,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\AddApplyForOrder;
 use App\Admin\Actions\Grid\AddMakeProduct;
+use App\Admin\Actions\Grid\MakeProductReplenish;
 use App\Admin\Actions\Grid\TaskActions;
 use App\Admin\Extensions\Grid\ApplyOfOrders;
 use App\Admin\Extensions\Grid\ColumnSelector;
@@ -99,6 +100,10 @@ class TaskController extends AdminController
                     $actions->append(new AddApplyForOrder());
                 }
                 $actions->append(new AddMakeProduct());
+                // 已审核（已完成）的单据可进行二次生产补入库
+                if ($this->status === TaskModel::STATUS_FINISH) {
+                    $actions->append(new MakeProductReplenish());
+                }
             });
 
             $grid->filter(function (Grid\Filter $filter) {
