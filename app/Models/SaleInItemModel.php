@@ -59,11 +59,24 @@ class SaleInItemModel extends BaseModel
 
     protected $with = ['sku'];
 
-    protected $appends = ['standard_str'];
+    protected $appends = ['sku_stock_num', 'standard_str'];
 
     public function sku(): BelongsTo
     {
         return $this->belongsTo(ProductSkuModel::class, 'sku_id')->withTrashed();
+    }
+
+    public function sku_stock(): BelongsTo
+    {
+        return $this->belongsTo(SkuStockModel::class, 'sku_id', 'sku_id')
+            ->where([
+                'standard' => $this->standard,
+            ]);
+    }
+
+    public function getSkuStockNumAttribute()
+    {
+        return $this->sku_stock()->value('num') ?? 0;
     }
 
     public function order(): BelongsTo

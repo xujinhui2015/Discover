@@ -188,6 +188,7 @@ class SaleInOrderController extends OrderController
         $grid->column("_", '合计')->display(function () {
             return bcmul($this->actual_num, $this->price, 2);
         });
+        $grid->column('sku_stock_num', '现有库存数');
     }
 
     protected function creating(Form &$form): void

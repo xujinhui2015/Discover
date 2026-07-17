@@ -30,6 +30,8 @@ class StockHistoryObserver
             case StockHistoryModel::CHECK_IN_TYPE:
             // 物料返仓单
             case StockHistoryModel::RETURN_TO_WAREHOUSE_TYPE:
+            // 销售退货单
+            case StockHistoryModel::STORE_IN_TYPE:
                 SkuStockBatchModel::updateOrCreate([
                     'position_id' => $stockHistoryModel->in_position_id,
                     'batch_no'    => $stockHistoryModel->batch_no,

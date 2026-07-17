@@ -41,6 +41,7 @@ class SaleInOrderItemDetail extends LazyRenderable
                     $itemModel->return_num,
                     $itemModel->price,
                     bcmul($itemModel->actual_num, $itemModel->price, 2),
+                    $itemModel->sku_stock_num,
                 ];
             });
 
@@ -56,6 +57,7 @@ class SaleInOrderItemDetail extends LazyRenderable
             '实退数',
             '退价',
             '合计',
+            '现有库存数',
         ];
 
         return Table::make($titles, $items->toArray());
