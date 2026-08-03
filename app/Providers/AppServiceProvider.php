@@ -29,6 +29,7 @@ use App\Models\InventoryOrderModel;
 use App\Models\MakeProductItemModel;
 use App\Models\MakeProductOrderModel;
 use App\Models\ProductModel;
+use App\Models\ProductSkuModel;
 use App\Models\PurchaseInOrderModel;
 use App\Models\PurchaseItemModel;
 use App\Models\PurchaseOrderModel;
@@ -64,6 +65,7 @@ use App\Observers\MakeProductItemObserver;
 use App\Observers\MakeProductOrderObserver;
 use App\Observers\OrderNoCreatedObserver;
 use App\Observers\ProductObserver;
+use App\Observers\ProductSkuObserver;
 use App\Observers\PurchaseInOrderObserver;
 use App\Observers\PurchaseItemObserver;
 use App\Observers\PurchaseOrderObserver;
@@ -110,6 +112,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         ProductModel::observe(ProductObserver::class);
+        ProductSkuModel::observe(ProductSkuObserver::class);
         PurchaseOrderModel::observe([PurchaseOrderObserver::class, OrderNoCreatedObserver::class]);
         PurchaseItemModel::observe(PurchaseItemObserver::class);
         PurchaseInOrderModel::observe([PurchaseInOrderObserver::class, OrderNoCreatedObserver::class]);

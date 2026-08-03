@@ -33,7 +33,7 @@ class BatchDeleteProduct extends BatchAction
             return $this->response()->error('删除失败：已存在采购单据')->refresh();
         }
 
-        if (SkuStockModel::whereIn('sku_id', $allSkuIds->keys())->exists()) {
+        if (SkuStockModel::whereIn('sku_id', $allSkuIds->keys())->where('num', '>', 0)->exists()) {
             return $this->response()->error('删除失败：已存在库存')->refresh();
         }
 
