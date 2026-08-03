@@ -37,7 +37,6 @@ class SaleInOrder extends EloquentRepository
     public function getWithOrder(): Collection
     {
         return SaleOutOrderModel::where([
-            'status'        => SaleOutOrderModel::STATUS_DOING,
             'review_status' => SaleOutOrderModel::REVIEW_STATUS_OK
         ])->orderBy('id', 'desc')->pluck('order_no', 'id');
     }
