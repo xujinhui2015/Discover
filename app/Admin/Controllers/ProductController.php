@@ -22,6 +22,7 @@ use App\Admin\Extensions\BarcodeDrawer;
 use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Repositories\Product;
 use App\Models\AttrModel;
+use App\Models\AttrValueModel;
 use App\Models\BrandModel;
 use App\Models\ProductCategoryModel;
 use App\Models\ProductModel;
@@ -193,8 +194,23 @@ class ProductController extends AdminController
                         return;
                     }
 
-                    $query->whereHasIn('sku', function (Builder $query) use ($attrValueId) {
-                        $query->whereRaw("CONCAT(',', IFNULL(attr_value_ids, ''), ',') LIKE ?", ["%,{$attrValueId},%"]);
+                    // 按属性值名称模糊匹配：选择「30ML」时同样命中「30ML50ML」
+                    $attrValueName = AttrValueModel::query()->where('id', $attrValueId)->value('name');
+                    $attrValueIds = [$attrValueId];
+                    if ($attrValueName !== null && $attrValueName !== '') {
+                        $keyword = addcslashes($attrValueName, '%_\\');
+                        $attrValueIds = AttrValueModel::query()
+                            ->where('name', 'like', '%' . $keyword . '%')
+                            ->pluck('id')
+                            ->all();
+                    }
+
+                    $query->whereHasIn('sku', function (Builder $query) use ($attrValueIds) {
+                        $query->where(function (Builder $query) use ($attrValueIds) {
+                            foreach ($attrValueIds as $id) {
+                                $query->orWhereRaw("CONCAT(',', IFNULL(attr_value_ids, ''), ',') LIKE ?", ["%,{$id},%"]);
+                            }
+                        });
                     });
                 }, '属性值')
                     ->width(4);

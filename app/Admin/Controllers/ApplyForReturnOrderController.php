@@ -23,6 +23,7 @@ use App\Admin\Extensions\Grid\ColumnSelector;
 use App\Admin\Extensions\Grid\ApplyForReturnOrderItemDetail;
 use App\Admin\Repositories\ApplyForReturnOrder;
 use App\Models\AttrModel;
+use App\Models\AttrValueModel;
 use App\Models\ApplyForOrderModel;
 use App\Models\ApplyForReturnItemModel;
 use App\Models\ApplyForReturnOrderModel;
@@ -147,9 +148,24 @@ class ApplyForReturnOrderController extends OrderController
                         return;
                     }
 
-                    $query->whereHasIn('items', function (Builder $query) use ($attrValueId) {
-                        $query->whereHasIn('sku', function (Builder $query) use ($attrValueId) {
-                            $query->whereRaw("CONCAT(',', IFNULL(attr_value_ids, ''), ',') LIKE ?", ["%,{$attrValueId},%"]);
+                    // 按属性值名称模糊匹配：选择「30ML」时同样命中「30ML50ML」
+                    $attrValueName = AttrValueModel::query()->where('id', $attrValueId)->value('name');
+                    $attrValueIds = [$attrValueId];
+                    if ($attrValueName !== null && $attrValueName !== '') {
+                        $keyword = addcslashes($attrValueName, '%_\\');
+                        $attrValueIds = AttrValueModel::query()
+                            ->where('name', 'like', '%' . $keyword . '%')
+                            ->pluck('id')
+                            ->all();
+                    }
+
+                    $query->whereHasIn('items', function (Builder $query) use ($attrValueIds) {
+                        $query->whereHasIn('sku', function (Builder $query) use ($attrValueIds) {
+                            $query->where(function (Builder $query) use ($attrValueIds) {
+                                foreach ($attrValueIds as $id) {
+                                    $query->orWhereRaw("CONCAT(',', IFNULL(attr_value_ids, ''), ',') LIKE ?", ["%,{$id},%"]);
+                                }
+                            });
                         });
                     });
                 }, '属性值')
